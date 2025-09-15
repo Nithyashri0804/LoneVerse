@@ -1,4 +1,3 @@
-import "@nomicfoundation/hardhat-toolbox";
 import "dotenv/config";
 
 /** @type import('hardhat/config').HardhatUserConfig */
