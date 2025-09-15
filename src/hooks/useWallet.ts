@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { BrowserProvider, formatEther } from 'ethers';
 
 export const useWallet = () => {
   const [account, setAccount] = useState<string>('');
@@ -39,13 +39,15 @@ export const useWallet = () => {
 
   const updateBalance = async (address: string) => {
     if (typeof window.ethereum !== 'undefined') {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const provider = new BrowserProvider(window.ethereum);
       const balance = await provider.getBalance(address);
-      setBalance(ethers.utils.formatEther(balance));
+      setBalance(formatEther(balance));
     }
   };
 
   const switchToSepolia = async () => {
+    if (!window.ethereum) return;
+    
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link2, Github, Twitter, Shield } from 'lucide-react';
 import WalletConnect from './components/WalletConnect';
 import LoanRequestForm from './components/LoanRequestForm';

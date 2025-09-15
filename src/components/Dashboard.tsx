@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, DollarSign, Shield, Clock, RefreshCw } from 'lucide-react';
-import { ethers } from 'ethers';
+import { formatEther } from 'ethers';
 import { useContract } from '../hooks/useContract';
 import { useWallet } from '../hooks/useWallet';
 import { Loan, LoanStatus } from '../types/loan';
@@ -83,11 +83,11 @@ const Dashboard: React.FC = () => {
     const lentLoans = loans.filter(loan => loan.lender.toLowerCase() === account.toLowerCase());
     
     const totalBorrowed = borrowedLoans.reduce((sum, loan) => {
-      return sum + parseFloat(ethers.utils.formatEther(loan.amount));
+      return sum + parseFloat(formatEther(loan.amount));
     }, 0);
 
     const totalLent = lentLoans.reduce((sum, loan) => {
-      return sum + parseFloat(ethers.utils.formatEther(loan.amount));
+      return sum + parseFloat(formatEther(loan.amount));
     }, 0);
 
     const activeLoans = loans.filter(loan => loan.status === LoanStatus.FUNDED).length;
