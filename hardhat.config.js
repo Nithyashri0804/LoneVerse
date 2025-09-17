@@ -1,4 +1,5 @@
 import "dotenv/config";
+import "@nomicfoundation/hardhat-toolbox";
 
 /** @type import('hardhat/config').HardhatUserConfig */
 const config = {
@@ -21,7 +22,7 @@ const config = {
     },
     sepolia: {
       type: "http",
-      url: process.env.SEPOLIA_URL || "",
+      url: process.env.SEPOLIA_URL || "https://sepolia.infura.io/v3/demo",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
   },

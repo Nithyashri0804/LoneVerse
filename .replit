@@ -1,11 +1,11 @@
-modules = ["nodejs-20", "web"]
+modules = ["web", "nodejs-22"]
 
 [nix]
 channel = "stable-25_05"
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["npm", "run", "start"]
+run = ["npx", "vite", "preview", "--host", "0.0.0.0", "--port", "5000"]
 build = ["npm", "run", "build"]
 
 [workflows]
@@ -18,13 +18,27 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Start application"
+args = "Frontend Server"
 
 [[workflows.workflow]]
-name = "Start application"
+name = "Frontend Server"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[agent]
+expertMode = true
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 40691
+externalPort = 3000
