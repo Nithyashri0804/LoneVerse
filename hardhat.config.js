@@ -6,7 +6,16 @@ const config = {
   solidity: {
     compilers: [
       {
-        version: "0.8.19", // must match your contract pragma
+        version: "0.8.19", // for your contract
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
+      },
+      {
+        version: "0.8.20", // for OpenZeppelin contracts
         settings: {
           optimizer: {
             enabled: true,
@@ -18,12 +27,12 @@ const config = {
   },
   networks: {
     hardhat: {
-      type: "edr-simulated", // required in Hardhat 3
+      // removed the type line for compatibility
     },
     sepolia: {
       type: "http",
       url: process.env.SEPOLIA_URL || "https://sepolia.infura.io/v3/demo",
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      // accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [], // commented out for now
     },
   },
   etherscan: {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PlusCircle, AlertCircle, Calculator } from 'lucide-react';
-import { ethers } from 'ethers';
+import { parseEther } from 'ethers';
 import { useContract } from '../hooks/useContract';
 import { LoanFormData } from '../types/loan';
 
@@ -43,8 +43,8 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       setIsLoading(true);
       setError('');
 
-      const loanAmount = ethers.utils.parseEther(formData.amount);
-      const collateralAmount = ethers.utils.parseEther(formData.collateral);
+      const loanAmount = parseEther(formData.amount);
+      const collateralAmount = parseEther(formData.collateral);
       const interestRateBasisPoints = formData.interestRate * 100; // Convert to basis points
       const durationSeconds = formData.duration * 24 * 60 * 60; // Convert days to seconds
 

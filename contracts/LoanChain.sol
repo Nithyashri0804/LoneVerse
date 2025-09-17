@@ -77,7 +77,7 @@ contract LoanChain is ReentrancyGuard, Ownable {
         uint256 amount
     );
     
-    constructor() {}
+    constructor() Ownable(msg.sender) {}
     
     /**
      * @dev Request a new loan with collateral
