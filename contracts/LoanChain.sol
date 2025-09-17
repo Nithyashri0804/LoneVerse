@@ -14,7 +14,8 @@ contract LoanChain is ReentrancyGuard, Ownable {
         REQUESTED,    // Loan requested by borrower
         FUNDED,       // Loan funded by lender
         REPAID,       // Loan fully repaid
-        DEFAULTED     // Loan defaulted (collateral liquidated)
+        DEFAULTED,    // Loan defaulted (collateral liquidated)
+        CANCELLED     // Loan cancelled by borrower
     }
     
     struct Loan {
@@ -138,7 +139,8 @@ contract LoanChain is ReentrancyGuard, Ownable {
         lenderLoans[msg.sender].push(_loanId);
         
         // Transfer loan amount to borrower
-        payable(loan.borrower).transfer(loan.amount);
+        (bool success, ) = payable(loan.borrower).call{value: loan.amount}("");
+        require(success, "Transfer to borrower failed");
         
         emit LoanFunded(_loanId, msg.sender, block.timestamp);
     }
@@ -160,14 +162,17 @@ contract LoanChain is ReentrancyGuard, Ownable {
         loan.status = LoanStatus.REPAID;
         
         // Transfer repayment to lender
-        payable(loan.lender).transfer(totalRepayment);
+        (bool success1, ) = payable(loan.lender).call{value: totalRepayment}("");
+        require(success1, "Transfer to lender failed");
         
         // Return collateral to borrower
-        payable(loan.borrower).transfer(loan.collateral);
+        (bool success2, ) = payable(loan.borrower).call{value: loan.collateral}("");
+        require(success2, "Collateral return failed");
         
         // Return excess payment if any
         if (msg.value > totalRepayment) {
-            payable(msg.sender).transfer(msg.value - totalRepayment);
+            (bool success3, ) = payable(msg.sender).call{value: msg.value - totalRepayment}("");
+            require(success3, "Excess payment return failed");
         }
         
         emit LoanRepaid(_loanId, msg.sender, totalRepayment);
@@ -188,7 +193,8 @@ contract LoanChain is ReentrancyGuard, Ownable {
         loan.collateralClaimed = true;
         
         // Transfer collateral to lender
-        payable(loan.lender).transfer(loan.collateral);
+        (bool success, ) = payable(loan.lender).call{value: loan.collateral}("");
+        require(success, "Collateral transfer failed");
         
         emit LoanDefaulted(_loanId, loan.borrower, loan.lender);
         emit CollateralClaimed(_loanId, msg.sender, loan.collateral);
@@ -203,10 +209,11 @@ contract LoanChain is ReentrancyGuard, Ownable {
         require(loan.borrower == msg.sender, "Only borrower can cancel");
         require(loan.status == LoanStatus.REQUESTED, "Can only cancel unfunded loans");
         
-        loan.status = LoanStatus.DEFAULTED; // Reuse status for cancelled
+        loan.status = LoanStatus.CANCELLED;
         
         // Return collateral to borrower
-        payable(loan.borrower).transfer(loan.collateral);
+        (bool success, ) = payable(loan.borrower).call{value: loan.collateral}("");
+        require(success, "Collateral return failed");
     }
     
     /**

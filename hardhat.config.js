@@ -12,6 +12,7 @@ const config = {
             enabled: true,
             runs: 200,
           },
+          viaIR: true,
         },
       },
       {
@@ -21,6 +22,7 @@ const config = {
             enabled: true,
             runs: 200,
           },
+          viaIR: true,
         },
       },
     ],

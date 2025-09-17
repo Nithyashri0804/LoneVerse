@@ -1,0 +1,63 @@
+I want to build a decentralized peer-to-peer lending platform called LoanVerse, with a full-stack, production-like architecture. The platform must be cost-free for development and deployed on Ethereum testnets (Sepolia). It should include both smart contracts and an integrated front-end UI, with mobile support and wallet integration. The project requirements are as follows:
+
+Smart Contracts (Solidity / Ethereum):
+
+Multi-token support (ETH + ERC-20 tokens).
+
+Loan creation, management, and automated repayment.
+
+Multi-step collateral evaluation and dynamic interest rate calculation.
+
+Automated default handling including collateral liquidation and auctions.
+
+On-chain credit scoring for borrowers.
+
+Fraud detection and dispute resolution mechanisms.
+
+Secure storage of critical loan info on-chain; hashes of documents stored on IPFS.
+
+Include automated tests and security checks using open-source libraries (e.g., OpenZeppelin).
+
+Back-End (Node.js / Python):
+
+Connect smart contracts to the front-end.
+
+Analytics dashboard tracking loans, repayments, defaults, and risk scores.
+
+Machine-learning-driven credit risk prediction for borrowers.
+
+Notifications for repayments, defaults, auctions, or fraud alerts (in-app or email).
+
+Front-End (React / Next.js / Tailwind):
+
+Borrower and lender dashboards (loan request creation, browsing, and management).
+
+Wallet integration using MetaMask and WalletConnect.
+
+Mobile-friendly responsive UI.
+
+Storage & Deployment:
+
+Store documents, collateral, and other large data on IPFS; loan and credit data stored on-chain.
+
+Deploy smart contracts on Sepolia testnet.
+
+Host front-end and back-end on Replit (or any free hosting).
+
+Additional Requirements:
+
+Ensure code is secure, auditable, and modular for future feature expansion.
+
+Include unit tests, automated deployment scripts, and instructions for running the project locally and on Sepolia.
+
+Generate the full project structure with:
+
+Smart contracts folder with Solidity contracts and tests.
+
+Backend folder with ML-based risk scoring and APIs.
+
+Front-end folder with dashboards and wallet integration.
+
+Configuration files for testnet deployment and IPFS integration.
+
+Clear README with instructions for setup, testing, and deployment.

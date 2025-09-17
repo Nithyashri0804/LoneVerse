@@ -26,8 +26,8 @@ function App() {
                 <Link2 className="text-white" size={24} />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-white">LoanChain</h1>
-                <p className="text-xs text-gray-400">Decentralized P2P Lending</p>
+                <h1 className="text-xl font-bold text-white">LoanVerse</h1>
+                <p className="text-xs text-gray-400">Next-Gen DeFi Lending</p>
               </div>
             </div>
             
@@ -45,24 +45,24 @@ function App() {
                 <Shield className="text-white" size={48} />
               </div>
               <h2 className="text-3xl font-bold text-white mb-4">
-                Welcome to LoanChain
+                Welcome to LoanVerse
               </h2>
               <p className="text-gray-400 mb-8 leading-relaxed">
-                The future of decentralized lending. Connect your wallet to start borrowing 
-                or lending with complete transparency and security powered by smart contracts.
+                Advanced DeFi lending with AI-powered risk assessment, multi-token support, 
+                and transparent smart contract execution. Join the future of peer-to-peer finance.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                  <div className="text-blue-400 font-medium mb-1">Collateralized</div>
-                  <div className="text-gray-300">150% minimum collateral ratio</div>
+                  <div className="text-blue-400 font-medium mb-1">AI-Powered</div>
+                  <div className="text-gray-300">ML-based risk assessment</div>
                 </div>
                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                  <div className="text-green-400 font-medium mb-1">Automated</div>
-                  <div className="text-gray-300">Smart contract execution</div>
+                  <div className="text-green-400 font-medium mb-1">Multi-Token</div>
+                  <div className="text-gray-300">ETH & ERC-20 support</div>
                 </div>
                 <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                  <div className="text-purple-400 font-medium mb-1">Transparent</div>
-                  <div className="text-gray-300">All transactions on-chain</div>
+                  <div className="text-purple-400 font-medium mb-1">Secure</div>
+                  <div className="text-gray-300">Audited smart contracts</div>
                 </div>
               </div>
             </div>
@@ -114,7 +114,7 @@ function App() {
                 <Link2 className="text-white" size={20} />
               </div>
               <div>
-                <div className="text-white font-medium">LoanChain</div>
+                <div className="text-white font-medium">LoanVerse</div>
                 <div className="text-xs text-gray-400">Built on Ethereum</div>
               </div>
             </div>
@@ -140,7 +140,7 @@ function App() {
           </div>
           
           <div className="mt-6 pt-6 border-t border-gray-700 text-center text-sm text-gray-400">
-            <p>© 2024 LoanChain. Decentralized lending protocol powered by smart contracts.</p>
+            <p>© 2024 LoanVerse. Next-generation DeFi lending with AI-powered risk assessment.</p>
             <p className="mt-1">Always verify contract addresses and do your own research before transacting.</p>
           </div>
         </div>

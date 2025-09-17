@@ -7,12 +7,14 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "vite preview --host 0.0.0.0 --port 5000"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.4.0",
     "@supabase/supabase-js": "^2.57.4",
     "ethers": "^6.15.0",
+    "form-data": "^4.0.4",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
