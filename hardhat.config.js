@@ -1,21 +1,26 @@
 import "dotenv/config";
 
 /** @type import('hardhat/config').HardhatUserConfig */
-export default {
+const config = {
   solidity: {
-    version: "0.8.19",
-    settings: {
-      optimizer: {
-        enabled: true,
-        runs: 200,
+    compilers: [
+      {
+        version: "0.8.19", // must match your contract pragma
+        settings: {
+          optimizer: {
+            enabled: true,
+            runs: 200,
+          },
+        },
       },
-    },
+    ],
   },
   networks: {
     hardhat: {
-      chainId: 31337,
+      type: "edr-simulated", // required in Hardhat 3
     },
     sepolia: {
+      type: "http",
       url: process.env.SEPOLIA_URL || "",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
@@ -24,3 +29,5 @@ export default {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
 };
+
+export default config;
