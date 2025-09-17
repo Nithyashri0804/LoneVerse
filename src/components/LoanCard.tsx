@@ -56,7 +56,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
   };
 
   const calculateRepaymentAmount = () => {
-    const amount = parseFloat(ethers.utils.formatEther(loan.amount));
+    const amount = parseFloat(ethers.formatEther(loan.amount));
     const interest = (amount * loan.interestRate) / 10000;
     return amount + interest;
   };
@@ -111,7 +111,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       setIsLoading(true);
       setError('');
 
-      const repaymentAmount = ethers.utils.parseEther(calculateRepaymentAmount().toString());
+      const repaymentAmount = ethers.parseEther(calculateRepaymentAmount().toString());
       const tx = await contract.repayLoan(loan.id, {
         value: repaymentAmount,
       });
@@ -168,7 +168,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Loan Amount</div>
               <div className="text-white font-medium">
-                {parseFloat(ethers.utils.formatEther(loan.amount)).toFixed(4)} ETH
+                {parseFloat(ethers.formatEther(loan.amount)).toFixed(4)} ETH
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Collateral</div>
               <div className="text-white font-medium">
-                {parseFloat(ethers.utils.formatEther(loan.collateral)).toFixed(4)} ETH
+                {parseFloat(ethers.formatEther(loan.collateral)).toFixed(4)} ETH
               </div>
             </div>
           </div>
@@ -201,7 +201,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             </div>
           </div>
 
-          {loan.lender !== ethers.constants.AddressZero && (
+          {loan.lender !== ethers.ZeroAddress && (
             <div className="flex items-center space-x-2">
               <User className="text-cyan-400" size={16} />
               <div>

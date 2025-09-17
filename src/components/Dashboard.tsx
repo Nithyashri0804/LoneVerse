@@ -30,25 +30,25 @@ const Dashboard: React.FC = () => {
 
       // Combine all unique loan IDs
       const allLoanIds = new Set([
-        ...activeLoanIds.map((id: any) => id.toNumber()),
-        ...borrowerLoanIds.map((id: any) => id.toNumber()),
-        ...lenderLoanIds.map((id: any) => id.toNumber()),
+        ...activeLoanIds.map((id: any) => Number(id.toString())),
+        ...borrowerLoanIds.map((id: any) => Number(id.toString())),
+        ...lenderLoanIds.map((id: any) => Number(id.toString())),
       ]);
 
       // Fetch loan details
       const loanPromises = Array.from(allLoanIds).map(async (loanId) => {
         const loanData = await contract.getLoan(loanId);
         return {
-          id: loanData.id.toNumber(),
+          id: Number(loanData.id.toString()),
           borrower: loanData.borrower,
           lender: loanData.lender,
           amount: loanData.amount.toString(),
           collateral: loanData.collateral.toString(),
-          interestRate: loanData.interestRate.toNumber(),
-          duration: loanData.duration.toNumber(),
-          createdAt: loanData.createdAt.toNumber(),
-          fundedAt: loanData.fundedAt.toNumber(),
-          dueDate: loanData.dueDate.toNumber(),
+          interestRate: Number(loanData.interestRate.toString()),
+          duration: Number(loanData.duration.toString()),
+          createdAt: Number(loanData.createdAt.toString()),
+          fundedAt: Number(loanData.fundedAt.toString()),
+          dueDate: Number(loanData.dueDate.toString()),
           status: loanData.status as LoanStatus,
           collateralClaimed: loanData.collateralClaimed,
         } as Loan;
