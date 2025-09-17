@@ -56,9 +56,15 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
   };
 
   const calculateRepaymentAmount = () => {
-    const amount = parseFloat(ethers.formatEther(loan.amount));
-    const interest = (amount * loan.interestRate) / 10000;
-    return amount + interest;
+    // Use wei-based integer arithmetic for precision
+    const amountWei = BigInt(loan.amount);
+    const interestWei = (amountWei * BigInt(loan.interestRate)) / BigInt(10000);
+    return amountWei + interestWei;
+  };
+
+  const calculateRepaymentAmountForDisplay = () => {
+    const repaymentWei = calculateRepaymentAmount();
+    return parseFloat(ethers.formatEther(repaymentWei));
   };
 
   const isExpired = () => {
@@ -67,18 +73,18 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
 
   const canFund = () => {
     return loan.status === LoanStatus.REQUESTED && 
-           account.toLowerCase() !== loan.borrower.toLowerCase();
+           account && account.toLowerCase() !== loan.borrower.toLowerCase();
   };
 
   const canRepay = () => {
     return loan.status === LoanStatus.FUNDED && 
-           account.toLowerCase() === loan.borrower.toLowerCase() &&
+           account && account.toLowerCase() === loan.borrower.toLowerCase() &&
            !isExpired();
   };
 
   const canClaimCollateral = () => {
     return loan.status === LoanStatus.FUNDED && 
-           account.toLowerCase() === loan.lender.toLowerCase() &&
+           account && account.toLowerCase() === loan.lender.toLowerCase() &&
            isExpired() &&
            !loan.collateralClaimed;
   };
@@ -111,7 +117,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       setIsLoading(true);
       setError('');
 
-      const repaymentAmount = ethers.parseEther(calculateRepaymentAmount().toString());
+      const repaymentAmount = calculateRepaymentAmount();
       const tx = await contract.repayLoan(loan.id, {
         value: repaymentAmount,
       });
@@ -234,7 +240,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             </div>
             <div>
               <span className="text-gray-400">Total Repayment:</span>
-              <div className="text-white font-medium">{calculateRepaymentAmount().toFixed(4)} ETH</div>
+              <div className="text-white font-medium">{calculateRepaymentAmountForDisplay().toFixed(4)} ETH</div>
             </div>
           </div>
         </div>

@@ -68,6 +68,8 @@ const Dashboard: React.FC = () => {
   }, [contract, account]);
 
   const filteredLoans = loans.filter((loan) => {
+    if (!account) return activeTab === 'all';
+    
     switch (activeTab) {
       case 'borrowed':
         return loan.borrower.toLowerCase() === account.toLowerCase();
@@ -79,6 +81,10 @@ const Dashboard: React.FC = () => {
   });
 
   const getStats = () => {
+    if (!account) {
+      return { totalBorrowed: 0, totalLent: 0, activeLoans: 0 };
+    }
+    
     const borrowedLoans = loans.filter(loan => loan.borrower.toLowerCase() === account.toLowerCase());
     const lentLoans = loans.filter(loan => loan.lender.toLowerCase() === account.toLowerCase());
     
