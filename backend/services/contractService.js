@@ -222,8 +222,8 @@ function generateMockLoanDetails(loanId) {
     lender: ethers.ZeroAddress,
     tokenId: 0,
     collateralTokenId: 0,
-    amount: (seed % 10 + 1) * 1000000000000000000n, // 1-10 ETH
-    collateralAmount: (seed % 10 + 1) * 1500000000000000000n, // 1.5x collateral
+    amount: BigInt(seed % 10 + 1) * 1000000000000000000n, // 1-10 ETH
+    collateralAmount: BigInt(seed % 10 + 1) * 1500000000000000000n, // 1.5x collateral
     interestRate: 500 + (seed % 1000), // 5-15%
     duration: (seed % 30 + 7) * 24 * 60 * 60, // 7-37 days
     createdAt: Date.now() / 1000 - (seed % 86400),
