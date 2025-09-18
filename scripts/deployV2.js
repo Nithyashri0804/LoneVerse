@@ -68,12 +68,13 @@ async function main() {
   );
   console.log("✅ USDT support added");
 
-  // Update token prices (mock prices for development)
-  await loanChainV2.updateTokenPrice(0, 250000000000); // ETH: $2500
-  await loanChainV2.updateTokenPrice(1, 100000000);    // USDC: $1
-  await loanChainV2.updateTokenPrice(2, 100000000);    // DAI: $1  
-  await loanChainV2.updateTokenPrice(3, 100000000);    // USDT: $1
-  console.log("✅ Token prices updated");
+  // Update token prices with dual sources for the new oracle system
+  await loanChainV2.updateTokenPrice(0, "250000000000", "250000000000"); // ETH: $2500 from both sources
+  await loanChainV2.updateTokenPrice(1, "100000000", "100000000");       // USDC: $1.00 from both sources
+  await loanChainV2.updateTokenPrice(2, "100000000", "100000000");       // DAI: $1.00 from both sources
+  await loanChainV2.updateTokenPrice(3, "100000000", "100000000");       // USDT: $1.00 from both sources
+  
+  console.log("✅ Token prices updated with multi-oracle system");
 
   console.log("🎉 Deployment completed!");
   console.log("📋 Contract Addresses:");

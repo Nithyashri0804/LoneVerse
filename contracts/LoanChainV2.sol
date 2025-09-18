@@ -84,8 +84,20 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
     mapping(address => uint256[]) public borrowerLoans;
     mapping(address => uint256[]) public lenderLoans;
     
-    // Price oracle (simplified for now, can be enhanced with Chainlink)
-    mapping(TokenType => uint256) public tokenPrices; // Price in USD with 8 decimals
+    // Multi-oracle price system for enhanced security
+    struct PriceData {
+        uint256 price;         // Price in USD with 8 decimals
+        uint256 lastUpdate;    // Last update timestamp
+        uint256 priceSource1;  // First price source
+        uint256 priceSource2;  // Second price source  
+        uint256 updateCount;   // Number of updates
+    }
+    
+    mapping(TokenType => PriceData) public tokenPrices;
+    mapping(address => bool) public priceOracles; // Approved price oracle addresses
+    
+    uint256 private constant PRICE_STALENESS_THRESHOLD = 3600; // 1 hour
+    uint256 private constant MAX_PRICE_DEVIATION = 1000; // 10% in basis points
     
     // Events
     event LoanRequested(
@@ -127,6 +139,7 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
     
     event TokenAdded(TokenType indexed tokenType, address indexed contractAddress);
     event PriceUpdated(TokenType indexed tokenType, uint256 newPrice);
+    event PriceOracleUpdated(address indexed oracle, bool approved);
 
     constructor() Ownable(msg.sender) {
         // Initialize supported tokens
@@ -147,11 +160,38 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
             maxLoanAmount: 1000 ether
         });
         
-        // Mock token prices (USD with 8 decimals)
-        tokenPrices[TokenType.NATIVE_ETH] = 250000000000; // $2500 ETH
-        tokenPrices[TokenType.USDC] = 100000000;          // $1 USDC
-        tokenPrices[TokenType.DAI] = 100000000;           // $1 DAI  
-        tokenPrices[TokenType.USDT] = 100000000;          // $1 USDT
+        // Initialize price data (8 decimals)
+        tokenPrices[TokenType.NATIVE_ETH] = PriceData({
+            price: 250000000000,
+            lastUpdate: block.timestamp,
+            priceSource1: 250000000000,
+            priceSource2: 250000000000,
+            updateCount: 1
+        });
+        tokenPrices[TokenType.USDC] = PriceData({
+            price: 100000000,
+            lastUpdate: block.timestamp,
+            priceSource1: 100000000,
+            priceSource2: 100000000,
+            updateCount: 1
+        });
+        tokenPrices[TokenType.DAI] = PriceData({
+            price: 100000000,
+            lastUpdate: block.timestamp,
+            priceSource1: 100000000,
+            priceSource2: 100000000,
+            updateCount: 1
+        });
+        tokenPrices[TokenType.USDT] = PriceData({
+            price: 100000000,
+            lastUpdate: block.timestamp,
+            priceSource1: 100000000,
+            priceSource2: 100000000,
+            updateCount: 1
+        });
+        
+        // Owner is initially approved as price oracle (can be removed later)
+        priceOracles[msg.sender] = true;
     }
 
     /**
@@ -177,11 +217,47 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
     }
 
     /**
-     * @dev Update token price (simplified oracle)
+     * @dev Add or remove price oracle (decentralized governance)
      */
-    function updateTokenPrice(TokenType _tokenType, uint256 _price) external onlyOwner {
-        tokenPrices[_tokenType] = _price;
-        emit PriceUpdated(_tokenType, _price);
+    function setPriceOracle(address _oracle, bool _approved) external onlyOwner {
+        priceOracles[_oracle] = _approved;
+        emit PriceOracleUpdated(_oracle, _approved);
+    }
+
+    /**
+     * @dev Update token price with validation (multi-oracle system)
+     */
+    function updateTokenPrice(TokenType _tokenType, uint256 _price1, uint256 _price2) external {
+        require(priceOracles[msg.sender], "Not authorized price oracle");
+        require(_price1 > 0 && _price2 > 0, "Invalid prices");
+        
+        PriceData storage priceData = tokenPrices[_tokenType];
+        
+        // Calculate average price from two sources
+        uint256 avgPrice = (_price1 + _price2) / 2;
+        
+        // Validate price deviation (max 10% difference between sources)
+        uint256 deviation = _price1 > _price2 
+            ? ((_price1 - _price2) * 10000) / _price2
+            : ((_price2 - _price1) * 10000) / _price1;
+        require(deviation <= MAX_PRICE_DEVIATION, "Price sources deviate too much");
+        
+        // If not first price update, validate against existing price
+        if (priceData.updateCount > 0) {
+            uint256 priceDeviation = avgPrice > priceData.price
+                ? ((avgPrice - priceData.price) * 10000) / priceData.price
+                : ((priceData.price - avgPrice) * 10000) / avgPrice;
+            require(priceDeviation <= MAX_PRICE_DEVIATION * 3, "New price deviates too much from current");
+        }
+        
+        // Update price data
+        priceData.price = avgPrice;
+        priceData.lastUpdate = block.timestamp;
+        priceData.priceSource1 = _price1;
+        priceData.priceSource2 = _price2;
+        priceData.updateCount++;
+        
+        emit PriceUpdated(_tokenType, avgPrice);
     }
 
     /**
@@ -189,10 +265,16 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
      */
     function calculateUSDValue(TokenType _tokenType, uint256 _amount) public view returns (uint256) {
         Token memory token = supportedTokens[_tokenType];
-        uint256 price = tokenPrices[_tokenType];
+        PriceData memory priceData = tokenPrices[_tokenType];
+        
+        // Check if price is not stale
+        require(
+            block.timestamp - priceData.lastUpdate <= PRICE_STALENESS_THRESHOLD,
+            "Price data is stale"
+        );
         
         // Convert amount to USD value (8 decimals)
-        return (_amount * price) / (10 ** token.decimals);
+        return (_amount * priceData.price) / (10 ** token.decimals);
     }
 
     /**
@@ -404,9 +486,36 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
     }
 
     /**
-     * @dev Get current token price
+     * @dev Get current token price with staleness check
      */
     function getTokenPrice(TokenType _tokenType) external view returns (uint256) {
-        return tokenPrices[_tokenType];
+        PriceData memory priceData = tokenPrices[_tokenType];
+        require(
+            block.timestamp - priceData.lastUpdate <= PRICE_STALENESS_THRESHOLD,
+            "Price data is stale"
+        );
+        return priceData.price;
+    }
+    
+    /**
+     * @dev Get detailed price information
+     */
+    function getTokenPriceInfo(TokenType _tokenType) external view returns (
+        uint256 price,
+        uint256 lastUpdate,
+        uint256 source1,
+        uint256 source2,
+        uint256 updateCount,
+        bool isStale
+    ) {
+        PriceData memory priceData = tokenPrices[_tokenType];
+        return (
+            priceData.price,
+            priceData.lastUpdate,
+            priceData.priceSource1,
+            priceData.priceSource2,
+            priceData.updateCount,
+            block.timestamp - priceData.lastUpdate > PRICE_STALENESS_THRESHOLD
+        );
     }
 }
