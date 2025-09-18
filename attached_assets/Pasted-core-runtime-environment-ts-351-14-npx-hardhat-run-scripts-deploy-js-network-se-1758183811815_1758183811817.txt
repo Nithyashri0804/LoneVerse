@@ -1,0 +1,91 @@
+core\runtime-environment.ts:351:14)                   npx hardhat run scripts/deploy.js --network sepolia
+>> C:\Users\Administrator\OneDrive\Desktop\LoneVerse>
+Deploying LoanChain contract...
+LoanChain deployed to: 0xDB945F8c9b681c240d5Acb3F602D210567bDfFc6
+Network: sepolia
+Waiting for block confirmations...
+Verifying contract on Etherscan...
+[WARNING] Network and explorer-specific api keys are deprecated in favour of the new Etherscan v2 api. Support for v1 is expected to end by May 31st, 2025. To migrate, please specify a single Etherscan.io api key the apiKey config value.
+Error verifying contract: HardhatVerifyError: Invalid API Key (#err2)|SEPOLIA-
+    at Etherscan.verify (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@nomicfoundation\hardhat-verify\src\internal\etherscan.ts:233:13)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at SimpleTaskDefinition.action (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:315:33)
+    at Environment._runTaskDefinition (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\hardhat\src\internal\core\runtime-environment.ts:351:14)
+    at Environment.run (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\hardhat\src\internal\core\runtime-environment.ts:184:14)
+    at SimpleTaskDefinition.action (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@nomicfoundation\hardhat-verify\src\internal\tasks\etherscan.ts:169:7)
+    at Environment._runTaskDefinition (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\hardhat\src\internal\core\runtime-environment.ts:351:14)
+    at Environment.run (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\hardhat\src\internal\core\runtime-environment.ts:184:14)
+    at SimpleTaskDefinition.action (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@nomicfoundation\hardhat-verify\src\index.ts:313:9)
+    at Environment._runTaskDefinition (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\hardhat\src\internal\core\runtime-environment.ts:351:14)
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse> npx hardhat verify --network sepolia 0xDB945F8c9b681c240d5Acb3F602D210567bDfFc6
+>>
+[INFO] Sourcify Verification Skipped: Sourcify verification is currently disabled. To enable it, add the following entry to your Hardhat configuration:
+
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse> npx hardhat verify --network sepolia 0xDB945F8c9b681c240d5Acb3F602D210567bDfFc6
+>>
+[INFO] Sourcify Verification Skipped: Sourcify verification is currently disabled. To enable it, add the following entry to your Hardhat configuration:
+
+sourcify: {
+  enabled: true
+}
+
+Or set 'enabled' to false to hide this message.
+
+For more information, visit https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-verify#verifying-on-sourcify
+hardhat-verify found one or more errors during the verification process:
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse> npx hardhat verify --network sepolia 0xDB945F8c9b681c240d5Acb3F602D210567bDfFc6
+>>
+[INFO] Sourcify Verification Skipped: Sourcify verification is currently disabled. To enable it, add the following entry to your Hardhat configuration:
+
+sourcify: {
+  enabled: true
+}
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse> npx hardhat verify --network sepolia 0xDB945F8c9b681c240d5Acb3F602D210567bDfFc6
+>>
+[INFO] Sourcify Verification Skipped: Sourcify verification is currently disabled. To enable it, add the following entry to your Hardhat configuration:
+
+0567bDfFc6
+>>
+[INFO] Sourcify Verification Skipped: Sourcify verification is currently disabled. To enable it, add the following entry to your Hardhat configuration:
+
+[INFO] Sourcify Verification Skipped: Sourcify verification is currently disabled. To enable it, add the following entry to your Hardhat configuration:
+
+ your Hardhat configuration:
+
+sourcify: {
+
+sourcify: {
+sourcify: {
+  enabled: true
+}
+
+Or set 'enabled' to false to hide this message.
+
+For more information, visit https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-verify#verifying-on-sourcify
+hardhat-verify found one or more errors during the verification process:
+
+Etherscan:
+}
+
+Or set 'enabled' to false to hide this message.
+
+For more information, visit https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-verify#verifying-on-sourcify
+hardhat-verify found one or more errors during the verification process:
+
+Etherscan:
+Invalid API Key (#err2)|SEPOLIA-
+
+
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse>
+
+Or set 'enabled' to false to hide this message.
+
+For more information, visit https://hardhat.org/hardhat-runner/plugins/nomicfoundation-hardhat-verify#verifying-on-sourcify
+hardhat-verify found one or more errors during the verification process:
+
+Etherscan:
+hardhat-verify found one or more errors during the verification process:
+
+Etherscan:
+Etherscan:
+Invalid API Key (#err2)|SEPOLIA-
