@@ -31,7 +31,7 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
       
       // Cross-collateral calculation (simplified with mock prices)
       if (formData.loanToken !== formData.collateralToken) {
-        // For cross-collateral, use different ratios
+        // For cross-collateral, use 120% ratio (as per contract)
         const requiredCollateral = calculateCrossCollateral(
           loanAmount,
           formData.loanToken,
@@ -40,8 +40,8 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
         setCalculatedCollateral(requiredCollateral.toFixed(6));
         setCrossCollateralEnabled(true);
       } else {
-        // Same token collateral - 150% ratio
-        const requiredCollateral = loanAmount * 1.5;
+        // Same token collateral - 120% ratio (contract uses 120% for all)
+        const requiredCollateral = loanAmount * 1.2;
         setCalculatedCollateral(requiredCollateral.toFixed(6));
         setCrossCollateralEnabled(false);
       }
@@ -59,7 +59,7 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
     };
 
     const loanValueUSD = loanAmount * prices[loanToken];
-    const requiredCollateralUSD = loanValueUSD * 1.2; // 120% for cross-collateral
+    const requiredCollateralUSD = loanValueUSD * 1.2; // 120% collateralization (contract requirement)
     
     return requiredCollateralUSD / prices[collateralToken];
   };
@@ -84,11 +84,19 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
     
     const totalAmount = ethers.parseUnits(formData.totalAmount, loanTokenInfo.decimals).toString();
     const collateralAmount = ethers.parseUnits(formData.collateralAmount, collateralTokenInfo.decimals).toString();
+    
+    // Convert duration from days to seconds
+    const durationInSeconds = formData.duration * 24 * 60 * 60;
+    
+    // Convert interest rate from percentage to basis points
+    const interestRateInBasisPoints = formData.interestRate * 100;
 
     onSubmit({
       ...formData,
       totalAmount,
       collateralAmount,
+      duration: durationInSeconds,
+      interestRate: interestRateInBasisPoints,
     });
   };
 
@@ -275,7 +283,7 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
             </div>
             <div>
               <span className="text-gray-400">Collateral Ratio:</span>
-              <span className="text-white ml-2">{crossCollateralEnabled ? '120%' : '150%'}</span>
+              <span className="text-white ml-2">120%</span>
             </div>
           </div>
         </div>

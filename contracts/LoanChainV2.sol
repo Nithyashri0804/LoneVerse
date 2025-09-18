@@ -242,8 +242,9 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
         
         // Handle collateral deposit
         if (_collateralToken == TokenType.NATIVE_ETH) {
-            require(msg.value >= _collateralAmount, "Insufficient ETH collateral sent");
+            require(msg.value == _collateralAmount, "ETH sent must exactly match collateral amount");
         } else {
+            require(msg.value == 0, "No ETH should be sent for ERC20 collateral");
             // Transfer ERC20 collateral tokens
             Token memory collateralToken = supportedTokens[_collateralToken];
             IERC20(collateralToken.contractAddress).safeTransferFrom(
