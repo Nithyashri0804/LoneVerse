@@ -30,7 +30,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "VITE_HARDHAT_LOANCHAIN_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3 VITE_HARDHAT_RPC_URL=http://localhost:8545 npm run dev"
 waitForPort = 5000
 
 [workflows.workflow.metadata]
@@ -42,7 +42,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && npm start"
+args = "cd backend && NODE_ENV=development PORT=3001 FRONTEND_URL=http://localhost:5000 npm start"
 waitForPort = 3001
 
 [workflows.workflow.metadata]
@@ -54,14 +54,7 @@ expertMode = true
 [[ports]]
 localPort = 3001
 externalPort = 3001
-
-[[ports]]
-localPort = 5000
-externalPort = 5000
-
-[[ports]]
-localPort = 5001
-externalPort = 3001
+exposeLocalhost = true
 
 [[ports]]
 localPort = 8545
