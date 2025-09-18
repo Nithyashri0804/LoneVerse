@@ -9,60 +9,6 @@ run = ["npm", "start"]
 build = ["npm", "run", "build"]
 
 [workflows]
-runButton = "Project"
-
-[[workflows.workflow]]
-name = "Project"
-mode = "parallel"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Hardhat Network"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Frontend Server"
-
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Backend API"
-
-[[workflows.workflow]]
-name = "Hardhat Network"
-author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx hardhat node --port 8000 --hostname 0.0.0.0"
-waitForPort = 8000
-
-[[workflows.workflow]]
-name = "Frontend Server"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "VITE_HARDHAT_LOANCHAIN_ADDRESS=0x5FbDB2315678afecb367f032d93F642f64180aa3 VITE_HARDHAT_RPC_URL=http://localhost:8000 npm run dev"
-waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
-
-[[workflows.workflow]]
-name = "Backend API"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd backend && NODE_ENV=development PORT=3001 npm start"
-waitForPort = 3001
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [agent]
 expertMode = true
