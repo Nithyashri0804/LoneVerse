@@ -3,7 +3,9 @@ import { Link2, Github, Twitter, Shield } from 'lucide-react';
 import WalletConnect from './components/WalletConnect';
 import LoanRequestForm from './components/LoanRequestForm';
 import Dashboard from './components/Dashboard';
+import NotificationCenter from './components/NotificationCenter';
 import { useWallet } from './hooks/useWallet';
+import { NotificationProvider } from './hooks/useNotifications';
 
 function App() {
   const { isConnected } = useWallet();
@@ -16,7 +18,8 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <NotificationProvider>
+      <div className="min-h-screen bg-gray-900">
       {/* Header */}
       <header className="bg-gray-800 border-b border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -31,7 +34,10 @@ function App() {
               </div>
             </div>
             
-            <WalletConnect />
+            <div className="flex items-center space-x-4">
+              <NotificationCenter />
+              <WalletConnect />
+            </div>
           </div>
         </div>
       </header>
@@ -145,7 +151,8 @@ function App() {
           </div>
         </div>
       </footer>
-    </div>
+      </div>
+    </NotificationProvider>
   );
 }
 
