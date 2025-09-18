@@ -34,7 +34,7 @@ const config = {
     sepolia: {
       type: "http",
       url: process.env.SEPOLIA_URL || "https://sepolia.infura.io/v3/demo",
-      // accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [], // commented out for now
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
     },
   },
   etherscan: {
