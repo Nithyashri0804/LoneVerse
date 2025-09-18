@@ -3,13 +3,15 @@ import { Link2, Github, Twitter, Shield } from 'lucide-react';
 import WalletConnect from './components/WalletConnect';
 import LoanRequestForm from './components/LoanRequestForm';
 import Dashboard from './components/Dashboard';
+import BrowseLoans from './components/BrowseLoans';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
 import NotificationCenter from './components/NotificationCenter';
 import { useWallet } from './hooks/useWallet';
 import { NotificationProvider } from './hooks/useNotifications';
 
 function App() {
   const { isConnected } = useWallet();
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'request'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'browse' | 'analytics' | 'request'>('dashboard');
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleLoanSuccess = () => {
@@ -88,6 +90,26 @@ function App() {
                 Dashboard
               </button>
               <button
+                onClick={() => setActiveTab('browse')}
+                className={`px-6 py-3 rounded-md text-sm font-medium transition-colors ${
+                  activeTab === 'browse'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Browse Loans
+              </button>
+              <button
+                onClick={() => setActiveTab('analytics')}
+                className={`px-6 py-3 rounded-md text-sm font-medium transition-colors ${
+                  activeTab === 'analytics'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Analytics
+              </button>
+              <button
                 onClick={() => setActiveTab('request')}
                 className={`px-6 py-3 rounded-md text-sm font-medium transition-colors ${
                   activeTab === 'request'
@@ -102,6 +124,10 @@ function App() {
             {/* Tab Content */}
             {activeTab === 'dashboard' ? (
               <Dashboard key={refreshKey} />
+            ) : activeTab === 'browse' ? (
+              <BrowseLoans />
+            ) : activeTab === 'analytics' ? (
+              <AnalyticsDashboard />
             ) : (
               <div className="max-w-2xl mx-auto">
                 <LoanRequestForm onSuccess={handleLoanSuccess} />
