@@ -18,7 +18,14 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5000',
+  origin: [
+    'http://localhost:5000',
+    'https://*.repl.co',
+    'https://*.replit.dev',
+    'https://*.replit.com',
+    /^https:\/\/.*\.replit\.dev$/,
+    /^https:\/\/.*\.repl\.co$/
+  ],
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));
@@ -66,7 +73,7 @@ async function startServer() {
     startRiskMonitoring();
     console.log('✅ Risk monitoring started');
     
-    app.listen(PORT, '0.0.0.0', () => {
+    app.listen(PORT, 'localhost', () => {
       console.log(`🌟 LoanVerse Backend running on port ${PORT}`);
       console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
