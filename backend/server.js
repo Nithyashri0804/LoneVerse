@@ -73,7 +73,7 @@ async function startServer() {
     startRiskMonitoring();
     console.log('✅ Risk monitoring started');
     
-    app.listen(PORT, 'localhost', () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🌟 LoanVerse Backend running on port ${PORT}`);
       console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
