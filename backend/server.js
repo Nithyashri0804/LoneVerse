@@ -7,6 +7,7 @@ import riskAnalyticsRoutes from './routes/riskAnalytics.js';
 import loanAnalyticsRoutes from './routes/loanAnalytics.js';
 import notificationRoutes from './routes/notifications.js';
 import ipfsRoutes from './routes/ipfs.js';
+import emailNotificationRoutes from './routes/emailNotifications.js';
 import { initializeMLModel } from './services/mlService.js';
 import { startRiskMonitoring } from './services/monitoringService.js';
 
@@ -36,6 +37,7 @@ app.use('/api/risk', riskAnalyticsRoutes);
 app.use('/api/analytics', loanAnalyticsRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/ipfs', ipfsRoutes);
+app.use('/api/email-notifications', emailNotificationRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

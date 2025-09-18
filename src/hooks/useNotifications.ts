@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, useContext, ReactNode } from
 import { Notification as NotificationInterface, NotificationType, NotificationStats } from '../types/notification';
 import { useWallet } from './useWallet';
 import { useContract } from './useContract';
+import EmailNotificationService from '../services/emailNotificationService';
 
 interface NotificationContextType {
   notifications: NotificationInterface[];
@@ -53,103 +54,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     }
   }, [notifications, account]);
 
-  // Monitor blockchain events and generate notifications
-  useEffect(() => {
-    if (!contract || !account) return;
-
-    // Define event handlers
-    const handleLoanFunded = (loanId: any, borrower: string, lender: string, amount: any) => {
-          if (borrower.toLowerCase() === account.toLowerCase()) {
-            addNotification({
-              type: NotificationType.LOAN_FUNDED,
-              title: 'Loan Funded!',
-              message: `Your loan request #${loanId} has been funded by ${lender.slice(0, 6)}...${lender.slice(-4)}`,
-              urgent: false,
-              loanId: Number(loanId),
-              amount: amount.toString(),
-              userAddress: lender
-            });
-          } else if (lender.toLowerCase() === account.toLowerCase()) {
-            addNotification({
-              type: NotificationType.LOAN_FUNDED,
-              title: 'Loan Funded Successfully',
-              message: `You have successfully funded loan #${loanId} for ${borrower.slice(0, 6)}...${borrower.slice(-4)}`,
-              urgent: false,
-              loanId: Number(loanId),
-              amount: amount.toString(),
-              userAddress: borrower
-            });
-          }
-        }
-      };
-
-      const handleLoanRepaid = (loanId: any, borrower: string, lender: string, amount: any) => {
-          if (borrower.toLowerCase() === account.toLowerCase()) {
-            addNotification({
-              type: NotificationType.LOAN_REPAID,
-              title: 'Loan Repaid Successfully',
-              message: `You have successfully repaid loan #${loanId}. Your collateral has been returned.`,
-              urgent: false,
-              loanId: Number(loanId),
-              amount: amount.toString(),
-              userAddress: lender
-            });
-          } else if (lender.toLowerCase() === account.toLowerCase()) {
-            addNotification({
-              type: NotificationType.LOAN_REPAID,
-              title: 'Loan Repaid!',
-              message: `Loan #${loanId} has been repaid by ${borrower.slice(0, 6)}...${borrower.slice(-4)}`,
-              urgent: false,
-              loanId: Number(loanId),
-              amount: amount.toString(),
-              userAddress: borrower
-            });
-          }
-        }
-      };
-
-      const handleCollateralClaimed = (loanId: any, lender: string, borrower: string, collateralAmount: any) => {
-          if (borrower.toLowerCase() === account.toLowerCase()) {
-            addNotification({
-              type: NotificationType.COLLATERAL_CLAIMED,
-              title: 'Collateral Claimed',
-              message: `Your collateral for loan #${loanId} has been claimed due to default.`,
-              urgent: true,
-              loanId: Number(loanId),
-              amount: collateralAmount.toString(),
-              userAddress: lender
-            });
-          } else if (lender.toLowerCase() === account.toLowerCase()) {
-            addNotification({
-              type: NotificationType.COLLATERAL_CLAIMED,
-              title: 'Collateral Claimed Successfully',
-              message: `You have claimed collateral for defaulted loan #${loanId}`,
-              urgent: false,
-              loanId: Number(loanId),
-              amount: collateralAmount.toString(),
-              userAddress: borrower
-            });
-          }
-        }
-      };
-
-    // Setup event listeners
-    try {
-      contract.on('LoanFunded', handleLoanFunded);
-      contract.on('LoanRepaid', handleLoanRepaid);
-      contract.on('CollateralClaimed', handleCollateralClaimed);
-    } catch (error) {
-      console.error('Failed to setup notification event listeners:', error);
-    }
-
-    // Cleanup event listeners
-    return () => {
-      contract.off('LoanFunded', handleLoanFunded);
-      contract.off('LoanRepaid', handleLoanRepaid);
-      contract.off('CollateralClaimed', handleCollateralClaimed);
-    };
-  }, [contract, account]);
-
   const addNotification = (notification: Omit<NotificationInterface, 'id' | 'timestamp' | 'read'>) => {
     const newNotification: NotificationInterface = {
       id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -169,6 +73,119 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       });
     }
   };
+
+  // Monitor blockchain events and generate notifications
+  useEffect(() => {
+    if (!contract || !account) return;
+
+    const handleLoanFunded = (loanId: any, borrower: string, lender: string, amount: any) => {
+      if (borrower.toLowerCase() === account.toLowerCase()) {
+        addNotification({
+          type: NotificationType.LOAN_FUNDED,
+          title: 'Loan Funded!',
+          message: `Your loan request #${loanId} has been funded by ${lender.slice(0, 6)}...${lender.slice(-4)}`,
+          urgent: false,
+          loanId: Number(loanId),
+          amount: amount.toString(),
+          userAddress: lender
+        });
+        
+        // Trigger email notification for borrower
+        EmailNotificationService.sendLoanFundedNotification(borrower, {
+          loanId: Number(loanId),
+          amount: amount.toString(),
+          interestRate: 0, // We'd need to get this from the contract
+          duration: 0, // We'd need to get this from the contract
+          borrower,
+          lender
+        });
+      } else if (lender.toLowerCase() === account.toLowerCase()) {
+        addNotification({
+          type: NotificationType.LOAN_FUNDED,
+          title: 'Loan Funded Successfully',
+          message: `You have successfully funded loan #${loanId} for ${borrower.slice(0, 6)}...${borrower.slice(-4)}`,
+          urgent: false,
+          loanId: Number(loanId),
+          amount: amount.toString(),
+          userAddress: borrower
+        });
+        
+        // Trigger email notification for lender
+        EmailNotificationService.sendLoanFundedNotification(lender, {
+          loanId: Number(loanId),
+          amount: amount.toString(),
+          interestRate: 0, // We'd need to get this from the contract
+          duration: 0, // We'd need to get this from the contract
+          borrower,
+          lender
+        });
+      }
+    };
+
+    const handleLoanRepaid = (loanId: any, borrower: string, lender: string, amount: any) => {
+      if (borrower.toLowerCase() === account.toLowerCase()) {
+        addNotification({
+          type: NotificationType.LOAN_REPAID,
+          title: 'Loan Repaid Successfully',
+          message: `You have successfully repaid loan #${loanId}. Your collateral has been returned.`,
+          urgent: false,
+          loanId: Number(loanId),
+          amount: amount.toString(),
+          userAddress: lender
+        });
+      } else if (lender.toLowerCase() === account.toLowerCase()) {
+        addNotification({
+          type: NotificationType.LOAN_REPAID,
+          title: 'Loan Repaid!',
+          message: `Loan #${loanId} has been repaid by ${borrower.slice(0, 6)}...${borrower.slice(-4)}`,
+          urgent: false,
+          loanId: Number(loanId),
+          amount: amount.toString(),
+          userAddress: borrower
+        });
+      }
+    };
+
+    const handleCollateralClaimed = (loanId: any, lender: string, borrower: string, collateralAmount: any) => {
+      if (borrower.toLowerCase() === account.toLowerCase()) {
+        addNotification({
+          type: NotificationType.COLLATERAL_CLAIMED,
+          title: 'Collateral Claimed',
+          message: `Your collateral for loan #${loanId} has been claimed due to default.`,
+          urgent: true,
+          loanId: Number(loanId),
+          amount: collateralAmount.toString(),
+          userAddress: lender
+        });
+      } else if (lender.toLowerCase() === account.toLowerCase()) {
+        addNotification({
+          type: NotificationType.COLLATERAL_CLAIMED,
+          title: 'Collateral Claimed Successfully',
+          message: `You have claimed collateral for defaulted loan #${loanId}`,
+          urgent: false,
+          loanId: Number(loanId),
+          amount: collateralAmount.toString(),
+          userAddress: borrower
+        });
+      }
+    };
+
+    // Setup event listeners
+    try {
+      contract.on('LoanFunded', handleLoanFunded);
+      contract.on('LoanRepaid', handleLoanRepaid);
+      contract.on('CollateralClaimed', handleCollateralClaimed);
+    } catch (error) {
+      console.error('Failed to setup notification event listeners:', error);
+    }
+
+    // Cleanup event listeners
+    return () => {
+      contract.off('LoanFunded', handleLoanFunded);
+      contract.off('LoanRepaid', handleLoanRepaid);
+      contract.off('CollateralClaimed', handleCollateralClaimed);
+    };
+  }, [contract, account]);
 
   const markAsRead = (id: string) => {
     setNotifications(prev =>
