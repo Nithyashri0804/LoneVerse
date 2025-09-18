@@ -31,6 +31,9 @@ const config = {
     hardhat: {
       // removed the type line for compatibility
     },
+    localhost: {
+      url: "http://127.0.0.1:8000"
+    },
     sepolia: {
       type: "http",
       url: process.env.SEPOLIA_URL || "https://sepolia.infura.io/v3/demo",
