@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { BrowserProvider, Contract, Signer } from 'ethers';
 import { getContractAddress, isChainSupported } from '../config/contracts';
-import LoanVerseABI from '../contracts/LoanVerse.json';
+import LoanChainABI from '../contracts/LoanChain.json';
 
 export const useContract = () => {
   const [contract, setContract] = useState<Contract | null>(null);
@@ -36,7 +36,7 @@ export const useContract = () => {
           if (contractAddress) {
             const contractInstance = new Contract(
               contractAddress,
-              LoanVerseABI.abi,
+              LoanChainABI.abi,
               web3Signer
             );
             setContract(contractInstance);

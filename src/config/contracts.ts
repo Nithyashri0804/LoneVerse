@@ -6,7 +6,7 @@ export const SUPPORTED_CHAINS = {
 
 export const CONTRACT_ADDRESSES: Record<number, { loanChain: string }> = {
   [SUPPORTED_CHAINS.SEPOLIA]: {
-    loanChain: import.meta.env.VITE_SEPOLIA_LOANCHAIN_ADDRESS || "",
+    loanChain: import.meta.env.VITE_SEPOLIA_LOANCHAIN_ADDRESS || "0xDB945F8c9b681c240d5Acb3F602D210567bDfFc6",
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
     loanChain: import.meta.env.VITE_HARDHAT_LOANCHAIN_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3",
