@@ -665,6 +665,85 @@
       "artifacts": [
         "LoanChainV2"
       ]
+    },
+    "/home/runner/workspace/contracts/TokenSwap.sol": {
+      "lastModificationDate": 1758205214171,
+      "contentHash": "9cdc7ed4e9b3cac02bd1420a4bd4628a",
+      "sourceName": "contracts/TokenSwap.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "./TokenTypes.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "ILoanChainV2",
+        "TokenSwap"
+      ]
+    },
+    "/home/runner/workspace/contracts/TokenTypes.sol": {
+      "lastModificationDate": 1758205194873,
+      "contentHash": "7bfd43c411d84341cf2fe985886d5de6",
+      "sourceName": "contracts/TokenTypes.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": []
     }
   }
 }

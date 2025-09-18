@@ -75,10 +75,38 @@ async function main() {
   await loanChainV2.updateTokenPrice(3, "100000000", "100000000");       // USDT: $1.00 from both sources
   
   console.log("✅ Token prices updated with multi-oracle system");
+  
+  // Deploy TokenSwap contract
+  console.log("🔄 Deploying TokenSwap contract...");
+  const TokenSwap = await hre.ethers.getContractFactory("TokenSwap");
+  const tokenSwap = await TokenSwap.deploy(loanChainV2Address);
+  await tokenSwap.waitForDeployment();
+  const tokenSwapAddress = await tokenSwap.getAddress();
+  console.log("✅ TokenSwap deployed to:", tokenSwapAddress);
+  
+  // Add some initial liquidity for testing (owner adds liquidity)
+  console.log("💰 Adding initial liquidity to TokenSwap...");
+  
+  // Add 10 ETH
+  await tokenSwap.addLiquidity(0, hre.ethers.parseEther("10"), {
+    value: hre.ethers.parseEther("10")
+  });
+  
+  // Add 25,000 USDC (6 decimals)
+  await mockUSDC.mint(await tokenSwap.getAddress(), hre.ethers.parseUnits("25000", 6));
+  
+  // Add 25,000 DAI (18 decimals)
+  await mockDAI.mint(await tokenSwap.getAddress(), hre.ethers.parseEther("25000"));
+  
+  // Add 25,000 USDT (6 decimals)
+  await mockUSDT.mint(await tokenSwap.getAddress(), hre.ethers.parseUnits("25000", 6));
+  
+  console.log("✅ Initial liquidity added to TokenSwap");
 
   console.log("🎉 Deployment completed!");
   console.log("📋 Contract Addresses:");
   console.log("  LoanChainV2:", loanChainV2Address);
+  console.log("  TokenSwap:", tokenSwapAddress);
   console.log("  Mock USDC:", usdcAddress);
   console.log("  Mock DAI:", daiAddress);
   console.log("  Mock USDT:", usdtAddress);
@@ -90,6 +118,7 @@ async function main() {
     timestamp: new Date().toISOString(),
     contracts: {
       loanChainV2: loanChainV2Address,
+      tokenSwap: tokenSwapAddress,
       mockUSDC: usdcAddress,
       mockDAI: daiAddress,
       mockUSDT: usdtAddress,

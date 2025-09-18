@@ -79,9 +79,9 @@ export const TOKEN_ADDRESSES: Record<number, Record<TokenType, string>> = {
   // Hardhat local network
   31337: {
     [TokenType.NATIVE_ETH]: '0x0000000000000000000000000000000000000000',
-    [TokenType.USDC]: '0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E', // Deployed mock USDC
-    [TokenType.DAI]: '0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690',  // Deployed mock DAI
-    [TokenType.USDT]: '0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB', // Deployed mock USDT
+    [TokenType.USDC]: '0x4826533B4897376654Bb4d4AD88B7faFD0C98528', // Deployed mock USDC
+    [TokenType.DAI]: '0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf',  // Deployed mock DAI
+    [TokenType.USDT]: '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF', // Deployed mock USDT
     [TokenType.GOVERNANCE_TOKEN]: '',
   },
   // Sepolia testnet

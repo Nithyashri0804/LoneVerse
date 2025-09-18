@@ -7,6 +7,7 @@ export const SUPPORTED_CHAINS = {
 export const CONTRACT_ADDRESSES: Record<number, { 
   loanChain: string; 
   loanChainV2: string;
+  tokenSwap?: string;
   mockUSDC: string;
   mockDAI: string; 
   mockUSDT: string;
@@ -20,10 +21,11 @@ export const CONTRACT_ADDRESSES: Record<number, {
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
     loanChain: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Original V1 contract  
-    loanChainV2: "0x9E545E3C0baAB3E08CdfD552C960A1050f373042",   // Enhanced V2 with multi-oracle system
-    mockUSDC: "0xE6E340D132b5f46d1e472DebcD681B2aBc16e57E",     // Deployed mock USDC
-    mockDAI: "0xc3e53F4d16Ae77Db1c982e75a937B9f60FE63690",      // Deployed mock DAI
-    mockUSDT: "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",     // Deployed mock USDT
+    loanChainV2: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",   // Enhanced V2 with multi-oracle system
+    tokenSwap: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",    // Token swap contract
+    mockUSDC: "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",     // Deployed mock USDC
+    mockDAI: "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",      // Deployed mock DAI
+    mockUSDT: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",     // Deployed mock USDT
   },
 };
 
