@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Clock, DollarSign, Shield, User, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
 import { ethers } from 'ethers';
 import { Loan, LoanStatus } from '../types/loan';
+import { calculateRiskScore, getRiskLevel } from '../utils/loanFilters';
 import { useContract } from '../hooks/useContract';
 import { useWallet } from '../hooks/useWallet';
 
@@ -54,6 +55,9 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
     if (timestamp === 0) return 'N/A';
     return new Date(timestamp * 1000).toLocaleDateString();
   };
+
+  const riskScore = calculateRiskScore(loan);
+  const riskLevel = getRiskLevel(riskScore);
 
   const calculateRepaymentAmount = () => {
     // Use wei-based integer arithmetic for precision
@@ -194,6 +198,16 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Interest Rate</div>
               <div className="text-white font-medium">{loan.interestRate / 100}%</div>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Shield className="text-yellow-400" size={16} />
+            <div>
+              <div className="text-xs text-gray-400">Risk Score</div>
+              <div className={`font-medium ${riskLevel.color}`}>
+                {riskScore} - {riskLevel.level}
+              </div>
             </div>
           </div>
         </div>
