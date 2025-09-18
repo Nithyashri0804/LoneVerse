@@ -99,6 +99,14 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
     uint256 private constant PRICE_STALENESS_THRESHOLD = 3600; // 1 hour
     uint256 private constant MAX_PRICE_DEVIATION = 1000; // 10% in basis points
     
+    // Insurance Pool Management
+    mapping(TokenType => uint256) public insurancePools; // Insurance funds by token type
+    mapping(uint256 => mapping(address => bool)) public hasClaimedInsurance; // Track claimed insurance by loan ID and lender
+    mapping(address => uint256) public lenderInsuranceContributions; // Track lender contributions
+    
+    uint256 public constant INSURANCE_RATE = 100; // 1% insurance fee in basis points
+    uint256 public constant CLAIM_GRACE_PERIOD = 7 days; // Grace period before claims allowed
+    
     // Events
     event LoanRequested(
         uint256 indexed loanId,
@@ -140,6 +148,9 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
     event TokenAdded(TokenType indexed tokenType, address indexed contractAddress);
     event PriceUpdated(TokenType indexed tokenType, uint256 newPrice);
     event PriceOracleUpdated(address indexed oracle, bool approved);
+    event InsuranceFeeCollected(uint256 indexed loanId, TokenType indexed token, uint256 amount);
+    event InsuranceClaimed(uint256 indexed loanId, address indexed lender, uint256 amount);
+    event InsurancePoolContribution(TokenType indexed token, uint256 amount);
 
     constructor() Ownable(msg.sender) {
         // Initialize supported tokens
@@ -322,11 +333,26 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
 
         uint256 loanId = nextLoanId++;
         
-        // Handle collateral deposit
+        // Calculate insurance fee first
+        uint256 insuranceFee = 0;
+        if (_hasInsurance) {
+            insuranceFee = (_totalAmount * INSURANCE_RATE) / 10000; // 1% insurance fee
+        }
+
+        // Handle collateral and insurance fee collection
         if (_collateralToken == TokenType.NATIVE_ETH) {
-            require(msg.value == _collateralAmount, "ETH sent must exactly match collateral amount");
+            uint256 requiredETH = _collateralAmount;
+            if (_hasInsurance && _loanToken == TokenType.NATIVE_ETH) {
+                requiredETH += insuranceFee;
+            }
+            require(msg.value == requiredETH, "ETH sent must match collateral plus insurance fee (if applicable)");
         } else {
-            require(msg.value == 0, "No ETH should be sent for ERC20 collateral");
+            // ERC20 collateral case
+            if (_hasInsurance && _loanToken == TokenType.NATIVE_ETH) {
+                require(msg.value == insuranceFee, "Must send exact ETH insurance fee");
+            } else {
+                require(msg.value == 0, "No ETH should be sent");
+            }
             // Transfer ERC20 collateral tokens
             Token memory collateralToken = supportedTokens[_collateralToken];
             IERC20(collateralToken.contractAddress).safeTransferFrom(
@@ -336,10 +362,22 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
             );
         }
 
-        // Calculate insurance fee if requested
-        uint256 insuranceFee = 0;
+        // Collect insurance fee if applicable
         if (_hasInsurance) {
-            insuranceFee = (_totalAmount * 100) / 10000; // 1% insurance fee
+            if (_loanToken != TokenType.NATIVE_ETH) {
+                // For ERC20 loan tokens, collect insurance fee separately
+                Token memory loanTokenInfo = supportedTokens[_loanToken];
+                IERC20(loanTokenInfo.contractAddress).safeTransferFrom(
+                    msg.sender,
+                    address(this),
+                    insuranceFee
+                );
+            }
+            // ETH insurance fee already collected above with collateral/msg.value
+            
+            // Add to insurance pool
+            insurancePools[_loanToken] += insuranceFee;
+            emit InsuranceFeeCollected(loanId, _loanToken, insuranceFee);
         }
         
         loans[loanId] = Loan({
@@ -517,5 +555,122 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
             priceData.updateCount,
             block.timestamp - priceData.lastUpdate > PRICE_STALENESS_THRESHOLD
         );
+    }
+    
+    /**
+     * @dev Claim insurance for defaulted loan (lenders only)
+     */
+    function claimInsurance(uint256 _loanId) external nonReentrant {
+        Loan storage loan = loans[_loanId];
+        require(loan.id != 0, "Loan does not exist");
+        require(loan.status == LoanStatus.DEFAULTED, "Loan is not defaulted");
+        require(loan.hasInsurance, "Loan does not have insurance");
+        require(!hasClaimedInsurance[_loanId][msg.sender], "Insurance already claimed by this lender");
+        require(
+            block.timestamp >= loan.dueDate + CLAIM_GRACE_PERIOD,
+            "Grace period not ended"
+        );
+        
+        // Calculate total amount contributed by this lender (may have funded multiple times)
+        bool isLender = false;
+        uint256 lenderAmount = 0;
+        for (uint256 i = 0; i < loan.lenders.length; i++) {
+            if (loan.lenders[i] == msg.sender) {
+                isLender = true;
+                lenderAmount += loan.lenderAmounts[i];
+            }
+        }
+        require(isLender, "Not a lender on this loan");
+        require(lenderAmount > 0, "No amount to claim");
+        
+        // Calculate insurance payout (proportional to lender's contribution)
+        uint256 totalInsuranceFund = insurancePools[loan.loanToken];
+        
+        // Ensure sufficient insurance funds
+        require(totalInsuranceFund > 0, "No insurance funds available");
+        
+        // Calculate proportional insurance payout
+        uint256 insurancePayout = (lenderAmount * loan.insuranceFee) / loan.totalAmount;
+        require(insurancePayout <= totalInsuranceFund, "Insufficient insurance funds");
+        
+        // Mark insurance as claimed for this lender
+        hasClaimedInsurance[_loanId][msg.sender] = true;
+        
+        // Reduce insurance pool
+        insurancePools[loan.loanToken] -= insurancePayout;
+        
+        // Transfer insurance payout to lender
+        if (loan.loanToken == TokenType.NATIVE_ETH) {
+            (bool success, ) = msg.sender.call{value: insurancePayout}("");
+            require(success, "ETH transfer failed");
+        } else {
+            Token memory loanTokenInfo = supportedTokens[loan.loanToken];
+            IERC20(loanTokenInfo.contractAddress).safeTransfer(msg.sender, insurancePayout);
+        }
+        
+        emit InsuranceClaimed(_loanId, msg.sender, insurancePayout);
+    }
+    
+    /**
+     * @dev Add funds to insurance pool (anyone can contribute)
+     */
+    function contributeToInsurancePool(TokenType _tokenType, uint256 _amount) external payable nonReentrant {
+        require(_amount > 0, "Amount must be positive");
+        
+        if (_tokenType == TokenType.NATIVE_ETH) {
+            require(msg.value == _amount, "ETH amount mismatch");
+        } else {
+            require(msg.value == 0, "No ETH should be sent");
+            Token memory tokenInfo = supportedTokens[_tokenType];
+            IERC20(tokenInfo.contractAddress).safeTransferFrom(msg.sender, address(this), _amount);
+        }
+        
+        insurancePools[_tokenType] += _amount;
+        lenderInsuranceContributions[msg.sender] += _amount;
+        
+        emit InsurancePoolContribution(_tokenType, _amount);
+    }
+    
+    /**
+     * @dev Get insurance pool balance for a token
+     */
+    function getInsurancePoolBalance(TokenType _tokenType) external view returns (uint256) {
+        return insurancePools[_tokenType];
+    }
+    
+    /**
+     * @dev Get insurance status for a loan
+     */
+    function getInsuranceStatus(uint256 _loanId, address _lender) external view returns (
+        bool hasInsurance,
+        uint256 insuranceFee,
+        bool isClaimed,
+        bool canClaim
+    ) {
+        Loan storage loan = loans[_loanId];
+        require(loan.id != 0, "Loan does not exist");
+        
+        hasInsurance = loan.hasInsurance;
+        insuranceFee = loan.insuranceFee;
+        isClaimed = hasClaimedInsurance[_loanId][_lender];
+        
+        // Check if the address is a lender and calculate total contribution
+        bool isLender = false;
+        uint256 totalContribution = 0;
+        for (uint256 i = 0; i < loan.lenders.length; i++) {
+            if (loan.lenders[i] == _lender) {
+                isLender = true;
+                totalContribution += loan.lenderAmounts[i];
+            }
+        }
+        
+        canClaim = loan.hasInsurance &&
+                  loan.status == LoanStatus.DEFAULTED &&
+                  !hasClaimedInsurance[_loanId][_lender] &&
+                  isLender &&
+                  totalContribution > 0 &&
+                  block.timestamp >= loan.dueDate + CLAIM_GRACE_PERIOD;
+        
+        return (hasInsurance, insuranceFee, isClaimed, canClaim);
     }
 }

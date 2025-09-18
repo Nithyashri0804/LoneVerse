@@ -21,11 +21,11 @@ export const CONTRACT_ADDRESSES: Record<number, {
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
     loanChain: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Original V1 contract  
-    loanChainV2: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",   // Enhanced V2 with multi-oracle system
-    tokenSwap: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",    // Token swap contract
-    mockUSDC: "0x4826533B4897376654Bb4d4AD88B7faFD0C98528",     // Deployed mock USDC
-    mockDAI: "0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf",      // Deployed mock DAI
-    mockUSDT: "0x0E801D84Fa97b50751Dbf25036d067dCf18858bF",     // Deployed mock USDT
+    loanChainV2: "0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75",   // Complete V2 with all insurance bugs fixed
+    tokenSwap: "0x3347B4d90ebe72BeFb30444C9966B2B990aE9FcB",    // Token swap contract
+    mockUSDC: "0xD5ac451B0c50B9476107823Af206eD814a2e2580",     // Deployed mock USDC
+    mockDAI: "0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397",      // Deployed mock DAI
+    mockUSDT: "0xc0F115A19107322cFBf1cDBC7ea011C19EbDB4F8",     // Deployed mock USDT
   },
 };
 
