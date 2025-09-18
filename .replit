@@ -5,7 +5,7 @@ channel = "stable-25_05"
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["bash", "-c", "cd backend && npm start & npm run start"]
+run = ["npm", "start"]
 build = ["npm", "run", "build"]
 
 [workflows]
