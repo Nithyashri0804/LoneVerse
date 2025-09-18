@@ -60,7 +60,7 @@ LoanChain is a decentralized peer-to-peer lending platform built on Ethereum. Us
 - ✅ Deployment configured for production (autoscale with build step)
 - ✅ Both workflows properly configured and running
 - ✅ Contract address configured in frontend for local development
-- ✅ Hardhat local blockchain running on port 8545
+- ✅ Hardhat local blockchain running on port 8000
 - ✅ **GitHub import setup completed successfully - project is fully functional**
 
 ### Fresh Setup Completed (September 18, 2025)
