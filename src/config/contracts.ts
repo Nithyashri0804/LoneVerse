@@ -9,7 +9,7 @@ export const CONTRACT_ADDRESSES: Record<number, { loanChain: string }> = {
     loanChain: import.meta.env.VITE_SEPOLIA_LOANCHAIN_ADDRESS || "",
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
-    loanChain: import.meta.env.VITE_HARDHAT_LOANCHAIN_ADDRESS || "",
+    loanChain: import.meta.env.VITE_HARDHAT_LOANCHAIN_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3",
   },
 };
 
