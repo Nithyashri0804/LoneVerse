@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { getActiveLoans, getLoanDetails } from './contractService.js';
+import { getActiveLoans, getLoanDetails, getBorrowerHistory } from './contractService.js';
 import { sendNotification, NotificationTypes, NotificationTemplates } from '../routes/notifications.js';
 import { calculateRiskScore, getRiskCategory } from './mlService.js';
 
