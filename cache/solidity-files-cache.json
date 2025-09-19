@@ -744,6 +744,87 @@
         "^0.8.19"
       ],
       "artifacts": []
+    },
+    "/home/runner/workspace/contracts/LoanVerseV3.sol": {
+      "lastModificationDate": 1758294724554,
+      "contentHash": "6993d94f2075c2c1e5c67c4b88ee862b",
+      "sourceName": "contracts/LoanVerseV3.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/utils/Pausable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "AggregatorV3Interface",
+        "LoanVerseV3"
+      ]
+    },
+    "/home/runner/workspace/contracts/MockV3Aggregator.sol": {
+      "lastModificationDate": 1758295212167,
+      "contentHash": "41a412d970d530c98bfa07b57fc16ab6",
+      "sourceName": "contracts/MockV3Aggregator.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "MockV3Aggregator"
+      ]
     }
   }
 }
