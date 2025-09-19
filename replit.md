@@ -66,38 +66,45 @@ LoanChain is a decentralized peer-to-peer lending platform built on Ethereum. Us
 ### Fresh GitHub Import Setup Completed (September 19, 2025)
 **Project successfully imported and fully configured for Replit environment:**
 
-✅ **Dependencies Installation**
-- Frontend: All npm packages installed successfully (React, Vite, Ethers.js, TypeScript, etc.)
-- Backend: All npm packages installed successfully (Express, TensorFlow.js, Nodemailer, etc.)
-- Hardhat: Smart contract development tools configured properly
+✅ **Dependencies Installation** 
+- Frontend: All npm packages installed successfully (React 18, Vite, Ethers.js v6, TypeScript, etc.)
+- Backend: All npm packages installed successfully (Express, TensorFlow.js, Nodemailer, etc.)  
+- Hardhat: Smart contract development tools configured and ready
 
 ✅ **Network Configuration**
 - Frontend: Vite dev server running on port 5000 (host: 0.0.0.0, allowedHosts: true)
-- Backend: Express API server running on port 3001 with CORS configured for Replit proxy
+- Backend: Express API server running on port 3001 with proper CORS for Replit proxy
 - Hardhat: Local blockchain network running successfully on port 8000
 
 ✅ **Smart Contract Deployment**
-- LoanChain contract successfully deployed to: `0x5FbDB2315678afecb367f032d93F642f64180aa3`
-- Contract configuration updated for localhost:8000 connection
-- All Ethereum interactions properly configured for local development
-- Hardhat test accounts available with 10,000 ETH each
+- **LoanChain V1**: `0x5FbDB2315678afecb367f032d93F642f64180aa3`
+- **LoanChainV2** (Multi-token): `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9`
+- **TokenSwap**: `0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0`
+- **Mock Tokens**:
+  - Mock USDC: `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512`
+  - Mock DAI: `0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0`  
+  - Mock USDT: `0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9`
+- All tokens configured with proper decimals and limits
+- Token prices updated with multi-oracle system
+- Initial liquidity added to TokenSwap contract
+- Configuration files auto-generated in `deployments/localhost-deployment.js`
 
 ✅ **Workflow Services Running**
 - Frontend: `npm run dev` on port 5000 (webview output for user interface)
-- Backend API: `npm start` on port 3001 with health endpoint responding
-- Hardhat Node: Local blockchain on port 8000 with contract deployment confirmed
+- Backend API: `npm start` on port 3001 with health endpoint responding  
+- Hardhat Node: Local blockchain on port 8000 with all contracts deployed
 
 ✅ **Production Deployment Configured**
-- Deployment type: autoscale (for stateless web application)
+- Deployment type: **autoscale** (for stateless web application)
 - Build command: `npm run build` configured
-- Run command: `npm run start` configured
+- Run command: `npm run start` configured  
 - Ready for production deployment when needed
 
 ✅ **Services Verification**
-- Backend health endpoint responding correctly at /health
-- Frontend serving HTML content with correct title and React app
-- Smart contract transaction confirmed on local blockchain
-- ML model, risk monitoring, and email services initialized successfully
+- Backend health endpoint responding: `{"status":"healthy","timestamp":"2025-09-19T15:38:44.923Z","version":"1.0.0"}`
+- Frontend serving React app with modern LoanVerse UI
+- Smart contracts deployed and verified on local blockchain (17 successful transactions)
+- ML model, risk monitoring, liquidation, and email services initialized successfully
 
 ## Backend API Features
 - 🤖 **AI Risk Assessment**: ML-powered loan risk scoring with TensorFlow.js
