@@ -11,23 +11,27 @@ interface LoanRequestFormProps {
 const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
   const { contract } = useContract();
   const [formData, setFormData] = useState<LoanFormData>({
-    amount: '',
+    totalAmount: '',
+    loanToken: 0, // NATIVE_ETH
+    collateralToken: 0, // NATIVE_ETH
+    collateralAmount: '',
     interestRate: 5,
     duration: 30,
-    collateral: '',
+    isVariableRate: false,
+    hasInsurance: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
   const calculateRequiredCollateral = () => {
-    if (!formData.amount) return '0';
-    const amount = parseFloat(formData.amount);
-    return (amount * 1.5).toFixed(4); // 150% collateralization
+    if (!formData.totalAmount) return '0';
+    const amount = parseFloat(formData.totalAmount);
+    return (amount * 1.2).toFixed(4); // 120% collateralization for V2 contract
   };
 
   const calculateTotalRepayment = () => {
-    if (!formData.amount) return '0';
-    const amount = parseFloat(formData.amount);
+    if (!formData.totalAmount) return '0';
+    const amount = parseFloat(formData.totalAmount);
     const interest = (amount * formData.interestRate) / 100;
     return (amount + interest).toFixed(4);
   };
@@ -43,8 +47,8 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       setIsLoading(true);
       setError('');
 
-      const loanAmount = parseEther(formData.amount);
-      const collateralAmount = parseEther(formData.collateral);
+      const loanAmount = parseEther(formData.totalAmount);
+      const collateralAmount = parseEther(formData.collateralAmount);
       const interestRateBasisPoints = formData.interestRate * 100; // Convert to basis points
       const durationSeconds = formData.duration * 24 * 60 * 60; // Convert days to seconds
 
@@ -66,10 +70,14 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       
       // Reset form
       setFormData({
-        amount: '',
+        totalAmount: '',
+        loanToken: 0,
+        collateralToken: 0,
+        collateralAmount: '',
         interestRate: 5,
         duration: 30,
-        collateral: '',
+        isVariableRate: false,
+        hasInsurance: false,
       });
     } catch (error: any) {
       console.error('Error requesting loan:', error);
@@ -100,8 +108,8 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
             type="number"
             step="0.0001"
             min="0.0001"
-            value={formData.amount}
-            onChange={(e) => handleInputChange('amount', e.target.value)}
+            value={formData.totalAmount}
+            onChange={(e) => handleInputChange('totalAmount', e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="0.0000"
             required
@@ -151,18 +159,18 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
             type="number"
             step="0.0001"
             min="0.0001"
-            value={formData.collateral}
-            onChange={(e) => handleInputChange('collateral', e.target.value)}
+            value={formData.collateralAmount}
+            onChange={(e) => handleInputChange('collateralAmount', e.target.value)}
             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="0.0000"
             required
           />
           <div className="mt-2 text-sm text-gray-400">
-            Minimum required: {calculateRequiredCollateral()} ETH (150% of loan amount)
+            Minimum required: {calculateRequiredCollateral()} ETH (120% of loan amount)
           </div>
         </div>
 
-        {formData.amount && (
+        {formData.totalAmount && (
           <div className="bg-gray-700 rounded-lg p-4 space-y-2">
             <div className="flex items-center space-x-2 text-blue-400 mb-2">
               <Calculator size={16} />
@@ -171,7 +179,7 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-gray-400">Loan Amount:</span>
-                <div className="text-white font-medium">{formData.amount} ETH</div>
+                <div className="text-white font-medium">{formData.totalAmount} ETH</div>
               </div>
               <div>
                 <span className="text-gray-400">Total Repayment:</span>
