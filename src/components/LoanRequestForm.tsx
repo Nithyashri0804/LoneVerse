@@ -48,10 +48,16 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       const interestRateBasisPoints = formData.interestRate * 100; // Convert to basis points
       const durationSeconds = formData.duration * 24 * 60 * 60; // Convert days to seconds
 
+      // LoanChainV2 function signature: requestLoan(totalAmount, loanToken, collateralToken, collateralAmount, interestRate, duration, isVariableRate, hasInsurance)
       const tx = await contract.requestLoan(
-        loanAmount,
-        interestRateBasisPoints,
-        durationSeconds,
+        loanAmount,              // _totalAmount
+        0,                       // _loanToken (NATIVE_ETH = 0)
+        0,                       // _collateralToken (NATIVE_ETH = 0)  
+        collateralAmount,        // _collateralAmount
+        interestRateBasisPoints, // _interestRate
+        durationSeconds,         // _duration
+        false,                   // _isVariableRate
+        false,                   // _hasInsurance
         { value: collateralAmount }
       );
 
