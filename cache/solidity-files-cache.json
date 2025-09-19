@@ -741,9 +741,7 @@
       "versionPragmas": [
         "^0.8.19"
       ],
-      "artifacts": [
-        "LoanChainV2"
-      ]
+      "artifacts": []
     }
   }
 }

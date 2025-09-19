@@ -8,8 +8,11 @@ import loanAnalyticsRoutes from './routes/loanAnalytics.js';
 import notificationRoutes from './routes/notifications.js';
 import ipfsRoutes from './routes/ipfs.js';
 import emailNotificationRoutes from './routes/emailNotifications.js';
+import liquidationRoutes from './routes/liquidation.js';
+import matchingRoutes from './routes/matching.js';
 import { initializeMLModel } from './services/mlService.js';
 import { startRiskMonitoring } from './services/monitoringService.js';
+import { startLiquidationMonitoring } from './services/liquidationService.js';
 
 dotenv.config();
 
@@ -38,6 +41,8 @@ app.use('/api/analytics', loanAnalyticsRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/ipfs', ipfsRoutes);
 app.use('/api/email-notifications', emailNotificationRoutes);
+app.use('/api/liquidation', liquidationRoutes);
+app.use('/api/matching', matchingRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -74,6 +79,10 @@ async function startServer() {
     // Start risk monitoring service
     startRiskMonitoring();
     console.log('✅ Risk monitoring started');
+    
+    // Start liquidation monitoring service
+    startLiquidationMonitoring();
+    console.log('✅ Liquidation monitoring started');
     
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`🌟 LoanVerse Backend running on port ${PORT}`);

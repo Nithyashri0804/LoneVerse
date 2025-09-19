@@ -7,6 +7,7 @@ export const SUPPORTED_CHAINS = {
 export const CONTRACT_ADDRESSES: Record<number, { 
   loanChain: string; 
   loanChainV2: string;
+  loanChainV3?: string;
   tokenSwap?: string;
   mockUSDC: string;
   mockDAI: string; 
@@ -22,6 +23,7 @@ export const CONTRACT_ADDRESSES: Record<number, {
   [SUPPORTED_CHAINS.HARDHAT]: {
     loanChain: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Original V1 contract  
     loanChainV2: "0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75",   // Complete V2 with all insurance bugs fixed
+    loanChainV3: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",   // V3 with Chainlink oracles and auto-liquidation
     tokenSwap: "0x3347B4d90ebe72BeFb30444C9966B2B990aE9FcB",    // Token swap contract
     mockUSDC: "0xD5ac451B0c50B9476107823Af206eD814a2e2580",     // Deployed mock USDC
     mockDAI: "0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397",      // Deployed mock DAI
