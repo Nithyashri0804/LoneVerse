@@ -1,12 +1,35 @@
-import * as tf from '@tensorflow/tfjs-node';
-
+// Optional TensorFlow import - gracefully handle if not available
+let tf = null;
 let model = null;
+let mlAvailable = false;
+
+// Try to import TensorFlow - fallback to heuristic-only mode if unavailable
+try {
+  if (process.env.ENABLE_ML_FEATURES !== 'false') {
+    tf = await import('@tensorflow/tfjs-node').catch(() => {
+      console.log('📝 TensorFlow.js-node not available, trying browser version...');
+      return import('@tensorflow/tfjs');
+    });
+    mlAvailable = true;
+    console.log('✅ TensorFlow.js loaded successfully');
+  } else {
+    console.log('📝 ML features disabled via environment variable');
+  }
+} catch (error) {
+  console.log('📝 TensorFlow.js not available, using heuristic-only risk assessment');
+  mlAvailable = false;
+}
 
 /**
  * Initialize the ML model for credit risk assessment
  */
 export async function initializeMLModel() {
   try {
+    if (!mlAvailable || !tf) {
+      console.log('⚡ Using heuristic-based risk assessment (ML disabled)');
+      return { mlEnabled: false, fallbackMode: 'heuristic' };
+    }
+
     // For now, create a simple neural network
     // In production, this would load a pre-trained model
     model = tf.sequential({
@@ -39,14 +62,13 @@ export async function initializeMLModel() {
       metrics: ['accuracy']
     });
 
-    console.log('ML model created successfully');
-    
-    // In a real scenario, you would train the model with historical data
-    // For demo purposes, we'll use a simple heuristic-based approach
+    console.log('🤖 ML model created successfully');
+    return { mlEnabled: true, fallbackMode: null };
     
   } catch (error) {
-    console.error('Error initializing ML model:', error);
-    throw error;
+    console.error('⚠️ Error initializing ML model, falling back to heuristic mode:', error.message);
+    mlAvailable = false;
+    return { mlEnabled: false, fallbackMode: 'heuristic', error: error.message };
   }
 }
 
@@ -177,4 +199,15 @@ export function getRecommendedInterestRate(riskScore) {
   const riskPremium = (riskScore / 1000) * 1500; // Up to 15% risk premium
   
   return Math.round(baseRate + riskPremium);
+}
+
+/**
+ * Get current ML service status
+ */
+export function getMlStatus() {
+  return {
+    available: mlAvailable,
+    tensorflow: tf !== null,
+    model: model !== null
+  };
 }

@@ -15,19 +15,19 @@ export const CONTRACT_ADDRESSES: Record<number, {
 }> = {
   [SUPPORTED_CHAINS.SEPOLIA]: {
     loanChain: import.meta.env.VITE_SEPOLIA_LOANCHAIN_ADDRESS || "0xDB945F8c9b681c240d5Acb3F602D210567bDfFc6",
-    loanChainV2: import.meta.env.VITE_SEPOLIA_LOANCHAIN_V2_ADDRESS || "",
+    loanChainV2: import.meta.env.VITE_SEPOLIA_LOANCHAIN_V2_ADDRESS || "", // Empty means V2 not deployed on Sepolia
     mockUSDC: "0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8", // Sepolia USDC
     mockDAI: "0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357",  // Sepolia DAI
     mockUSDT: "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0", // Sepolia USDT
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
-    loanChain: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Original V1 contract  
-    loanChainV2: "0xc96304e3c037f81dA488ed9dEa1D8F2a48278a75",   // Complete V2 with all insurance bugs fixed
-    loanChainV3: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",   // V3 with Chainlink oracles and auto-liquidation
-    tokenSwap: "0x3347B4d90ebe72BeFb30444C9966B2B990aE9FcB",    // Token swap contract
-    mockUSDC: "0xD5ac451B0c50B9476107823Af206eD814a2e2580",     // Deployed mock USDC
-    mockDAI: "0xF8e31cb472bc70500f08Cd84917E5A1912Ec8397",      // Deployed mock DAI
-    mockUSDT: "0xc0F115A19107322cFBf1cDBC7ea011C19EbDB4F8",     // Deployed mock USDT
+    loanChain: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Original V1 contract (deployed first)
+    loanChainV2: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",   // V2 with multi-token support (ACTUAL DEPLOYED)
+    loanChainV3: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",   // Currently using V2 as primary
+    tokenSwap: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",    // Token swap contract (ACTUAL DEPLOYED)
+    mockUSDC: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",     // ACTUAL DEPLOYED Mock USDC
+    mockDAI: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",      // ACTUAL DEPLOYED Mock DAI
+    mockUSDT: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",     // ACTUAL DEPLOYED Mock USDT
   },
 };
 
@@ -41,13 +41,71 @@ export const RPC_URLS: Record<number, string> = {
   [SUPPORTED_CHAINS.HARDHAT]: "http://localhost:8000",
 };
 
-export function getContractAddress(chainId: number): string | null {
+export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' = 'v2'): string | null {
   const addresses = CONTRACT_ADDRESSES[chainId];
-  if (!addresses || !addresses.loanChain) {
-    console.warn(`LoanChain contract not deployed on chain ${chainId}`);
+  if (!addresses) {
+    console.warn(`No contracts deployed on chain ${chainId}`);
     return null;
   }
-  return addresses.loanChain;
+  
+  // Return the requested version, fallback to v1 if version not available
+  let contractAddress: string | undefined;
+  switch (version) {
+    case 'v3':
+      contractAddress = addresses.loanChainV3;
+      break;
+    case 'v2':
+      contractAddress = addresses.loanChainV2;
+      break;
+    case 'v1':
+    default:
+      contractAddress = addresses.loanChain;
+      break;
+  }
+  
+  if (!contractAddress) {
+    console.warn(`LoanChain ${version} not deployed on chain ${chainId}`);
+    // Fallback to v1 if requested version not available
+    return addresses.loanChain || null;
+  }
+  
+  return contractAddress;
+}
+
+// Helper to get the best available contract version and address
+export function getPrimaryContractAddress(chainId: number): { address: string | null, version: 'v1' | 'v2' | 'v3' } {
+  const addresses = CONTRACT_ADDRESSES[chainId];
+  if (!addresses) {
+    return { address: null, version: 'v1' };
+  }
+  
+  // Try V2 first (preferred), then fallback to V1
+  if (addresses.loanChainV2 && addresses.loanChainV2 !== addresses.loanChain) {
+    return { address: addresses.loanChainV2, version: 'v2' };
+  }
+  
+  // Fallback to V1
+  if (addresses.loanChain) {
+    return { address: addresses.loanChain, version: 'v1' };
+  }
+  
+  return { address: null, version: 'v1' };
+}
+
+// Helper to get V2-specific addresses
+export function getV2ContractAddresses(chainId: number) {
+  const addresses = CONTRACT_ADDRESSES[chainId];
+  if (!addresses) return null;
+  
+  return {
+    loanChain: addresses.loanChainV2,
+    tokenSwap: addresses.tokenSwap,
+    tokens: {
+      USDC: addresses.mockUSDC,
+      DAI: addresses.mockDAI,
+      USDT: addresses.mockUSDT,
+    }
+  };
 }
 
 export function isChainSupported(chainId: number): boolean {

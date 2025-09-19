@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { ethers } from 'ethers';
 import riskAnalyticsRoutes from './routes/riskAnalytics.js';
@@ -10,7 +11,7 @@ import ipfsRoutes from './routes/ipfs.js';
 import emailNotificationRoutes from './routes/emailNotifications.js';
 import liquidationRoutes from './routes/liquidation.js';
 import matchingRoutes from './routes/matching.js';
-import { initializeMLModel } from './services/mlService.js';
+import { initializeMLModel, getMlStatus } from './services/mlService.js';
 import { startRiskMonitoring } from './services/monitoringService.js';
 import { startLiquidationMonitoring } from './services/liquidationService.js';
 
@@ -19,8 +20,27 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Trust proxy for accurate IP addresses behind reverse proxies (critical for rate limiting)
+app.set('trust proxy', 1);
+
+// Rate limiting - prevents API abuse
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests, please try again later.',
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+});
+
+const strictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes  
+  max: 20, // limit each IP to 20 requests per windowMs for sensitive endpoints
+  message: 'Too many requests to this endpoint, please try again later.'
+});
+
 // Middleware
 app.use(helmet());
+app.use(generalLimiter); // Apply general rate limiting to all routes
 app.use(cors({
   origin: [
     'http://localhost:5000',
@@ -32,24 +52,47 @@ app.use(cors({
   ],
   credentials: true
 }));
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Routes
-app.use('/api/risk', riskAnalyticsRoutes);
-app.use('/api/analytics', loanAnalyticsRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/ipfs', ipfsRoutes);
-app.use('/api/email-notifications', emailNotificationRoutes);
-app.use('/api/liquidation', liquidationRoutes);
-app.use('/api/matching', matchingRoutes);
+// Input validation and size limits
+app.use(express.json({ 
+  limit: '10mb', // Reduced from 50mb for security
+  verify: (req, res, buf) => {
+    try {
+      JSON.parse(buf);
+    } catch (e) {
+      res.status(400).json({ error: 'Invalid JSON' });
+      throw new Error('Invalid JSON');
+    }
+  }
+}));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health check
-app.get('/health', (req, res) => {
+// Routes with different rate limits
+app.use('/api/risk', strictLimiter, riskAnalyticsRoutes);        // AI/ML endpoints - limited
+app.use('/api/analytics', loanAnalyticsRoutes);                  // Read-only - general limit
+app.use('/api/notifications', notificationRoutes);              // General limit 
+app.use('/api/ipfs', strictLimiter, ipfsRoutes);                // File uploads - limited
+app.use('/api/email-notifications', strictLimiter, emailNotificationRoutes); // Email sending - limited
+app.use('/api/liquidation', strictLimiter, liquidationRoutes);  // Critical operations - limited
+app.use('/api/matching', matchingRoutes);                       // General limit
+
+// Health check with service status (excluded from rate limiting)
+const healthLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 60, // Higher limit for health checks
+  message: 'Health check rate limit exceeded'
+});
+
+app.get('/health', healthLimiter, (req, res) => {
+  const mlStatus = getMlStatus();
   res.json({ 
     status: 'healthy', 
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
+    services: {
+      ml: mlStatus.available ? 'enabled' : 'disabled (fallback mode)',
+      liquidation: process.env.LIQUIDATOR_PRIVATE_KEY ? 'enabled' : 'disabled'
+    }
   });
 });
 
@@ -72,21 +115,34 @@ async function startServer() {
   try {
     console.log('🚀 Starting LoanVerse Backend...');
     
-    // Initialize ML model
-    await initializeMLModel();
-    console.log('✅ ML model initialized');
+    // Initialize ML model (optional - graceful fallback)
+    const mlStatus = await initializeMLModel();
+    if (mlStatus.mlEnabled) {
+      console.log('✅ ML model initialized');
+    } else {
+      console.log(`⚡ Running in ${mlStatus.fallbackMode} mode (ML disabled)`);
+    }
     
-    // Start risk monitoring service
-    startRiskMonitoring();
-    console.log('✅ Risk monitoring started');
+    // Start risk monitoring service (graceful fallback)
+    try {
+      startRiskMonitoring();
+      console.log('✅ Risk monitoring started');
+    } catch (error) {
+      console.log('⚠️ Risk monitoring failed to start:', error.message);
+    }
     
-    // Start liquidation monitoring service
-    startLiquidationMonitoring();
-    console.log('✅ Liquidation monitoring started');
+    // Start liquidation monitoring service (graceful fallback)
+    try {
+      startLiquidationMonitoring();
+      console.log('✅ Liquidation monitoring started');
+    } catch (error) {
+      console.log('⚠️ Liquidation monitoring failed to start:', error.message);
+    }
     
     app.listen(PORT, '0.0.0.0', () => {
       console.log(`🌟 LoanVerse Backend running on port ${PORT}`);
       console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🤖 ML Features: ${mlStatus.mlEnabled ? 'Enabled' : 'Disabled'}`);
     });
     
   } catch (error) {
