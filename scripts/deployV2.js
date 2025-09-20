@@ -68,6 +68,16 @@ async function main() {
   );
   console.log("✅ USDT support added");
 
+  // Add NATIVE_ETH support (Token 0)
+  await loanChainV2.addSupportedToken(
+    0, // TokenType.NATIVE_ETH
+    "0x0000000000000000000000000000000000000000", // zero address for native ETH
+    18, // decimals
+    hre.ethers.parseEther("0.01"), // min: 0.01 ETH
+    hre.ethers.parseEther("100000") // max: 100K ETH
+  );
+  console.log("✅ NATIVE_ETH support added");
+
   // Update token prices with dual sources for the new oracle system
   await loanChainV2.updateTokenPrice(0, "250000000000", "250000000000"); // ETH: $2500 from both sources
   await loanChainV2.updateTokenPrice(1, "100000000", "100000000");       // USDC: $1.00 from both sources
