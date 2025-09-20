@@ -79,7 +79,7 @@ const BrowseLoans: React.FC = () => {
       if (!contract) throw new Error('Contract not available');
       
       // Get all loans for this borrower
-      const borrowerLoans = await contract.getBorrowerLoans(borrowerAddress);
+      const borrowerLoans = await contract.borrowerLoans(borrowerAddress);
       
       let totalLoans = 0;
       let successfulLoans = 0;

@@ -52,8 +52,8 @@ const AnalyticsDashboard: React.FC = () => {
       const activeLoanIds = await contract.getActiveLoanRequests();
 
       // For demo, we'll use active loans + user's loans
-      const borrowerLoanIds = account ? await contract.getBorrowerLoans(account) : [];
-      const lenderLoanIds = account ? await contract.getLenderLoans(account) : [];
+      const borrowerLoanIds = account ? await contract.borrowerLoans(account) : [];
+      const lenderLoanIds = account ? await contract.lenderLoans(account) : [];
       
       const combinedLoanIds = new Set([
         ...activeLoanIds.map((id: any) => Number(id.toString())),
