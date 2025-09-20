@@ -51,19 +51,73 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       const collateralAmount = parseEther(formData.collateralAmount);
       const interestRateBasisPoints = formData.interestRate * 100; // Convert to basis points
       const durationSeconds = formData.duration * 24 * 60 * 60; // Convert days to seconds
+      const loanToken = formData.loanToken; // 0 = NATIVE_ETH
+      const hasInsurance = formData.hasInsurance;
 
-      // LoanChainV2 function signature: requestLoan(totalAmount, loanToken, collateralToken, collateralAmount, interestRate, duration, isVariableRate, hasInsurance)
-      const tx = await contract.requestLoan(
+      // Calculate insurance fee (1% of loan amount if insurance is enabled)
+      const insuranceFee = hasInsurance ? loanAmount * BigInt(100) / BigInt(10000) : BigInt(0);
+
+      // Function arguments for requestLoan
+      const args = [
         loanAmount,              // _totalAmount
-        0,                       // _loanToken (NATIVE_ETH = 0)
+        loanToken,               // _loanToken (NATIVE_ETH = 0)
         0,                       // _collateralToken (NATIVE_ETH = 0)  
         collateralAmount,        // _collateralAmount
         interestRateBasisPoints, // _interestRate
         durationSeconds,         // _duration
-        false,                   // _isVariableRate
-        false,                   // _hasInsurance
-        { value: collateralAmount }
-      );
+        formData.isVariableRate, // _isVariableRate
+        hasInsurance,            // _hasInsurance
+      ];
+
+      // Try different ETH value scenarios to find the correct one
+      let gasEstimate: any;
+      let ethValue: bigint = BigInt(0); // Initialize to prevent TypeScript errors
+      let success = false;
+
+      // Scenario A: Send collateral + insurance fee (if loan is in ETH)
+      try {
+        ethValue = collateralAmount + (hasInsurance && loanToken === 0 ? insuranceFee : BigInt(0));
+        gasEstimate = await contract.requestLoan.estimateGas(...args, { value: ethValue });
+        success = true;
+        console.log('✅ Gas estimation successful with collateral + insurance:', ethValue.toString());
+      } catch (error: any) {
+        console.log('❌ Scenario A failed:', error.shortMessage || error.message);
+      }
+
+      // Scenario B: Send only insurance fee (if applicable)
+      if (!success) {
+        try {
+          ethValue = hasInsurance && loanToken === 0 ? insuranceFee : BigInt(0);
+          gasEstimate = await contract.requestLoan.estimateGas(...args, { value: ethValue });
+          success = true;
+          console.log('✅ Gas estimation successful with insurance only:', ethValue.toString());
+        } catch (error: any) {
+          console.log('❌ Scenario B failed:', error.shortMessage || error.message);
+        }
+      }
+
+      // If both scenarios fail, use callStatic to get the actual revert reason
+      if (!success) {
+        try {
+          await contract.requestLoan.staticCall(...args, { value: collateralAmount });
+          await contract.requestLoan.staticCall(...args, { value: BigInt(0) });
+          throw new Error('Gas estimation failed but static call succeeded - this should not happen');
+        } catch (staticError: any) {
+          const revertReason = staticError.reason || staticError.shortMessage || staticError.message || 'Unknown contract error';
+          throw new Error(`Contract rejected transaction: ${revertReason}`);
+        }
+      }
+
+      // Add 25% safety margin to gas estimate
+      const gasLimit = gasEstimate * BigInt(125) / BigInt(100);
+
+      console.log(`🚀 Sending transaction with gas limit: ${gasLimit.toString()}, ETH value: ${ethValue.toString()}`);
+
+      // Send the transaction with proper gas limit and ETH value
+      const tx = await contract.requestLoan(...args, { 
+        value: ethValue,
+        gasLimit: gasLimit
+      });
 
       await tx.wait();
       onSuccess();
@@ -81,7 +135,9 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       });
     } catch (error: any) {
       console.error('Error requesting loan:', error);
-      setError(error.reason || error.message || 'Failed to request loan');
+      // Enhanced error messages
+      const errorMessage = error.shortMessage || error.reason || error.message || 'Failed to request loan';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }

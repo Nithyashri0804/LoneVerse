@@ -21,13 +21,13 @@ export const CONTRACT_ADDRESSES: Record<number, {
     mockUSDT: "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0", // Sepolia USDT
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
-    loanChain: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // LoanChain V1 (basic version) - now Mock USDC
-    loanChainV2: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // LoanChainV2 with multi-token support (LATEST)
-    loanChainV3: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // Using V2 as latest version
-    tokenSwap: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",    // TokenSwap contract for token exchanges
-    mockUSDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Mock USDC token
-    mockDAI: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",      // Mock DAI token  
-    mockUSDT: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",     // Mock USDT token
+    loanChain: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // LoanChain V1 (basic version)
+    loanChainV2: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",   // LoanChainV2 with multi-token support (LATEST)
+    loanChainV3: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",   // Using V2 as latest version
+    tokenSwap: "0x0DCd1Bf9A1b36cE34237eEaFef220932846BCD82",    // TokenSwap contract for token exchanges
+    mockUSDC: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",     // Mock USDC token
+    mockDAI: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",      // Mock DAI token  
+    mockUSDT: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",     // Mock USDT token
   },
 };
 
