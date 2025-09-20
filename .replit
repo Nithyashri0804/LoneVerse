@@ -32,13 +32,13 @@ args = "Hardhat Node"
 name = "Frontend"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
 
 [[workflows.workflow]]
 name = "Backend API"
@@ -72,12 +72,24 @@ localPort = 3001
 externalPort = 3001
 
 [[ports]]
+localPort = 5001
+externalPort = 8080
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
+
+[[ports]]
 localPort = 33213
 externalPort = 5000
 
 [[ports]]
 localPort = 33543
 externalPort = 6000
+
+[[ports]]
+localPort = 37521
+externalPort = 6800
 
 [[ports]]
 localPort = 39493
@@ -108,5 +120,5 @@ localPort = 46803
 externalPort = 3003
 
 [[ports]]
-localPort = 8000
-externalPort = 8000
+localPort = 5000
+externalPort = 80
