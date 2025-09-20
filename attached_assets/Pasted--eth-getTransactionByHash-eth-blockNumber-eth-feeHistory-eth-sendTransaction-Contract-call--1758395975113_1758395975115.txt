@@ -1,0 +1,201 @@
+
+eth_getTransactionByHash
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       LoanChainV2#addSupportedToken
+  Transaction:         0xa45895dd67dd4fd1481c6ead93af9846f13955cc0e7ccf9c56b62bc20f2589d3
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9   
+  Value:               0 ETH
+  Gas used:            35947 of 30000000
+  Block #8:            0xc6217ed8284d6eb33f04db9df3f21ab73f9de039ea2d524b5fe27c1141ad660b
+
+eth_getTransactionByHash
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       LoanChainV2#updateTokenPrice
+  Transaction:         0xbe60a8fc7c7b287979c5872e5171a3a4d3f5f92675ca61f5384d602f59e1464a
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9   
+  Value:               0 ETH
+  Gas used:            43042 of 30000000
+  Block #9:            0xbea2713a6bc76cd4b8d751a96d82ad2a720c0a83ca3f773d4aafb2039af91c8e
+
+eth_getTransactionByHash
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       LoanChainV2#updateTokenPrice
+  Transaction:         0x3c18a811716a4fca42a0de909ed0425a7d4f7ce05103ad610b46212c95d99572
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9   
+  Value:               0 ETH
+  Gas used:            43030 of 30000000
+  Block #10:           0xa96916ac3d0b9bc73a664d95ac7c5ca98993f8b50b09a3ef99dba1957adda007
+
+eth_getTransactionByHash
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       LoanChainV2#updateTokenPrice
+  Transaction:         0x1e42d51933eb755751bd275986b1c6584724e3bbb366be0616c66468d39155a9
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9   
+  Value:               0 ETH
+  Gas used:            43030 of 30000000
+  Block #11:           0xd264b27dd2dfffcfc1eea5fc05fde5961e21e9a8f57f92a7e55f66fc75e17b1a
+
+eth_getTransactionByHash
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       LoanChainV2#updateTokenPrice
+  Transaction:         0x2dcb3c03a05a67aea7015654468c2f66a86d7dce15e04cbdac12a1e7e3dbc731
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9   
+  Value:               0 ETH
+  Gas used:            43030 of 30000000
+  Block #12:           0xf38f0868bb76488941db48e69f14bd7d59678bbbc1df3a7bc93e58ac24b9d4b7
+
+eth_getTransactionByHash
+eth_accounts
+hardhat_metadata (20)
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract deployment: TokenSwap
+  Contract address:    0xa51c1fc2f0d1a1b8494ed1fe312d7c3a78ed91c0   
+  Transaction:         0xaa343eb5d254f389e6049d38d974e6558a2f5b13bd3bbe754d6821ce880e0e93
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  Value:               0 ETH
+  Gas used:            999498 of 30000000
+  Block #13:           0x7e266c2ef8ae39bfeeccf2d7854f98a4d1d1affe9157b8476d5daf63df0ab416
+
+eth_getTransactionByHash
+eth_getTransactionReceipt
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       TokenSwap#addLiquidity
+  Transaction:         0xa94664b461610d0f5c856aa42c4c7ba476ab750fa3f8646b72b62eb501cbb369
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0xa51c1fc2f0d1a1b8494ed1fe312d7c3a78ed91c0   
+  Value:               10. ETH
+  Gas used:            23833 of 30000000
+  Block #14:           0x36936dd4d2a221acdf056437d364bbd91b05a007caca9c4b76a2270d447b7985
+
+eth_getTransactionByHash
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       MockERC20#mint
+  Transaction:         0x9821de6281c6b14b6a4bfba6ed9438abed71de7b8dd8b46e384a64371dff8215
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0x5fbdb2315678afecb367f032d93f642f64180aa3
+  Value:               0 ETH
+  Gas used:            53184 of 30000000
+  Block #15:           0xd547fbf2de664e02d2e81aeb99fdb1e4626678f2eec9105b00bd69919a0af90d
+
+eth_getTransactionByHash
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       MockERC20#mint
+  Transaction:         0x523c7d3807c2dad387de03f3cec0c520a92be199bf23e218cf3e172286328f59
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0xe7f1725e7734ce288f8367e1bb143e90bb3f0512   
+  Value:               0 ETH
+  Gas used:            53232 of 30000000
+  Block #16:           0x25ef346b8910c880df4bdf3976d05a70029976e865f818efa746979fd3257eb8
+
+eth_getTransactionByHash
+eth_blockNumber
+eth_feeHistory
+eth_sendTransaction
+  Contract call:       MockERC20#mint
+  Transaction:         0x0580990f3d66d35b9262e9606836aca367ccede77a7248b3dcb11d91f59c6dfa
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266   
+  To:                  0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0
+  Value:               0 ETH
+  Gas used:            53184 of 30000000
+  Block #17:           0x05b2eea27f0433cffc3dbec0cb8c4cbd47a7c780fe4422fe5f3a5f4eaf889cf9
+
+eth_getTransactionByHash
+eth_blockNumber (14)
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_estimateGas
+eth_getCode
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_getCode
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_accounts
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_call
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_getCode
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_getTransactionCount
+
+  Received invalid block tag 18. Latest block number is 17
+
+eth_blockNumber (6)
