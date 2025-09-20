@@ -55,16 +55,24 @@ const Dashboard: React.FC = () => {
         return {
           id: Number(loanData.id.toString()),
           borrower: loanData.borrower,
-          lender: loanData.lender,
-          amount: loanData.amount.toString(),
-          collateral: loanData.collateral.toString(),
+          lenders: loanData.lenders,
+          lenderAmounts: loanData.lenderAmounts.map((amt: any) => amt.toString()),
+          totalAmount: loanData.totalAmount.toString(),
+          totalFunded: loanData.totalFunded.toString(),
+          loanToken: loanData.loanToken,
+          collateralToken: loanData.collateralToken,
+          collateralAmount: loanData.collateralAmount.toString(),
           interestRate: Number(loanData.interestRate.toString()),
+          isVariableRate: loanData.isVariableRate,
           duration: Number(loanData.duration.toString()),
           createdAt: Number(loanData.createdAt.toString()),
           fundedAt: Number(loanData.fundedAt.toString()),
           dueDate: Number(loanData.dueDate.toString()),
           status: loanData.status as LoanStatus,
           collateralClaimed: loanData.collateralClaimed,
+          riskScore: Number(loanData.riskScore.toString()),
+          hasInsurance: loanData.hasInsurance,
+          insuranceFee: loanData.insuranceFee.toString(),
         } as Loan;
       });
 
@@ -90,7 +98,7 @@ const Dashboard: React.FC = () => {
         case 'borrowed':
           return loan.borrower.toLowerCase() === account.toLowerCase();
         case 'lent':
-          return loan.lender.toLowerCase() === account.toLowerCase();
+          return loan.lenders.some(lender => lender.toLowerCase() === account.toLowerCase());
         default:
           return true;
       }
@@ -108,7 +116,7 @@ const Dashboard: React.FC = () => {
   const getStats = () => {
     if (!account) {
       const totalVolume = loans.reduce((sum, loan) => {
-        return sum + parseFloat(formatEther(loan.amount));
+        return sum + parseFloat(formatEther(loan.totalAmount));
       }, 0);
       const activeLoans = loans.filter(loan => loan.status === LoanStatus.FUNDED).length;
       const totalLoans = loans.length;
@@ -116,18 +124,23 @@ const Dashboard: React.FC = () => {
     }
     
     const borrowedLoans = loans.filter(loan => loan.borrower.toLowerCase() === account.toLowerCase());
-    const lentLoans = loans.filter(loan => loan.lender.toLowerCase() === account.toLowerCase());
+    const lentLoans = loans.filter(loan => loan.lenders.some(lender => lender.toLowerCase() === account.toLowerCase()));
     
     const totalBorrowed = borrowedLoans.reduce((sum, loan) => {
-      return sum + parseFloat(formatEther(loan.amount));
+      return sum + parseFloat(formatEther(loan.totalAmount));
     }, 0);
 
     const totalLent = lentLoans.reduce((sum, loan) => {
-      return sum + parseFloat(formatEther(loan.amount));
+      // Calculate the amount this user lent to this loan
+      const lenderIndex = loan.lenders.findIndex(lender => lender.toLowerCase() === account.toLowerCase());
+      if (lenderIndex >= 0) {
+        return sum + parseFloat(formatEther(loan.lenderAmounts[lenderIndex]));
+      }
+      return sum;
     }, 0);
 
     const totalVolume = loans.reduce((sum, loan) => {
-      return sum + parseFloat(formatEther(loan.amount));
+      return sum + parseFloat(formatEther(loan.totalAmount));
     }, 0);
 
     const activeLoans = loans.filter(loan => loan.status === LoanStatus.FUNDED).length;
