@@ -21,13 +21,13 @@ export const CONTRACT_ADDRESSES: Record<number, {
     mockUSDT: "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0", // Sepolia USDT
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
-    loanChain: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",     // LoanChainV2 deployed as primary
-    loanChainV2: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // V2 with multi-token support (USER'S LOCAL DEPLOYMENT)
-    loanChainV3: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // Currently using V2 as primary
-    tokenSwap: "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",    // Token swap contract (USER'S LOCAL DEPLOYMENT)
-    mockUSDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // USER'S LOCAL Mock USDC
-    mockDAI: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",      // USER'S LOCAL Mock DAI
-    mockUSDT: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",     // USER'S LOCAL Mock USDT
+    loanChain: "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",     // LoanChainV2 deployed as primary
+    loanChainV2: "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",   // V2 with multi-token support (REDEPLOYED)
+    loanChainV3: "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",   // Currently using V2 as primary
+    tokenSwap: "0x09635F643e140090A9A8Dcd712eD6285858ceBef",    // Token swap contract (REDEPLOYED)
+    mockUSDC: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",     // REDEPLOYED Mock USDC
+    mockDAI: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",      // REDEPLOYED Mock DAI
+    mockUSDT: "0x68B1D87F95878fE05B998F19b66F4baba5De1aed",     // REDEPLOYED Mock USDT
   },
 };
 
