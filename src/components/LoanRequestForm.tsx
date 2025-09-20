@@ -54,14 +54,15 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       const loanToken = formData.loanToken; // 0 = NATIVE_ETH
       const hasInsurance = formData.hasInsurance;
 
-      // Calculate insurance fee (1% of loan amount if insurance is enabled)
+      // Calculate required ETH based on contract logic
+      const collateralToken = formData.collateralToken; // 0 = NATIVE_ETH
       const insuranceFee = hasInsurance ? loanAmount * BigInt(100) / BigInt(10000) : BigInt(0);
 
       // Function arguments for requestLoan
       const args = [
         loanAmount,              // _totalAmount
         loanToken,               // _loanToken (NATIVE_ETH = 0)
-        0,                       // _collateralToken (NATIVE_ETH = 0)  
+        collateralToken,         // _collateralToken (NATIVE_ETH = 0)  
         collateralAmount,        // _collateralAmount
         interestRateBasisPoints, // _interestRate
         durationSeconds,         // _duration
@@ -69,42 +70,45 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
         hasInsurance,            // _hasInsurance
       ];
 
-      // Try different ETH value scenarios to find the correct one
-      let gasEstimate: any;
-      let ethValue: bigint = BigInt(0); // Initialize to prevent TypeScript errors
-      let success = false;
-
-      // Scenario A: Send collateral + insurance fee (if loan is in ETH)
-      try {
-        ethValue = collateralAmount + (hasInsurance && loanToken === 0 ? insuranceFee : BigInt(0));
-        gasEstimate = await contract.requestLoan.estimateGas(...args, { value: ethValue });
-        success = true;
-        console.log('✅ Gas estimation successful with collateral + insurance:', ethValue.toString());
-      } catch (error: any) {
-        console.log('❌ Scenario A failed:', error.shortMessage || error.message);
-      }
-
-      // Scenario B: Send only insurance fee (if applicable)
-      if (!success) {
-        try {
-          ethValue = hasInsurance && loanToken === 0 ? insuranceFee : BigInt(0);
-          gasEstimate = await contract.requestLoan.estimateGas(...args, { value: ethValue });
-          success = true;
-          console.log('✅ Gas estimation successful with insurance only:', ethValue.toString());
-        } catch (error: any) {
-          console.log('❌ Scenario B failed:', error.shortMessage || error.message);
+      // Calculate exact ETH value based on contract requirements
+      let ethValue: bigint;
+      if (collateralToken === 0) { // NATIVE_ETH collateral
+        ethValue = collateralAmount;
+        if (hasInsurance && loanToken === 0) { // Insurance fee only if loan is also ETH
+          ethValue += insuranceFee;
+        }
+      } else { // ERC20 collateral
+        if (hasInsurance && loanToken === 0) { // Insurance fee only if loan is ETH
+          ethValue = insuranceFee;
+        } else {
+          ethValue = BigInt(0); // No ETH should be sent
         }
       }
 
-      // If both scenarios fail, use callStatic to get the actual revert reason
-      if (!success) {
+      console.log(`💰 Calculated ETH value: ${ethValue.toString()} wei`);
+      console.log(`📋 Loan details:`, {
+        loanAmount: loanAmount.toString(),
+        collateralAmount: collateralAmount.toString(),
+        loanToken,
+        collateralToken,
+        hasInsurance,
+        insuranceFee: insuranceFee.toString()
+      });
+
+      // Estimate gas with the correct ETH value
+      let gasEstimate: any;
+      try {
+        gasEstimate = await contract.requestLoan.estimateGas(...args, { value: ethValue });
+        console.log('✅ Gas estimation successful:', gasEstimate.toString());
+      } catch (error: any) {
+        console.error('❌ Gas estimation failed:', error);
+        // Try to get the revert reason
         try {
-          await contract.requestLoan.staticCall(...args, { value: collateralAmount });
-          await contract.requestLoan.staticCall(...args, { value: BigInt(0) });
-          throw new Error('Gas estimation failed but static call succeeded - this should not happen');
+          await contract.requestLoan.staticCall(...args, { value: ethValue });
+          throw new Error('Gas estimation failed but static call succeeded');
         } catch (staticError: any) {
           const revertReason = staticError.reason || staticError.shortMessage || staticError.message || 'Unknown contract error';
-          throw new Error(`Contract rejected transaction: ${revertReason}`);
+          throw new Error(`Contract validation failed: ${revertReason}`);
         }
       }
 
