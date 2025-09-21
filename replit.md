@@ -204,6 +204,12 @@ LoanChain is a decentralized peer-to-peer lending platform built on Ethereum. Us
 
 **✅ COMPREHENSIVE SETUP COMPLETED - READY FOR USE**
 
+### Contract Configuration Fixed
+- **Issue Resolved**: Frontend was trying to call non-existent LoanChainV2 contracts
+- **Fix Applied**: Updated contract configuration to use only deployed LoanChain V1 
+- **Contract Address**: `0x5FbDB2315678afecb367f032d93F642f64180aa3` (V1 only)
+- **Case Variation**: Ethereum addresses display in different cases (checksummed vs lowercase) - this is normal behavior
+
 ### Dependencies & Installation
 - **Frontend**: 828 packages installed successfully (React 18, Vite 7.1.6, TypeScript, Ethers.js v6)
 - **Backend**: 478 packages installed successfully (Express, TensorFlow.js, ML features, Email services)
