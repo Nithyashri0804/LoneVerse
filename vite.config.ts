@@ -8,7 +8,8 @@ export default defineConfig({
     host: '0.0.0.0', // Listen on all local IPs (required for Replit)
     port: 5000, // Replit frontend port
     open: false, // Don't auto-open browser in VS Code
-    strictPort: true // Fail if port is not available
+    strictPort: true, // Fail if port is not available
+    allowedHosts: true // Allow all hosts for Replit proxy
   },
   preview: {
     host: '0.0.0.0',
