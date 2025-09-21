@@ -22,11 +22,11 @@ args = "Backend API"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Hardhat Node"
+args = "Frontend"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Frontend"
+args = "Hardhat Node"
 
 [[workflows.workflow]]
 name = "Backend API"
@@ -41,18 +41,6 @@ waitForPort = 3001
 outputType = "console"
 
 [[workflows.workflow]]
-name = "Hardhat Node"
-author = "agent"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx hardhat node --port 8000"
-waitForPort = 8000
-
-[[workflows.workflow]]
 name = "Frontend"
 author = "agent"
 
@@ -63,6 +51,18 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow]]
+name = "Hardhat Node"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx hardhat node --port 8000"
+waitForPort = 8000
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [agent]
 expertMode = true
@@ -82,10 +82,6 @@ externalPort = 8081
 [[ports]]
 localPort = 8000
 externalPort = 8000
-
-[[ports]]
-localPort = 34899
-externalPort = 6800
 
 [[ports]]
 localPort = 39493
