@@ -139,7 +139,7 @@ async function startServer() {
       console.log('⚠️ Liquidation monitoring failed to start:', error.message);
     }
     
-    app.listen(PORT, '0.0.0.0', () => {
+    app.listen(PORT, 'localhost', () => {
       console.log(`🌟 LoanVerse Backend running on port ${PORT}`);
       console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
       console.log(`🤖 ML Features: ${mlStatus.mlEnabled ? 'Enabled' : 'Disabled'}`);
