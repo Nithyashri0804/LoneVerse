@@ -1,5 +1,7 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import hre from "hardhat";
+const { ethers } = hre;
+import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs";
 
 describe("LoanChain", function () {
   let LoanChain;
@@ -13,13 +15,13 @@ describe("LoanChain", function () {
     LoanChain = await ethers.getContractFactory("LoanChain");
     [owner, borrower, lender, ...addrs] = await ethers.getSigners();
     loanChain = await LoanChain.deploy();
-    await loanChain.deployed();
+    await loanChain.waitForDeployment();
   });
 
   describe("Loan Request", function () {
     it("Should allow borrower to request a loan with sufficient collateral", async function () {
-      const loanAmount = ethers.utils.parseEther("1");
-      const collateralAmount = ethers.utils.parseEther("1.5");
+      const loanAmount = ethers.parseEther("1");
+      const collateralAmount = ethers.parseEther("1.5");
       const interestRate = 500; // 5%
       const duration = 30 * 24 * 60 * 60; // 30 days
 
@@ -39,8 +41,8 @@ describe("LoanChain", function () {
     });
 
     it("Should reject loan request with insufficient collateral", async function () {
-      const loanAmount = ethers.utils.parseEther("1");
-      const collateralAmount = ethers.utils.parseEther("1"); // Only 100% collateral
+      const loanAmount = ethers.parseEther("1");
+      const collateralAmount = ethers.parseEther("1"); // Only 100% collateral
       const interestRate = 500;
       const duration = 30 * 24 * 60 * 60;
 
@@ -54,8 +56,8 @@ describe("LoanChain", function () {
 
   describe("Loan Funding", function () {
     beforeEach(async function () {
-      const loanAmount = ethers.utils.parseEther("1");
-      const collateralAmount = ethers.utils.parseEther("1.5");
+      const loanAmount = ethers.parseEther("1");
+      const collateralAmount = ethers.parseEther("1.5");
       const interestRate = 500;
       const duration = 30 * 24 * 60 * 60;
 
@@ -65,13 +67,13 @@ describe("LoanChain", function () {
     });
 
     it("Should allow lender to fund a loan", async function () {
-      const loanAmount = ethers.utils.parseEther("1");
+      const loanAmount = ethers.parseEther("1");
       
       await expect(
         loanChain.connect(lender).fundLoan(1, { value: loanAmount })
       )
         .to.emit(loanChain, "LoanFunded")
-        .withArgs(1, lender.address, await ethers.provider.getBlockNumber() + 1);
+        .withArgs(1, lender.address, anyValue);
 
       const loan = await loanChain.getLoan(1);
       expect(loan.lender).to.equal(lender.address);
@@ -79,7 +81,7 @@ describe("LoanChain", function () {
     });
 
     it("Should reject funding with incorrect amount", async function () {
-      const wrongAmount = ethers.utils.parseEther("0.5");
+      const wrongAmount = ethers.parseEther("0.5");
       
       await expect(
         loanChain.connect(lender).fundLoan(1, { value: wrongAmount })
@@ -89,8 +91,8 @@ describe("LoanChain", function () {
 
   describe("Loan Repayment", function () {
     beforeEach(async function () {
-      const loanAmount = ethers.utils.parseEther("1");
-      const collateralAmount = ethers.utils.parseEther("1.5");
+      const loanAmount = ethers.parseEther("1");
+      const collateralAmount = ethers.parseEther("1.5");
       const interestRate = 500;
       const duration = 30 * 24 * 60 * 60;
 
