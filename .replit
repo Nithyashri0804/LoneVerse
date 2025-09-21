@@ -56,13 +56,13 @@ outputType = "console"
 name = "Hardhat Node"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npx hardhat node --port 8000"
 waitForPort = 8000
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [agent]
 expertMode = true
@@ -78,10 +78,6 @@ externalPort = 8081
 [[ports]]
 localPort = 8000
 externalPort = 8000
-
-[[ports]]
-localPort = 33543
-externalPort = 6000
 
 [[ports]]
 localPort = 34899
