@@ -29,7 +29,18 @@ const config = {
   },
   networks: {
     hardhat: {
-      // removed the type line for compatibility
+      // Deterministic accounts for consistent contract addresses
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+        count: 20,
+        accountsBalance: "10000000000000000000000", // 10,000 ETH per account
+      },
+      chainId: 31337,
+      // Fixed mining for deterministic behavior
+      mining: {
+        auto: true,
+        interval: 0
+      }
     },
     localhost: {
       url: "http://127.0.0.1:8000"
