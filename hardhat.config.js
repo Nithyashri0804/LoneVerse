@@ -32,7 +32,7 @@ const config = {
       // removed the type line for compatibility
     },
     localhost: {
-      url: "http://127.0.0.1:8000"
+      url: "http://127.0.0.1:8545" // Standard port for local development
     },
     sepolia: {
       type: "http",
