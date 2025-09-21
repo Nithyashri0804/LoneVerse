@@ -5,10 +5,10 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    host: true, // Listen on all local IPs (good for both local dev and Replit)
-    port: 5173, // Standard Vite port for local development
+    host: '0.0.0.0', // Listen on all local IPs (required for Replit)
+    port: 5000, // Replit frontend port
     open: false, // Don't auto-open browser in VS Code
-    allowedHosts: true
+    strictPort: true // Fail if port is not available
   },
   preview: {
     host: '0.0.0.0',
