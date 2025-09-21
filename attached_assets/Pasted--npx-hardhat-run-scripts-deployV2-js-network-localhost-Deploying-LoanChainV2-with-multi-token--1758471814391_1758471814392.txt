@@ -1,0 +1,69 @@
+ npx hardhat run scripts/deployV2.js --network localhost
+🚀 Deploying LoanChainV2 with multi-token support...
+📄 Deploying mock tokens...
+✅ Mock USDC deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+✅ Mock DAI deployed to: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+✅ Mock USDT deployed to: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+💰 Deploying LoanChainV2...
+✅ LoanChainV2 deployed to: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+⚙️ Configuring supported tokens...
+✅ USDC support added
+✅ DAI support added
+✅ USDT support added
+✅ NATIVE_ETH support added
+✅ Token prices updated with multi-oracle system
+🔄 Deploying TokenSwap contract...
+✅ TokenSwap deployed to: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+💰 Adding initial liquidity to TokenSwap...
+✅ Initial liquidity added to TokenSwap
+🎉 Deployment completed!
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+⚙️ Configuring supported tokens...
+✅ USDC support added
+✅ DAI support added
+✅ USDT support added
+✅ NATIVE_ETH support added
+✅ Token prices updated with multi-oracle system
+🔄 Deploying TokenSwap contract...
+✅ TokenSwap deployed to: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+💰 Adding initial liquidity to TokenSwap...
+✅ Initial liquidity added to TokenSwap
+🎉 Deployment completed!
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+✅ Token prices updated with multi-oracle system
+🔄 Deploying TokenSwap contract...
+✅ TokenSwap deployed to: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+💰 Adding initial liquidity to TokenSwap...
+✅ Initial liquidity added to TokenSwap
+🎉 Deployment completed!
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+✅ TokenSwap deployed to: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+💰 Adding initial liquidity to TokenSwap...
+✅ Initial liquidity added to TokenSwap
+🎉 Deployment completed!
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+💰 Adding initial liquidity to TokenSwap...
+✅ Initial liquidity added to TokenSwap
+🎉 Deployment completed!
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+✅ Initial liquidity added to TokenSwap
+🎉 Deployment completed!
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+🎉 Deployment completed!
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+  TokenSwap: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+  Mock USDC: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  Mock DAI: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+  Mock USDT: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+  Network: localhost
+✅ Deployment info saved to deployments/localhost-deployment.js
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse>
