@@ -673,4 +673,18 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
         
         return (hasInsurance, insuranceFee, isClaimed, canClaim);
     }
+
+    /**
+     * @dev Get all loan IDs for a borrower
+     */
+    function getBorrowerLoans(address _borrower) external view returns (uint256[] memory) {
+        return borrowerLoans[_borrower];
+    }
+
+    /**
+     * @dev Get all loan IDs for a lender  
+     */
+    function getLenderLoans(address _lender) external view returns (uint256[] memory) {
+        return lenderLoans[_lender];
+    }
 }

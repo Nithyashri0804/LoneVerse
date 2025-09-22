@@ -52,8 +52,8 @@ const AnalyticsDashboard: React.FC = () => {
       const activeLoanIds = await contract.getActiveLoanRequests();
 
       // For demo, we'll use active loans + user's loans
-      const borrowerLoanIds = account ? await contract.borrowerLoans(account) : [];
-      const lenderLoanIds = account ? await contract.lenderLoans(account) : [];
+      const borrowerLoanIds = account ? await contract.getBorrowerLoans(account) : [];
+      const lenderLoanIds = account ? await contract.getLenderLoans(account) : [];
       
       const combinedLoanIds = new Set([
         ...activeLoanIds.map((id: any) => Number(id.toString())),
@@ -67,23 +67,34 @@ const AnalyticsDashboard: React.FC = () => {
         return {
           id: Number(loanData.id.toString()),
           borrower: loanData.borrower,
-          lender: loanData.lender,
-          amount: loanData.amount.toString(),
-          collateral: loanData.collateral.toString(),
+          lender: loanData.lenders.length > 0 ? loanData.lenders[0] : '',
+          lenders: loanData.lenders,
+          lenderAmounts: loanData.lenderAmounts.map((amt: any) => amt.toString()),
+          amount: loanData.totalAmount.toString(),
+          totalAmount: loanData.totalAmount.toString(),
+          totalFunded: loanData.totalFunded.toString(),
+          loanToken: loanData.loanToken,
+          collateralToken: loanData.collateralToken,
+          collateral: loanData.collateralAmount.toString(),
+          collateralAmount: loanData.collateralAmount.toString(),
           interestRate: Number(loanData.interestRate.toString()),
+          isVariableRate: loanData.isVariableRate,
           duration: Number(loanData.duration.toString()),
           createdAt: Number(loanData.createdAt.toString()),
           fundedAt: Number(loanData.fundedAt.toString()),
           dueDate: Number(loanData.dueDate.toString()),
           status: loanData.status as LoanStatus,
           collateralClaimed: loanData.collateralClaimed,
+          riskScore: Number(loanData.riskScore.toString()),
+          hasInsurance: loanData.hasInsurance,
+          insuranceFee: loanData.insuranceFee.toString(),
         } as Loan;
       });
 
       const loans = await Promise.all(loanPromises);
       
       // Calculate analytics
-      const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatEther(loan.amount)), 0);
+      const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatEther(loan.totalAmount)), 0);
       const totalLoans = loans.length;
       const activeLoans = loans.filter(l => l.status === LoanStatus.FUNDED).length;
       const repaidLoans = loans.filter(l => l.status === LoanStatus.REPAID).length;

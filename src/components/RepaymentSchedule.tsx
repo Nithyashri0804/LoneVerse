@@ -27,10 +27,10 @@ const RepaymentSchedule: React.FC = () => {
       setIsLoading(true);
 
       // Get borrower's loans
-      const borrowerLoanIds = await contract.borrowerLoans(account);
+      const borrowerLoanIds = await contract.getBorrowerLoans(account);
       
       // Get lender's loans for portfolio tracking
-      const lenderLoanIds = await contract.lenderLoans(account);
+      const lenderLoanIds = await contract.getLenderLoans(account);
       
       // Combine for full schedule view
       const allLoanIds = new Set([
@@ -44,12 +44,15 @@ const RepaymentSchedule: React.FC = () => {
         const loan: Loan = {
           id: Number(loanData.id.toString()),
           borrower: loanData.borrower,
+          lender: loanData.lenders.length > 0 ? loanData.lenders[0] : '',
           lenders: loanData.lenders,
           lenderAmounts: loanData.lenderAmounts.map((amt: any) => amt.toString()),
+          amount: loanData.totalAmount.toString(),
           totalAmount: loanData.totalAmount.toString(),
           totalFunded: loanData.totalFunded.toString(),
           loanToken: loanData.loanToken,
           collateralToken: loanData.collateralToken,
+          collateral: loanData.collateralAmount.toString(),
           collateralAmount: loanData.collateralAmount.toString(),
           interestRate: Number(loanData.interestRate.toString()),
           isVariableRate: loanData.isVariableRate,
@@ -165,7 +168,7 @@ const RepaymentSchedule: React.FC = () => {
   };
 
   const getTokenSymbol = (tokenType: number): string => {
-    return TOKEN_INFO[tokenType]?.symbol || 'UNKNOWN';
+    return TOKEN_INFO[tokenType as keyof typeof TOKEN_INFO]?.symbol || 'UNKNOWN';
   };
 
   const filteredSchedule = getFilteredSchedule();

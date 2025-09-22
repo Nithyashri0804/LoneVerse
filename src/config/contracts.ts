@@ -38,7 +38,7 @@ export const NETWORK_NAMES: Record<number, string> = {
 
 export const RPC_URLS: Record<number, string> = {
   [SUPPORTED_CHAINS.SEPOLIA]: "https://sepolia.infura.io/v3/demo",
-  [SUPPORTED_CHAINS.HARDHAT]: "http://localhost:8545",
+  [SUPPORTED_CHAINS.HARDHAT]: "http://localhost:8000",
 };
 
 export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' = 'v2'): string | null {

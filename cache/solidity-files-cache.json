@@ -708,8 +708,8 @@
       ]
     },
     "/home/runner/workspace/contracts/LoanChainV2.sol": {
-      "lastModificationDate": 1758536222945,
-      "contentHash": "2a8661b40934d583aa32b36d59541bec",
+      "lastModificationDate": 1758539213035,
+      "contentHash": "b4406689e3be89da17616a69e732aa27",
       "sourceName": "contracts/LoanChainV2.sol",
       "solcConfig": {
         "version": "0.8.20",

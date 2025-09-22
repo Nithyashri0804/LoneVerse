@@ -37,10 +37,10 @@ const Dashboard: React.FC = () => {
       const activeLoanIds = await contract.getActiveLoanRequests();
       
       // Get borrower loans
-      const borrowerLoanIds = await contract.borrowerLoans(account);
+      const borrowerLoanIds = await contract.getBorrowerLoans(account);
       
       // Get lender loans  
-      const lenderLoanIds = await contract.lenderLoans(account);
+      const lenderLoanIds = await contract.getLenderLoans(account);
 
       // Combine all unique loan IDs
       const allLoanIds = new Set([
