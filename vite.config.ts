@@ -9,7 +9,13 @@ export default defineConfig({
     port: 5000, // Replit frontend port
     open: false, // Don't auto-open browser in VS Code
     strictPort: true, // Fail if port is not available
-    allowedHosts: true // Allow all hosts for Replit proxy
+    allowedHosts: true, // Allow all hosts for Replit proxy
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3001',
+        changeOrigin: true
+      }
+    }
   },
   preview: {
     host: '0.0.0.0',
