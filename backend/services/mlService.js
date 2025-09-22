@@ -271,27 +271,6 @@ export function getRecommendedInterestRate(riskScore) {
 }
 
 /**
- * Get risk category based on score
- */
-export function getRiskCategory(riskScore) {
-  if (riskScore <= 300) return 'Low';
-  if (riskScore <= 600) return 'Medium';
-  if (riskScore <= 800) return 'High';
-  return 'Very High';
-}
-
-/**
- * Get recommended interest rate based on risk score
- */
-export function getRecommendedInterestRate(riskScore) {
-  // Base rate + risk premium
-  const baseRate = 300; // 3% in basis points
-  const riskPremium = (riskScore / 1000) * 1500; // Up to 15% risk premium
-  
-  return Math.round(baseRate + riskPremium);
-}
-
-/**
  * Get current ML service status
  */
 export function getMlStatus() {

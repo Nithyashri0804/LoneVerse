@@ -92,16 +92,23 @@ const EnhancedAnalyticsDashboard: React.FC = () => {
     try {
       setIsLoading(true);
       
-      // Fetch market metrics
-      const activeLoanIds = await contract.getActiveLoanRequests();
-      setMarketMetrics({
-        totalVolume: 2850000,
-        activeLoans: activeLoanIds.length,
-        averageInterestRate: 8.5,
-        defaultRate: 2.3,
-        platformTVL: 15200000,
-        monthlyGrowth: 23.4
-      });
+      // Fetch real market metrics from backend
+      try {
+        const response = await fetch(`http://localhost:3001/api/analytics/market`);
+        const marketData = await response.json();
+        setMarketMetrics(marketData);
+      } catch (error) {
+        console.warn('Backend analytics unavailable, using fallback data');
+        const activeLoanIds = await contract.getActiveLoanRequests();
+        setMarketMetrics({
+          totalVolume: 0,
+          activeLoans: activeLoanIds.length,
+          averageInterestRate: 0,
+          defaultRate: 0,
+          platformTVL: 0,
+          monthlyGrowth: 0
+        });
+      }
 
       // Fetch user metrics (simulated)
       setUserMetrics({

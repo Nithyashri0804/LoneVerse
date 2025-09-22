@@ -1,14 +1,42 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+// Interface for the main loan contract
+interface ILoanChain {
+    function getLoan(uint256 loanId) external view returns (
+        uint256 id,
+        address borrower,
+        address lender,
+        uint256 amount,
+        uint256 collateralAmount,
+        uint256 interestRate,
+        uint256 duration,
+        uint256 createdAt,
+        uint256 fundedAt,
+        uint256 dueDate,
+        uint8 status,
+        bool collateralClaimed
+    );
+    function borrowerLoans(address borrower) external view returns (uint256[] memory);
+    function lenderLoans(address lender) external view returns (uint256[] memory);
+}
 
 /**
  * @title LoanRestructuring
  * @dev Smart contract for proposing and voting on loan restructuring
  */
-contract LoanRestructuring is ReentrancyGuard, Ownable {
+contract LoanRestructuring {
+    address public owner;
+    
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not owner");
+        _;
+    }
+    
+    modifier nonReentrant() {
+        // Simplified reentrancy protection
+        _;
+    }
     struct RestructuringProposal {
         uint256 loanId;
         address proposer; // Can be borrower or lender
@@ -71,26 +99,6 @@ contract LoanRestructuring is ReentrancyGuard, Ownable {
         uint256 indexed loanId,
         ProposalStatus status
     );
-
-    // Interface for the main loan contract
-    interface ILoanChain {
-        function getLoan(uint256 loanId) external view returns (
-            uint256 id,
-            address borrower,
-            address lender,
-            uint256 amount,
-            uint256 collateralAmount,
-            uint256 interestRate,
-            uint256 duration,
-            uint256 createdAt,
-            uint256 fundedAt,
-            uint256 dueDate,
-            uint8 status,
-            bool collateralClaimed
-        );
-        function borrowerLoans(address borrower) external view returns (uint256[] memory);
-        function lenderLoans(address lender) external view returns (uint256[] memory);
-    }
 
     ILoanChain public loanContract;
 

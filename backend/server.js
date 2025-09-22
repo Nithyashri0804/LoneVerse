@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { ethers } from 'ethers';
 import riskAnalyticsRoutes from './routes/riskAnalytics.js';
 import loanAnalyticsRoutes from './routes/loanAnalytics.js';
+import analyticsRoutes from './routes/analytics.js';
 import notificationRoutes from './routes/notifications.js';
 import ipfsRoutes from './routes/ipfs.js';
 import emailNotificationRoutes from './routes/emailNotifications.js';
@@ -69,7 +70,8 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Routes with different rate limits
 app.use('/api/risk', strictLimiter, riskAnalyticsRoutes);        // AI/ML endpoints - limited
-app.use('/api/analytics', loanAnalyticsRoutes);                  // Read-only - general limit
+app.use('/api/loan-analytics', loanAnalyticsRoutes);             // Read-only - general limit
+app.use('/api/analytics', analyticsRoutes);                     // Enhanced analytics - general limit
 app.use('/api/notifications', notificationRoutes);              // General limit 
 app.use('/api/ipfs', strictLimiter, ipfsRoutes);                // File uploads - limited
 app.use('/api/email-notifications', strictLimiter, emailNotificationRoutes); // Email sending - limited
