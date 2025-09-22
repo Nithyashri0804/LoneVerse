@@ -21,9 +21,9 @@ export const CONTRACT_ADDRESSES: Record<number, {
     mockUSDT: "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0", // Sepolia USDT
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
-    loanChain: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",     // LoanChain V1 (legacy)
+    loanChain: "",     // V1 not deployed locally
     loanChainV2: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // LoanChainV2 (local deployment)
-    loanChainV3: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // Using V2 address for now
+    loanChainV3: "",   // V3 not deployed locally
     tokenSwap: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",    // TokenSwap contract (local)
     mockUSDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Mock USDC token (local)
     mockDAI: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",      // Mock DAI token (local)
