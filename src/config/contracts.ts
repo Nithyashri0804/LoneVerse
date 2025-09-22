@@ -22,12 +22,12 @@ export const CONTRACT_ADDRESSES: Record<number, {
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
     loanChain: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",     // LoanChain V1 (legacy)
-    loanChainV2: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // LoanChainV2 (primary)
+    loanChainV2: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // LoanChainV2 (local deployment)
     loanChainV3: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // Using V2 address for now
-    tokenSwap: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",    // TokenSwap contract for token exchanges
-    mockUSDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Mock USDC token
-    mockDAI: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",      // Mock DAI token
-    mockUSDT: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",     // Mock USDT token
+    tokenSwap: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",    // TokenSwap contract (local)
+    mockUSDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Mock USDC token (local)
+    mockDAI: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",      // Mock DAI token (local)
+    mockUSDT: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",     // Mock USDT token (local)
   },
 };
 
@@ -38,7 +38,7 @@ export const NETWORK_NAMES: Record<number, string> = {
 
 export const RPC_URLS: Record<number, string> = {
   [SUPPORTED_CHAINS.SEPOLIA]: "https://sepolia.infura.io/v3/demo",
-  [SUPPORTED_CHAINS.HARDHAT]: "http://localhost:8000",
+  [SUPPORTED_CHAINS.HARDHAT]: "http://localhost:8545",
 };
 
 export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' = 'v2'): string | null {
