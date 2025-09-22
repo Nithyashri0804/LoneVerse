@@ -1,0 +1,45 @@
+ npm start  
+
+> loanverse-backend@1.0.0 start
+> node server.js
+
+📧 Email service initialized
+⚠️ LIQUIDATOR_PRIVATE_KEY not set - liquidation service disabled for security
+📈 Interest Rate Matching Service initialized
+📝 TensorFlow.js-node not available, trying browser version...
+⚠️ LIQUIDATOR_PRIVATE_KEY not set - liquidation service disabled for security
+📈 Interest Rate Matching Service initialized
+📝 TensorFlow.js-node not available, trying browser version...
+📈 Interest Rate Matching Service initialized
+📝 TensorFlow.js-node not available, trying browser version...
+📝 TensorFlow.js-node not available, trying browser version...
+✅ TensorFlow.js loaded successfully
+🚀 Starting LoanVerse Backend...
+
+============================
+Hi, looks like you are running TensorFlow.js in Node.js. To speed things up dramatically, install our node backend, visit https://github.com/tensorflow/tfjs-node for more details.
+============================
+🤖 ML model created successfully
+✅ ML model initialized
+
+============================
+Hi, looks like you are running TensorFlow.js in Node.js. To speed things up dramatically, install our node backend, visit https://github.com/tensorflow/tfjs-node for more details.
+============================
+🤖 ML model created successfully
+✅ ML model initialized
+Hi, looks like you are running TensorFlow.js in Node.js. To speed things up dramatically, install our node backend, visit https://github.com/tensorflow/tfjs-node for more details.
+============================
+🤖 ML model created successfully
+✅ ML model initialized
+============================
+🤖 ML model created successfully
+✅ ML model initialized
+✅ ML model initialized
+🔍 Starting risk monitoring service...
+✅ Risk monitoring service started
+✅ Risk monitoring started
+⚠️ Liquidation service disabled - set LIQUIDATOR_PRIVATE_KEY environment variable
+✅ Liquidation monitoring started
+🌟 LoanVerse Backend running on port 3001
+📊 Environment: development
+🤖 ML Features: Enabled
