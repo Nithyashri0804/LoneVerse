@@ -9,7 +9,7 @@ export const filterLoans = (loans: Loan[], filters: LoanFilters): Loan[] => {
       const searchLower = filters.search.toLowerCase();
       if (
         !loan.borrower.toLowerCase().includes(searchLower) &&
-        !loan.lender.toLowerCase().includes(searchLower) &&
+        !loan.lenders.some(lender => lender.toLowerCase().includes(searchLower)) &&
         !loan.id.toString().includes(searchLower)
       ) {
         return false;
@@ -17,7 +17,7 @@ export const filterLoans = (loans: Loan[], filters: LoanFilters): Loan[] => {
     }
 
     // Amount range filter
-    const loanAmountEth = parseFloat(formatEther(loan.amount));
+    const loanAmountEth = parseFloat(formatEther(loan.totalAmount));
     if (filters.amountMin && loanAmountEth < parseFloat(filters.amountMin)) {
       return false;
     }
@@ -56,9 +56,9 @@ export const sortLoans = (loans: Loan[], sortBy: LoanFilters['sortBy']): Loan[] 
     case 'oldest':
       return sortedLoans.sort((a, b) => a.createdAt - b.createdAt);
     case 'amount_high':
-      return sortedLoans.sort((a, b) => parseFloat(formatEther(b.amount)) - parseFloat(formatEther(a.amount)));
+      return sortedLoans.sort((a, b) => parseFloat(formatEther(b.totalAmount)) - parseFloat(formatEther(a.totalAmount)));
     case 'amount_low':
-      return sortedLoans.sort((a, b) => parseFloat(formatEther(a.amount)) - parseFloat(formatEther(b.amount)));
+      return sortedLoans.sort((a, b) => parseFloat(formatEther(a.totalAmount)) - parseFloat(formatEther(b.totalAmount)));
     case 'rate_low':
       return sortedLoans.sort((a, b) => a.interestRate - b.interestRate);
     case 'rate_high':
@@ -88,8 +88,8 @@ export const calculateRiskScore = (loan: Loan): number => {
   else if (durationDays > 90) riskScore += 5;
 
   // Factor in collateralization ratio
-  const loanAmountEth = parseFloat(formatEther(loan.amount));
-  const collateralAmountEth = parseFloat(formatEther(loan.collateral));
+  const loanAmountEth = parseFloat(formatEther(loan.totalAmount));
+  const collateralAmountEth = parseFloat(formatEther(loan.collateralAmount));
   const collateralizationRatio = collateralAmountEth / loanAmountEth;
   
   if (collateralizationRatio < 1.2) riskScore += 30;

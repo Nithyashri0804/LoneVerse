@@ -38,12 +38,15 @@ export interface LenderPosition {
 export interface Loan {
   id: number;
   borrower: string;
-  lenders: string[];
+  lender: string; // Primary lender for backward compatibility
+  lenders: string[]; // Multiple lenders for V2
   lenderAmounts: string[];
+  amount: string; // Alias for totalAmount for backward compatibility
   totalAmount: string;
   totalFunded: string;
   loanToken: TokenType;
   collateralToken: TokenType;
+  collateral: string; // Alias for collateralAmount for backward compatibility
   collateralAmount: string;
   interestRate: number;
   isVariableRate: boolean;
