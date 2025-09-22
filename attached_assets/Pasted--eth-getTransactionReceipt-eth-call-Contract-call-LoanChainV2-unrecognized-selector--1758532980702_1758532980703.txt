@@ -1,0 +1,66 @@
+
+eth_getTransactionReceipt
+eth_call
+  Contract call:       LoanChainV2#<unrecognized-selector>
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+
+  Error: Transaction reverted without a reason
+
+eth_blockNumber
+eth_getBlockByNumber
+eth_getLogs
+eth_call
+  Contract call:       LoanChainV2#<unrecognized-selector>
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+
+  Error: Transaction reverted without a reason
+
+eth_call
+  Contract call:       LoanChainV2#<unrecognized-selector>
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+
+  Error: Transaction reverted without a reason
+
+eth_getBalance (8)
+eth_gasPrice
+eth_call
+  Contract call:       LoanChainV2#getActiveLoanRequests
+  From:                0x15d34aaf54267db7d7c367839aaf71a00a2c6a65
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+
+eth_getTransactionReceipt
+eth_blockNumber
+eth_getBlockByHash
+eth_call
+  Contract call:       LoanChainV2#<unrecognized-selector>
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+
+  Error: Transaction reverted without a reason
+
+eth_blockNumber
+eth_call
+  Contract call:       LoanChainV2#<unrecognized-selector>
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+
+  Error: Transaction reverted without a reason
+
+eth_call
+  Contract call:       LoanChainV2#<unrecognized-selector>
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+
+  Error: Transaction reverted without a reason
+
+eth_call
+  Contract call:       LoanChainV2#<unrecognized-selector>
+  From:                0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+  To:                  0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9
+
+  Error: Transaction reverted without a reason
+
+eth_blockNumber
