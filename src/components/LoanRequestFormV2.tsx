@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
-import { Calculator, Shield, TrendingUp } from 'lucide-react';
+import { Calculator, Shield, TrendingUp, Upload } from 'lucide-react';
 import { TokenType, LoanFormData, TOKEN_INFO } from '../types/loan';
 import TokenSelector from './TokenSelector';
+import IPFSDocumentUpload from './IPFSDocumentUpload';
 
 interface LoanRequestFormV2Props {
   onSubmit: (loanData: LoanFormData) => void;
@@ -23,6 +24,7 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
 
   const [calculatedCollateral, setCalculatedCollateral] = useState('');
   const [crossCollateralEnabled, setCrossCollateralEnabled] = useState(false);
+  const [collateralDocuments, setCollateralDocuments] = useState<{ name: string; ipfsHash: string }[]>([]);
 
   // Calculate required collateral when loan amount or tokens change
   useEffect(() => {
@@ -286,6 +288,34 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
               <span className="text-white ml-2">120%</span>
             </div>
           </div>
+        </div>
+
+        {/* IPFS Document Upload */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-2 text-white">
+            <Upload className="w-5 h-5" />
+            <h3 className="font-medium">Collateral Documentation</h3>
+          </div>
+          <IPFSDocumentUpload
+            onDocumentsChange={setCollateralDocuments}
+            maxFiles={3}
+            title="Upload Collateral Proof"
+            description="Upload documents proving ownership and value of your collateral (property deeds, vehicle titles, appraisals, etc.)"
+          />
+          {collateralDocuments.length > 0 && (
+            <div className="bg-green-900/20 border border-green-700 rounded-lg p-3">
+              <div className="text-green-400 text-sm font-medium">Documents Uploaded:</div>
+              <div className="text-green-300 text-sm space-y-1">
+                {collateralDocuments.map((doc, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>{doc.name}</span>
+                    <span className="text-green-500 text-xs">({doc.ipfsHash.slice(0, 12)}...)</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Submit Button */}

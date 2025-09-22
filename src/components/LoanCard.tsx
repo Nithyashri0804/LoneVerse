@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Clock, DollarSign, Shield, User, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
 import { ethers } from 'ethers';
-import { Loan, LoanStatus } from '../types/loan';
+import { Loan, LoanStatus, TokenType, TOKEN_INFO } from '../types/loan';
 import { calculateRiskScore, getRiskLevel } from '../utils/loanFilters';
 import { useContract } from '../hooks/useContract';
 import { useWallet } from '../hooks/useWallet';
@@ -51,6 +51,10 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
+  const getTokenSymbol = (tokenType: TokenType): string => {
+    return TOKEN_INFO[tokenType]?.symbol || 'UNKNOWN';
+  };
+
   const formatDate = (timestamp: number) => {
     if (timestamp === 0) return 'N/A';
     return new Date(timestamp * 1000).toLocaleDateString();
@@ -61,7 +65,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
 
   const calculateRepaymentAmount = () => {
     // Use wei-based integer arithmetic for precision
-    const amountWei = BigInt(loan.amount);
+    const amountWei = BigInt(loan.totalAmount);
     const interestWei = (amountWei * BigInt(loan.interestRate)) / BigInt(10000);
     return amountWei + interestWei;
   };
@@ -88,7 +92,8 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
 
   const canClaimCollateral = () => {
     return loan.status === LoanStatus.FUNDED && 
-           account && account.toLowerCase() === loan.lender.toLowerCase() &&
+           account && loan.lenders.length > 0 && 
+           loan.lenders.some(lender => lender.toLowerCase() === account.toLowerCase()) &&
            isExpired() &&
            !loan.collateralClaimed;
   };
@@ -100,11 +105,21 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       setIsLoading(true);
       setError('');
 
-      const tx = await contract.fundLoan(loan.id, {
-        value: loan.amount,
-      });
+      const isNativeETH = loan.loanToken === 0; // TokenType.NATIVE_ETH
+      
+      if (isNativeETH) {
+        // For ETH loans, send ETH value
+        const tx = await contract.fundLoan(loan.id, {
+          value: loan.totalAmount,
+        });
+        await tx.wait();
+      } else {
+        // For ERC20 loans, need token approval first
+        // TODO: Implement ERC20 approval flow
+        setError('ERC20 token funding not yet implemented. Please use ETH loans for now.');
+        return;
+      }
 
-      await tx.wait();
       onUpdate();
     } catch (error: any) {
       console.error('Error funding loan:', error);
@@ -122,11 +137,21 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       setError('');
 
       const repaymentAmount = calculateRepaymentAmount();
-      const tx = await contract.repayLoan(loan.id, {
-        value: repaymentAmount,
-      });
+      const isNativeETH = loan.loanToken === 0; // TokenType.NATIVE_ETH
+      
+      if (isNativeETH) {
+        // For ETH loans, send ETH value
+        const tx = await contract.repayLoan(loan.id, {
+          value: repaymentAmount,
+        });
+        await tx.wait();
+      } else {
+        // For ERC20 loans, need token approval first
+        // TODO: Implement ERC20 approval and transfer
+        setError('ERC20 token repayment not yet implemented. Please use ETH loans for now.');
+        return;
+      }
 
-      await tx.wait();
       onUpdate();
     } catch (error: any) {
       console.error('Error repaying loan:', error);
@@ -178,7 +203,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Loan Amount</div>
               <div className="text-white font-medium">
-                {parseFloat(ethers.formatEther(loan.amount)).toFixed(4)} ETH
+                {parseFloat(ethers.formatEther(loan.totalAmount)).toFixed(4)} {getTokenSymbol(loan.loanToken)}
               </div>
             </div>
           </div>
@@ -188,7 +213,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Collateral</div>
               <div className="text-white font-medium">
-                {parseFloat(ethers.formatEther(loan.collateral)).toFixed(4)} ETH
+                {parseFloat(ethers.formatEther(loan.collateralAmount)).toFixed(4)} {getTokenSymbol(loan.collateralToken)}
               </div>
             </div>
           </div>
@@ -221,12 +246,17 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             </div>
           </div>
 
-          {loan.lender !== ethers.ZeroAddress && (
+          {loan.lenders.length > 0 && (
             <div className="flex items-center space-x-2">
               <User className="text-cyan-400" size={16} />
               <div>
-                <div className="text-xs text-gray-400">Lender</div>
-                <div className="text-white font-medium">{formatAddress(loan.lender)}</div>
+                <div className="text-xs text-gray-400">{loan.lenders.length > 1 ? 'Lenders' : 'Lender'}</div>
+                <div className="text-white font-medium">
+                  {loan.lenders.length === 1 
+                    ? formatAddress(loan.lenders[0])
+                    : `${loan.lenders.length} lenders`
+                  }
+                </div>
               </div>
             </div>
           )}

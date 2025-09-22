@@ -162,18 +162,30 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Loan Amount (ETH)
+            Loan Amount
           </label>
-          <input
-            type="number"
-            step="0.0001"
-            min="0.0001"
-            value={formData.totalAmount}
-            onChange={(e) => handleInputChange('totalAmount', e.target.value)}
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="0.0000"
-            required
-          />
+          <div className="flex space-x-3">
+            <input
+              type="number"
+              step="0.0001"
+              min="0.0001"
+              value={formData.totalAmount}
+              onChange={(e) => handleInputChange('totalAmount', e.target.value)}
+              className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="0.0000"
+              required
+            />
+            <select
+              value={formData.loanToken}
+              onChange={(e) => handleInputChange('loanToken', parseInt(e.target.value))}
+              className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value={0}>ETH</option>
+              <option value={1}>USDC</option>
+              <option value={2}>DAI</option>
+              <option value={3}>USDT</option>
+            </select>
+          </div>
         </div>
 
         <div>

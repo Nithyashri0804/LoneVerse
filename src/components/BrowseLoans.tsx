@@ -41,16 +41,24 @@ const BrowseLoans: React.FC = () => {
         return {
           id: Number(loanData.id.toString()),
           borrower: loanData.borrower,
-          lender: loanData.lender,
-          amount: loanData.amount.toString(),
-          collateral: loanData.collateral.toString(),
+          lenders: loanData.lenders,
+          lenderAmounts: loanData.lenderAmounts.map((amount: any) => amount.toString()),
+          totalAmount: loanData.totalAmount.toString(),
+          totalFunded: loanData.totalFunded.toString(),
+          loanToken: Number(loanData.loanToken),
+          collateralToken: Number(loanData.collateralToken),
+          collateralAmount: loanData.collateralAmount.toString(),
           interestRate: Number(loanData.interestRate.toString()),
+          isVariableRate: loanData.isVariableRate,
           duration: Number(loanData.duration.toString()),
           createdAt: Number(loanData.createdAt.toString()),
           fundedAt: Number(loanData.fundedAt.toString()),
           dueDate: Number(loanData.dueDate.toString()),
           status: loanData.status as LoanStatus,
           collateralClaimed: loanData.collateralClaimed,
+          riskScore: Number(loanData.riskScore.toString()),
+          hasInsurance: loanData.hasInsurance,
+          insuranceFee: loanData.insuranceFee.toString(),
         } as Loan;
       });
 
@@ -95,7 +103,7 @@ const BrowseLoans: React.FC = () => {
         const loanData = await contract.getLoan(loanId);
         totalLoans++;
 
-        const loanAmount = parseFloat(formatEther(loanData.amount.toString()));
+        const loanAmount = parseFloat(formatEther(loanData.totalAmount.toString()));
         totalBorrowed = (parseFloat(totalBorrowed) + loanAmount).toString();
 
         if (loanData.status === LoanStatus.REPAID) {
@@ -226,7 +234,7 @@ const BrowseLoans: React.FC = () => {
 
   const getMarketplaceStats = () => {
     const totalAvailable = loans.length;
-    const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatEther(loan.amount)), 0);
+    const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatEther(loan.totalAmount)), 0);
     const averageRate = loans.length > 0 ? loans.reduce((sum, loan) => sum + loan.interestRate, 0) / loans.length / 100 : 0;
     const verifiedBorrowers = Array.from(reputations.values()).filter(rep => rep.isVerified).length;
 
