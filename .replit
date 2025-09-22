@@ -47,6 +47,7 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd backend && npm start"
+waitForPort = 3001
 
 [workflows.workflow.metadata]
 outputType = "console"
@@ -57,7 +58,8 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx hardhat node --port 8000 --hostname localhost"
+args = "npx hardhat node --port 8000 --hostname 0.0.0.0"
+waitForPort = 8000
 
 [workflows.workflow.metadata]
 outputType = "console"
@@ -68,12 +70,10 @@ expertMode = true
 [[ports]]
 localPort = 3001
 externalPort = 3001
-exposeLocalhost = true
 
 [[ports]]
-localPort = 8000
-externalPort = 8000
-exposeLocalhost = true
+localPort = 5000
+externalPort = 80
 
 [[ports]]
 localPort = 33589
@@ -82,6 +82,10 @@ externalPort = 5000
 [[ports]]
 localPort = 34415
 externalPort = 9000
+
+[[ports]]
+localPort = 35229
+externalPort = 8000
 
 [[ports]]
 localPort = 37963
@@ -126,3 +130,7 @@ externalPort = 5173
 [[ports]]
 localPort = 46803
 externalPort = 3003
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
