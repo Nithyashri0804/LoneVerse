@@ -41,13 +41,19 @@ For local development, the project runs completely independently:
 The project follows a modular architecture separating frontend, backend API, and smart contracts. Frontend communicates with smart contracts via Ethers.js and with the backend API for off-chain services. The backend utilizes ML for risk assessment and integrates with IPFS for decentralized storage. Deployment is configured for autoscale environments.
 
 ## Recent Changes
-- **September 23, 2025**: Successfully re-imported and configured LoanChain for Replit environment
+- **September 23, 2025**: Successfully imported and configured LoanChain for Replit environment
 - Installed all frontend and backend dependencies (npm install completed)
-- Configured three workflows: Frontend (port 5000), Backend API (port 3001), Hardhat Node (port 8000)
-- Deployed LoanChainV2 contracts to local Hardhat network with addresses matching configuration
+- Configured three workflows: Frontend (port 5000), Backend API (port 3001), Hardhat Node (port 8000)  
+- Deployed LoanChainV2 contracts to local Hardhat network with proper addresses:
+  - LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+  - TokenSwap: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+  - Mock USDC: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  - Mock DAI: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+  - Mock USDT: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
 - Set up deployment configuration for autoscale production environment
 - All systems tested and running successfully
-- Frontend accessible and contracts deployed
+- Frontend accessible with proper UI/UX and smart contract integration
+- Backend API running with ML services, email notifications, and risk assessment
 
 ## External Dependencies
 - **Ethereum Blockchain**: For smart contract deployment and transactions (local Hardhat network, Sepolia testnet).
