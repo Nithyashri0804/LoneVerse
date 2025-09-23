@@ -39,7 +39,12 @@ const Dashboard: React.FC = () => {
           const result = await contractCall();
           return Array.isArray(result) ? result : [];
         } catch (error: any) {
-          console.warn('Contract call failed, returning empty array:', error.message);
+          // Silently handle empty result decoding errors (common when no data exists yet)
+          if (error.code === 'BAD_DATA' && error.value === '0x') {
+            return [];
+          }
+          // Log unexpected errors
+          console.warn('Unexpected contract call error:', error.message);
           return [];
         }
       };
