@@ -106,18 +106,46 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       setError('');
 
       const isNativeETH = loan.loanToken === 0; // TokenType.NATIVE_ETH
+      const fundingAmount = loan.totalAmount; // Fund the full amount
       
       if (isNativeETH) {
-        // For ETH loans, send ETH value
-        const tx = await contract.fundLoan(loan.id, {
-          value: loan.totalAmount,
+        // For ETH loans, send ETH value with both loanId and amount parameters
+        const tx = await contract.fundLoan(loan.id, fundingAmount, {
+          value: fundingAmount,
         });
         await tx.wait();
       } else {
         // For ERC20 loans, need token approval first
-        // TODO: Implement ERC20 approval flow
-        setError('ERC20 token funding not yet implemented. Please use ETH loans for now.');
-        return;
+        const { ethers } = await import('ethers');
+        const tokenAddress = await getTokenAddress(loan.loanToken);
+        
+        if (!tokenAddress) {
+          setError('Token address not found for this token type');
+          return;
+        }
+
+        // Create ERC20 contract instance
+        const erc20Contract = new ethers.Contract(
+          tokenAddress,
+          ['function approve(address spender, uint256 amount) external returns (bool)',
+           'function allowance(address owner, address spender) external view returns (uint256)'],
+          contract.runner
+        );
+
+        // Check current allowance
+        const currentAllowance = await erc20Contract.allowance(account, await contract.getAddress());
+        
+        if (currentAllowance < fundingAmount) {
+          // Need to approve first
+          console.log('Approving token spend...');
+          const approveTx = await erc20Contract.approve(await contract.getAddress(), fundingAmount);
+          await approveTx.wait();
+          console.log('Token approval confirmed');
+        }
+
+        // Now fund the loan
+        const tx = await contract.fundLoan(loan.id, fundingAmount);
+        await tx.wait();
       }
 
       onUpdate();
@@ -126,6 +154,16 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       setError(error.reason || error.message || 'Failed to fund loan');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const getTokenAddress = async (tokenType: TokenType): Promise<string | null> => {
+    try {
+      const tokenInfo = await contract.getSupportedToken(tokenType);
+      return tokenInfo.contractAddress;
+    } catch (error) {
+      console.error('Error getting token address:', error);
+      return null;
     }
   };
 
