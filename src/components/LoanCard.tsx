@@ -122,35 +122,44 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       } else {
         // For ERC20 loans, need token approval first
         const { ethers } = await import('ethers');
-        const tokenAddress = await getTokenAddress(loan.loanToken);
         
-        if (!tokenAddress) {
-          setError('Token address not found for this token type');
+        try {
+          const tokenInfo = await contract.getSupportedToken(loan.loanToken);
+          const tokenAddress = tokenInfo.contractAddress;
+          
+          if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
+            setError('Invalid token address for this token type');
+            return;
+          }
+
+          // Create ERC20 contract instance
+          const erc20Contract = new ethers.Contract(
+            tokenAddress,
+            ['function approve(address spender, uint256 amount) external returns (bool)',
+             'function allowance(address owner, address spender) external view returns (uint256)'],
+            contract.runner
+          );
+
+          // Check current allowance
+          const contractAddress = await contract.getAddress();
+          const currentAllowance = await erc20Contract.allowance(account, contractAddress);
+          
+          if (currentAllowance < fundingAmount) {
+            // Need to approve first
+            console.log('Approving token spend...');
+            const approveTx = await erc20Contract.approve(contractAddress, fundingAmount);
+            await approveTx.wait();
+            console.log('Token approval confirmed');
+          }
+
+          // Now fund the loan (no ETH value for ERC20 loans)
+          const tx = await contract.fundLoan(loan.id, fundingAmount);
+          await tx.wait();
+        } catch (tokenError: any) {
+          console.error('Error with token operations:', tokenError);
+          setError('Failed to get token information or approve token spend');
           return;
         }
-
-        // Create ERC20 contract instance
-        const erc20Contract = new ethers.Contract(
-          tokenAddress,
-          ['function approve(address spender, uint256 amount) external returns (bool)',
-           'function allowance(address owner, address spender) external view returns (uint256)'],
-          contract.runner
-        );
-
-        // Check current allowance
-        const currentAllowance = await erc20Contract.allowance(account, await contract.getAddress());
-        
-        if (currentAllowance < fundingAmount) {
-          // Need to approve first
-          console.log('Approving token spend...');
-          const approveTx = await erc20Contract.approve(await contract.getAddress(), fundingAmount);
-          await approveTx.wait();
-          console.log('Token approval confirmed');
-        }
-
-        // Now fund the loan
-        const tx = await contract.fundLoan(loan.id, fundingAmount);
-        await tx.wait();
       }
 
       onUpdate();
@@ -164,6 +173,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
 
   const getTokenAddress = async (tokenType: TokenType): Promise<string | null> => {
     try {
+      if (!contract) return null;
       const tokenInfo = await contract.getSupportedToken(tokenType);
       return tokenInfo.contractAddress;
     } catch (error) {
