@@ -33,14 +33,25 @@ const Dashboard: React.FC = () => {
     try {
       setIsLoading(true);
 
-      // Get all active loan requests
-      const activeLoanIds = await contract.getActiveLoanRequests();
+      // Helper function to safely call contract functions that return arrays
+      const safeContractCall = async (contractCall: () => Promise<any>): Promise<any[]> => {
+        try {
+          const result = await contractCall();
+          return Array.isArray(result) ? result : [];
+        } catch (error: any) {
+          console.warn('Contract call failed, returning empty array:', error.message);
+          return [];
+        }
+      };
+
+      // Get all active loan requests (safely handle empty results)
+      const activeLoanIds = await safeContractCall(() => contract.getActiveLoanRequests());
       
-      // Get borrower loans
-      const borrowerLoanIds = await contract.getBorrowerLoans(account);
+      // Get borrower loans (safely handle empty results)
+      const borrowerLoanIds = await safeContractCall(() => contract.getBorrowerLoans(account));
       
-      // Get lender loans  
-      const lenderLoanIds = await contract.getLenderLoans(account);
+      // Get lender loans (safely handle empty results)
+      const lenderLoanIds = await safeContractCall(() => contract.getLenderLoans(account));
 
       // Combine all unique loan IDs
       const allLoanIds = new Set([
@@ -49,37 +60,52 @@ const Dashboard: React.FC = () => {
         ...lenderLoanIds.map((id: any) => Number(id.toString())),
       ]);
 
+      // If no loans exist, set empty array and return
+      if (allLoanIds.size === 0) {
+        setLoans([]);
+        return;
+      }
+
       // Fetch loan details
       const loanPromises = Array.from(allLoanIds).map(async (loanId) => {
-        const loanData = await contract.getLoan(loanId);
-        return {
-          id: Number(loanData.id.toString()),
-          borrower: loanData.borrower,
-          lenders: loanData.lenders,
-          lenderAmounts: loanData.lenderAmounts.map((amt: any) => amt.toString()),
-          totalAmount: loanData.totalAmount.toString(),
-          totalFunded: loanData.totalFunded.toString(),
-          loanToken: loanData.loanToken,
-          collateralToken: loanData.collateralToken,
-          collateralAmount: loanData.collateralAmount.toString(),
-          interestRate: Number(loanData.interestRate.toString()),
-          isVariableRate: loanData.isVariableRate,
-          duration: Number(loanData.duration.toString()),
-          createdAt: Number(loanData.createdAt.toString()),
-          fundedAt: Number(loanData.fundedAt.toString()),
-          dueDate: Number(loanData.dueDate.toString()),
-          status: loanData.status as LoanStatus,
-          collateralClaimed: loanData.collateralClaimed,
-          riskScore: Number(loanData.riskScore.toString()),
-          hasInsurance: loanData.hasInsurance,
-          insuranceFee: loanData.insuranceFee.toString(),
-        } as Loan;
+        try {
+          const loanData = await contract.getLoan(loanId);
+          return {
+            id: Number(loanData.id.toString()),
+            borrower: loanData.borrower,
+            lenders: loanData.lenders,
+            lenderAmounts: loanData.lenderAmounts.map((amt: any) => amt.toString()),
+            totalAmount: loanData.totalAmount.toString(),
+            totalFunded: loanData.totalFunded.toString(),
+            loanToken: loanData.loanToken,
+            collateralToken: loanData.collateralToken,
+            collateralAmount: loanData.collateralAmount.toString(),
+            interestRate: Number(loanData.interestRate.toString()),
+            isVariableRate: loanData.isVariableRate,
+            duration: Number(loanData.duration.toString()),
+            createdAt: Number(loanData.createdAt.toString()),
+            fundedAt: Number(loanData.fundedAt.toString()),
+            dueDate: Number(loanData.dueDate.toString()),
+            status: loanData.status as LoanStatus,
+            collateralClaimed: loanData.collateralClaimed,
+            riskScore: Number(loanData.riskScore.toString()),
+            hasInsurance: loanData.hasInsurance,
+            insuranceFee: loanData.insuranceFee.toString(),
+          } as Loan;
+        } catch (error) {
+          console.warn(`Failed to load loan ${loanId}:`, error);
+          return null;
+        }
       });
 
-      const loadedLoans = await Promise.all(loanPromises);
-      setLoans(loadedLoans.sort((a, b) => b.id - a.id));
+      const loadedLoans = (await Promise.all(loanPromises))
+        .filter((loan): loan is Loan => loan !== null)
+        .sort((a, b) => b.id - a.id);
+      
+      setLoans(loadedLoans);
     } catch (error) {
       console.error('Error loading loans:', error);
+      setLoans([]); // Set empty array on error
     } finally {
       setIsLoading(false);
     }
