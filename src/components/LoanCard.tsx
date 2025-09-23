@@ -337,6 +337,15 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         </div>
       )}
 
+      {/* Debug info - remove this after testing */}
+      <div className="bg-gray-700 rounded-lg p-2 mb-3 text-xs text-gray-300">
+        <div>Debug: Status = {loan.status}, Account = {account || 'Not connected'}</div>
+        <div>Borrower = {loan.borrower}</div>
+        <div>Can Fund = {canFund() ? 'YES' : 'NO'}</div>
+        <div>Status Check = {loan.status === LoanStatus.REQUESTED ? 'PASS' : 'FAIL'}</div>
+        <div>Account Check = {account && account.toLowerCase() !== loan.borrower.toLowerCase() ? 'PASS' : 'FAIL'}</div>
+      </div>
+
       <div className="flex space-x-3">
         {canFund() && (
           <button
@@ -354,6 +363,22 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             )}
           </button>
         )}
+        
+        {/* Temporary button for testing - always visible */}
+        <button
+          onClick={handleFundLoan}
+          disabled={isLoading || !account}
+          className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+        >
+          {isLoading ? (
+            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+          ) : (
+            <>
+              <DollarSign size={16} />
+              <span>Test Fund Loan</span>
+            </>
+          )}
+        </button>
 
         {canRepay() && (
           <button
