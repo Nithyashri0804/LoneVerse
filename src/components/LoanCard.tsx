@@ -80,33 +80,23 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
   };
 
   const canFund = () => {
-    const isRequested = loan.status === LoanStatus.REQUESTED;
+    // Convert BigInt status to number for comparison
+    const statusNumber = Number(loan.status);
+    const isRequested = statusNumber === LoanStatus.REQUESTED;
     const hasAccount = !!account;
     const isDifferentFromBorrower = account && account.toLowerCase() !== loan.borrower.toLowerCase();
-    
-    // Debug logging
-    console.log('🔍 Fund Loan Debug:', {
-      loanId: loan.id,
-      loanStatus: loan.status,
-      isRequestedStatus: isRequested,
-      account: account,
-      hasAccount: hasAccount,
-      borrower: loan.borrower,
-      isDifferentFromBorrower: isDifferentFromBorrower,
-      canFund: isRequested && hasAccount && isDifferentFromBorrower
-    });
     
     return isRequested && hasAccount && isDifferentFromBorrower;
   };
 
   const canRepay = () => {
-    return loan.status === LoanStatus.FUNDED && 
+    return Number(loan.status) === LoanStatus.FUNDED && 
            account && account.toLowerCase() === loan.borrower.toLowerCase() &&
            !isExpired();
   };
 
   const canClaimCollateral = () => {
-    return loan.status === LoanStatus.FUNDED && 
+    return Number(loan.status) === LoanStatus.FUNDED && 
            account && loan.lenders.length > 0 && 
            loan.lenders.some(lender => lender.toLowerCase() === account.toLowerCase()) &&
            isExpired() &&
@@ -324,7 +314,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         </div>
       </div>
 
-      {loan.status === LoanStatus.FUNDED && (
+      {Number(loan.status) === LoanStatus.FUNDED && (
         <div className="bg-gray-700 rounded-lg p-3 mb-4">
           <div className="flex items-center space-x-2 mb-2">
             <Clock className="text-blue-400" size={16} />
