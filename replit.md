@@ -6,17 +6,27 @@ LoanChain is a decentralized peer-to-peer lending platform built on Ethereum. It
 ## User Preferences
 I prefer simple language and clear explanations. I want iterative development, with small, testable changes. Please ask before making any major architectural changes or refactoring large parts of the codebase. Do not make changes to the `deployments/localhost-deployment.js` file.
 
+**IMPORTANT: I strongly prefer running this project locally in VS Code, completely independent from Replit. When I ask for local development setup, provide ONLY local VS Code instructions with localhost URLs, not Replit-based solutions. Do not suggest Replit alternatives when I explicitly request local development.**
+
 ## System Architecture
 
 ### UI/UX Decisions
 The frontend is built with React 18 and TypeScript, using Vite for fast development and Tailwind CSS for a responsive, modern design. Lucide React provides a consistent set of UI icons. The UI is designed to be intuitive for wallet connection, loan requests, funding, and tracking.
 
 ### Technical Implementations
-- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Ethers.js v6. Configured for Replit with dev server on port 5000.
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Ethers.js v6. Supports both Replit and local VS Code development with dev server on port 5000.
 - **Smart Contracts**: Developed with Hardhat and Solidity (0.8.19/0.8.20), secured by OpenZeppelin. The core `LoanChain.sol` contract manages loan lifecycle, requiring a minimum 150% collateralization.
-- **Backend API**: Node.js and Express, providing AI-powered risk assessment, analytics, and notification services. Runs on port 3001 with CORS configured for Replit.
+- **Backend API**: Node.js and Express, providing AI-powered risk assessment, analytics, and notification services. Runs on port 3001 with CORS configured for both Replit and localhost.
 - **Blockchain**: Ethereum-compatible, supporting local Hardhat network (port 8000) and Sepolia testnet.
 - **Development Tooling**: ESLint, PostCSS, Hot Module Reload for efficient development.
+
+### Local VS Code Development Setup
+For local development, the project runs completely independently:
+- **Frontend**: `npm run dev` → http://localhost:5000
+- **Backend**: `cd backend && npm start` → http://localhost:3001  
+- **Blockchain**: `npx hardhat node --port 8000` → http://localhost:8000
+- **Deploy Contracts**: `npx hardhat run scripts/deployV2.js --network localhost`
+- **MetaMask Config**: RPC URL `http://localhost:8000`, Chain ID `31337`
 
 ### Feature Specifications
 - Wallet connection (MetaMask via Ethers.js v6).
