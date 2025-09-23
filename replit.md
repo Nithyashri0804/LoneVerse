@@ -8,6 +8,8 @@ I prefer simple language and clear explanations. I want iterative development, w
 
 **IMPORTANT: I strongly prefer running this project locally in VS Code, completely independent from Replit. When I ask for local development setup, provide ONLY local VS Code instructions with localhost URLs, not Replit-based solutions. Do not suggest Replit alternatives when I explicitly request local development.**
 
+**Development Environment Preference**: I am primarily developing this project in VS Code with local localhost URLs. The project has been successfully imported and configured to work in both environments, but my preference is VS Code development.
+
 ## System Architecture
 
 ### UI/UX Decisions
@@ -54,6 +56,7 @@ The project follows a modular architecture separating frontend, backend API, and
 - All systems tested and running successfully
 - Frontend accessible with proper UI/UX and smart contract integration
 - Backend API running with ML services, email notifications, and risk assessment
+- **Confirmed working in VS Code**: User successfully running the project in VS Code at localhost:5000 with full loan interface functionality, smart contract integration, and proper error handling
 
 ## External Dependencies
 - **Ethereum Blockchain**: For smart contract deployment and transactions (local Hardhat network, Sepolia testnet).
