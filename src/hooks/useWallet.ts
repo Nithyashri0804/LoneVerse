@@ -195,6 +195,8 @@ export const useWallet = () => {
           setAccount(accounts[0]);
           setIsConnected(true);
           await updateBalance(accounts[0]);
+          await checkNetwork();
+          await updateTokenBalances(accounts[0]);
         }
       }
     };
