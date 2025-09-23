@@ -1,0 +1,86 @@
+l# Deploy to local hardhat network
+>> npx hardhat run scripts/deployV2.js --network localhost
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> contracts/LoanRestructuring.sol:253:36:
+    |
+253 |     function calculateVotingWeight(address _voter, uint256 _loanId) public pure returns (uint256) {
+    |                                    ^^^^^^^^^^^^^^
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+   --> contracts/LoanRestructuring.sol:253:52:
+    |
+253 |     function calculateVotingWeight(address _voter, uint256 _loanId) public pure returns (uint256) {
+    |                                                    ^^^^^^^^^^^^^^^
+
+
+Warning: Unused local variable.
+   --> contracts/LoanVerseV3.sol:238:13:
+    |
+238 |             uint80 roundId,
+    |             ^^^^^^^^^^^^^^
+
+
+Warning: Unused local variable.
+   --> contracts/LoanVerseV3.sol:240:13:
+    |
+240 |             uint256 startedAt,
+    |             ^^^^^^^^^^^^^^^^^
+
+
+Warning: Unused local variable.
+   --> contracts/LoanVerseV3.sol:242:13:
+    |
+242 |             uint80 answeredInRound
+    |             ^^^^^^^^^^^^^^^^^^^^^^
+
+
+Warning: Unused local variable.
+   --> contracts/LoanVerseV3.sol:424:9:
+    |
+424 |         uint256 auctionId = startLiquidationAuction(_loanId);
+    |         ^^^^^^^^^^^^^^^^^
+
+
+Warning: Unused local variable.
+   --> contracts/LoanVerseV3.sol:498:13:
+    |
+498 |             uint256 loanValueUSD = calculateUSDValue(loan.tokenId, loan.amount);
+    |             ^^^^^^^^^^^^^^^^^^^^
+
+
+Warning: Unused function parameter. Remove or comment out the variable name to silence this warning.
+  --> contracts/MockV3Aggregator.sol:78:9:
+   |
+78 |         uint256 _startedAt
+   |         ^^^^^^^^^^^^^^^^^^
+
+
+Compiled 22 Solidity files successfully (evm target: paris).
+🚀 Deploying LoanChainV2 with multi-token support...
+📄 Deploying mock tokens...
+✅ Mock USDC deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+✅ Mock DAI deployed to: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+✅ Mock USDT deployed to: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+💰 Deploying LoanChainV2...
+✅ LoanChainV2 deployed to: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+⚙️ Configuring supported tokens...
+✅ USDC support added
+✅ DAI support added
+✅ USDT support added
+✅ NATIVE_ETH support added
+✅ Token prices updated with multi-oracle system
+🔄 Deploying TokenSwap contract...
+✅ TokenSwap deployed to: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+💰 Adding initial liquidity to TokenSwap...
+✅ Initial liquidity added to TokenSwap
+🎉 Deployment completed!
+📋 Contract Addresses:
+  LoanChainV2: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+  TokenSwap: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+  Mock USDC: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  Mock DAI: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+  Mock USDT: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+  Network: localhost
+✅ Deployment info saved to deployments/localhost-deployment.js
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse> 
