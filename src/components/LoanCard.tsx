@@ -80,8 +80,23 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
   };
 
   const canFund = () => {
-    return loan.status === LoanStatus.REQUESTED && 
-           account && account.toLowerCase() !== loan.borrower.toLowerCase();
+    const isRequested = loan.status === LoanStatus.REQUESTED;
+    const hasAccount = !!account;
+    const isDifferentFromBorrower = account && account.toLowerCase() !== loan.borrower.toLowerCase();
+    
+    // Debug logging
+    console.log('🔍 Fund Loan Debug:', {
+      loanId: loan.id,
+      loanStatus: loan.status,
+      isRequestedStatus: isRequested,
+      account: account,
+      hasAccount: hasAccount,
+      borrower: loan.borrower,
+      isDifferentFromBorrower: isDifferentFromBorrower,
+      canFund: isRequested && hasAccount && isDifferentFromBorrower
+    });
+    
+    return isRequested && hasAccount && isDifferentFromBorrower;
   };
 
   const canRepay = () => {
