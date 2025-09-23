@@ -65,6 +65,16 @@ export const useWallet = () => {
       const provider = new BrowserProvider(window.ethereum);
       const network = await provider.getNetwork();
       const currentChainId = Number(network.chainId);
+      
+      // Debug logging
+      console.log('🔍 Network Debug Info:');
+      console.log('- Detected Chain ID:', currentChainId);
+      console.log('- Expected Hardhat ID:', SUPPORTED_CHAINS.HARDHAT);
+      console.log('- Expected Sepolia ID:', SUPPORTED_CHAINS.SEPOLIA);
+      console.log('- Is Hardhat?', currentChainId === SUPPORTED_CHAINS.HARDHAT);
+      console.log('- Is Sepolia?', currentChainId === SUPPORTED_CHAINS.SEPOLIA);
+      console.log('- Network Name:', network.name);
+      
       setChainId(currentChainId);
       setIsCorrectNetwork(currentChainId === SUPPORTED_CHAINS.HARDHAT || currentChainId === SUPPORTED_CHAINS.SEPOLIA);
     }

@@ -32,7 +32,7 @@ const WalletConnect: React.FC = () => {
         <div className="flex items-center space-x-2">
           <div className={`w-2 h-2 rounded-full ${isCorrectNetwork ? 'bg-green-400' : 'bg-red-400'}`}></div>
           <span className="text-sm text-gray-300">
-            {chainId && NETWORK_NAMES[chainId] || 'Unknown Network'}
+            {chainId && NETWORK_NAMES[chainId] || `Unknown Network (ID: ${chainId || 'N/A'})`}
           </span>
         </div>
         
