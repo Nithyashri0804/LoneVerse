@@ -146,44 +146,26 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       }
     };
 
-    const handleCollateralClaimed = (loanId: any, lender: string, borrower: string, collateralAmount: any) => {
-      if (borrower.toLowerCase() === account.toLowerCase()) {
-        addNotification({
-          type: NotificationType.COLLATERAL_CLAIMED,
-          title: 'Collateral Claimed',
-          message: `Your collateral for loan #${loanId} has been claimed due to default.`,
-          urgent: true,
-          loanId: Number(loanId),
-          amount: collateralAmount.toString(),
-          userAddress: lender
-        });
-      } else if (lender.toLowerCase() === account.toLowerCase()) {
-        addNotification({
-          type: NotificationType.COLLATERAL_CLAIMED,
-          title: 'Collateral Claimed Successfully',
-          message: `You have claimed collateral for defaulted loan #${loanId}`,
-          urgent: false,
-          loanId: Number(loanId),
-          amount: collateralAmount.toString(),
-          userAddress: borrower
-        });
-      }
-    };
+    // Note: CollateralClaimed event handler removed as event doesn't exist in current contract
+    // This functionality may need to be implemented when collateral claiming is added
 
-    // Setup event listeners
+    // Setup event listeners with correct event names
     try {
-      contract.on('LoanFunded', handleLoanFunded);
+      contract.on('LoanFullyFunded', handleLoanFunded);
+      contract.on('LoanPartiallyFunded', handleLoanFunded);
       contract.on('LoanRepaid', handleLoanRepaid);
-      contract.on('CollateralClaimed', handleCollateralClaimed);
+      // Note: CollateralClaimed event doesn't exist in current contract
+      // contract.on('CollateralClaimed', handleCollateralClaimed);
     } catch (error) {
       console.error('Failed to setup notification event listeners:', error);
     }
 
     // Cleanup event listeners
     return () => {
-      contract.off('LoanFunded', handleLoanFunded);
+      contract.off('LoanFullyFunded', handleLoanFunded);
+      contract.off('LoanPartiallyFunded', handleLoanFunded);
       contract.off('LoanRepaid', handleLoanRepaid);
-      contract.off('CollateralClaimed', handleCollateralClaimed);
+      // contract.off('CollateralClaimed', handleCollateralClaimed);
     };
   }, [contract, account]);
 
