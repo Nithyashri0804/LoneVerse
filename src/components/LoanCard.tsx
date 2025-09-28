@@ -192,9 +192,45 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         await tx.wait();
       } else {
         // For ERC20 loans, need token approval first
-        // TODO: Implement ERC20 approval and transfer
-        setError('ERC20 token repayment not yet implemented. Please use ETH loans for now.');
-        return;
+        const { ethers } = await import('ethers');
+        
+        try {
+          const tokenInfo = await contract.getSupportedToken(loan.loanToken);
+          const tokenAddress = tokenInfo.contractAddress;
+          
+          if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
+            setError('Invalid token address for this token type');
+            return;
+          }
+
+          // Create ERC20 contract instance
+          const erc20Contract = new ethers.Contract(
+            tokenAddress,
+            ['function approve(address spender, uint256 amount) external returns (bool)',
+             'function allowance(address owner, address spender) external view returns (uint256)'],
+            contract.runner
+          );
+
+          // Check current allowance
+          const contractAddress = await contract.getAddress();
+          const currentAllowance = await erc20Contract.allowance(account, contractAddress);
+          
+          if (currentAllowance < repaymentAmount) {
+            // Need to approve first
+            console.log('Approving token spend for repayment...');
+            const approveTx = await erc20Contract.approve(contractAddress, repaymentAmount);
+            await approveTx.wait();
+            console.log('Token approval confirmed');
+          }
+
+          // Now repay the loan (no ETH value for ERC20 loans)
+          const tx = await contract.repayLoan(loan.id);
+          await tx.wait();
+        } catch (tokenError: any) {
+          console.error('Error with token operations:', tokenError);
+          setError('Failed to get token information or approve token spend for repayment');
+          return;
+        }
       }
 
       onUpdate();
@@ -329,7 +365,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             </div>
             <div>
               <span className="text-gray-400">Total Repayment:</span>
-              <div className="text-white font-medium">{calculateRepaymentAmountForDisplay().toFixed(4)} ETH</div>
+              <div className="text-white font-medium">{calculateRepaymentAmountForDisplay().toFixed(4)} {getTokenSymbol(loan.loanToken)}</div>
             </div>
           </div>
         </div>
