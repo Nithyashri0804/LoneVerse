@@ -171,16 +171,6 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
     }
   };
 
-  const getTokenAddress = async (tokenType: TokenType): Promise<string | null> => {
-    try {
-      if (!contract) return null;
-      const tokenInfo = await contract.getSupportedToken(tokenType);
-      return tokenInfo.contractAddress;
-    } catch (error) {
-      console.error('Error getting token address:', error);
-      return null;
-    }
-  };
 
   const handleRepayLoan = async () => {
     if (!contract) return;
