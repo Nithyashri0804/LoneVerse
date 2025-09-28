@@ -1,0 +1,104 @@
+npx hardhat console --network localhost
+Welcome to Node.js v22.16.0.
+Type ".help" for more information.
+> const usdc = await ethers.getContractAt("MockERC20", "0x5FbDB2315678afecb367f032d93F642f64180aa3");
+undefined
+> const dai = await ethers.getContractAt("MockERC20", "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512");
+undefined
+> const usdt = await ethers.getContractAt("MockERC20", "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0");
+undefined
+> await usdc.faucet(ethers.parseUnits("10000", 6));
+ContractTransactionResponse {
+  provider: HardhatEthersProvider {
+    _hardhatProvider: LazyInitializationProviderAdapter {
+      _providerFactory: [AsyncFunction (anonymous)],
+      _emitter: [EventEmitter],
+      _initializingPromise: [Promise],
+      provider: [BackwardsCompatibilityProviderAdapter]
+    },
+    _networkName: 'localhost',
+    _blockListeners: [],
+    _transactionHashListeners: Map(0) {},
+    _eventListeners: []
+  },
+  blockNumber: 19,
+  blockHash: '0x25d13e6ac240677d0626f976230ccce2110b9f2802054e92b273a8a728c03c5a',
+  index: undefined,
+  hash: '0x4b40b5d54e9bf0f56d0852582a4a49bfc95a368cd41759d492de14d3c0342efd',
+  type: 2,
+  to: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  from: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+  nonce: 18,
+  gasLimit: 30000000n,
+  gasPrice: 107126143n,
+  maxPriorityFeePerGas: 25686408n,
+  maxFeePerGas: 107126143n,
+  maxFeePerBlobGas: null,
+  data: '0x5791589700000000000000000000000000000000000000000000000000000002540be400',
+  value: 0n,
+  chainId: 31337n,
+  signature: Signature { r: "0x1308ecd3633d736b4762f8f02c7df3023af647182340228f07face6287bde255", s: "0x7c31018716a172c85a832912e8b4e174e126c600f2b57edf762307d36146c031", yParity: 1, networkV: null },    
+  accessList: [],
+  blobVersionedHashes: null,
+  authorizationList: null
+}
+> await dai.faucet(ethers.parseUnits("10000", 18));
+ContractTransactionResponse {
+  provider: HardhatEthersProvider {
+    _hardhatProvider: LazyInitializationProviderAdapter {
+      _providerFactory: [AsyncFunction (anonymous)],
+      _emitter: [EventEmitter],
+      _initializingPromise: [Promise],
+      provider: [BackwardsCompatibilityProviderAdapter]
+    },
+    _networkName: 'localhost',
+    _blockListeners: [],
+    _transactionHashListeners: Map(0) {},
+    _eventListeners: []
+  },
+  blockNumber: 20,
+  blockHash: '0x7a1309014e6bc87ae9f34e590cc42df0ccbd330640a813e4b1b279c7534a946e',
+  index: undefined,
+  hash: '0xf8f3baf88d1b0746a35ff7ac6fb95635572cb3377b482671a0cc1141851e195e',
+  type: 2,
+  to: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+  from: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+  nonce: 19,
+  gasLimit: 30000000n,
+  gasPrice: 93767312n,
+  maxPriorityFeePerGas: 22483264n,
+  maxFeePerGas: 93767312n,
+  maxFeePerBlobGas: null,
+  data: '0x5791589700000000000000000000000000000000000000000000021e19e0c9bab2400000',
+  value: 0n,
+  chainId: 31337n,
+  signature: Signature { r: "0xcc678cff6984251b17a55d00ec6329b7f9b59020314ade3ef45fef6d105bd42a", s: "0x6d331c6b01f65ab8bbc5f136e971f382562e1fbd79c166ca5cdb8f4ac1624541", yParity: 0, networkV: null },    
+  accessList: [],
+  blobVersionedHashes: null,
+  authorizationList: null
+}
+> const [signer] = await ethers.getSigners();
+e.log("Your address:", signer.address);undefined
+> consolconsole.log("USDC Balance:", ethers.formatUnits(await usdc.balanceOf(signer.address), 6));
+sole.log("USDT Balance:", ethers.formatUnits(await usdt.balanceOf
+... (signer.address), 6));
+Uncaught SyntaxError:
+sole.log("USDT Balance:", ethers.formatUnits(await usdt.balanceOf      sole.log("USDT Balance:", ethers.formatUnits(await usdt.balancesole.log("USDT Balance:", ethers.formatUnits(await usdt.balanceOf  
+... (signer.address), 6));
+Uncaught SyntaxError:
+(signer.address), 6));
+                     ^
+
+Unexpected token ';'
+> console.log("USDC Balance:", ethers.formatUnits(await usdc.balanceOf(signer.address), 6));
+lanceOf(signer.address), 18));
+USDC Balance: 1010000.0
+undefined
+> console.log("DAI Balance:", ethers.formatUnits(await dai.baconsole.log("USDT Balance:", ethers.formatUnits(await usdt.balanceOf(signer.address), 6));
+Uncaught SyntaxError:
+console.log("DAI Balance:", ethers.formatUnits(await dai.baconsole.log("USDT Balance:", ethers.formatUnits(await usdt.balanceOf(signer.address), 6));
+                                                                                                                                                    ^
+
+Unexpected token ';'
+> .exit
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse>
