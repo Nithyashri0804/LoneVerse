@@ -49,21 +49,43 @@ const Dashboard: React.FC = () => {
         }
       };
 
-      // Get all active loan requests (safely handle empty results)
-      const activeLoanIds = await safeContractCall(() => contract.getActiveLoanRequests());
+      // Try to get loans by checking IDs directly (fallback method)
+      let allLoanIds = new Set<number>();
       
-      // Get borrower loans (safely handle empty results)
-      const borrowerLoanIds = await safeContractCall(() => contract.getBorrowerLoans(account));
-      
-      // Get lender loans (safely handle empty results)
-      const lenderLoanIds = await safeContractCall(() => contract.getLenderLoans(account));
+      try {
+        // First try the normal methods
+        const activeLoanIds = await safeContractCall(() => contract.getActiveLoanRequests());
+        const borrowerLoanIds = await safeContractCall(() => contract.getBorrowerLoans(account));
+        const lenderLoanIds = await safeContractCall(() => contract.getLenderLoans(account));
 
-      // Combine all unique loan IDs
-      const allLoanIds = new Set([
-        ...activeLoanIds.map((id: any) => Number(id.toString())),
-        ...borrowerLoanIds.map((id: any) => Number(id.toString())),
-        ...lenderLoanIds.map((id: any) => Number(id.toString())),
-      ]);
+        // Combine all unique loan IDs
+        allLoanIds = new Set([
+          ...activeLoanIds.map((id: any) => Number(id.toString())),
+          ...borrowerLoanIds.map((id: any) => Number(id.toString())),
+          ...lenderLoanIds.map((id: any) => Number(id.toString())),
+        ]);
+        
+        console.log('Loan IDs found:', Array.from(allLoanIds));
+      } catch (error) {
+        console.warn('Failed to get loan IDs from contract methods, trying direct approach:', error);
+      }
+      
+      // If no loans found through normal methods, try checking for loans directly
+      if (allLoanIds.size === 0) {
+        console.log('No loans found through contract methods, checking for loans directly...');
+        // Try to find loans by checking IDs 1-10 directly
+        for (let i = 1; i <= 10; i++) {
+          try {
+            const loanData = await contract.getLoan(i);
+            if (loanData && loanData.borrower && loanData.borrower !== '0x0000000000000000000000000000000000000000') {
+              allLoanIds.add(i);
+              console.log(`Found loan ${i}:`, loanData);
+            }
+          } catch (error) {
+            // Loan doesn't exist, continue
+          }
+        }
+      }
 
       // If no loans exist, set empty array and return
       if (allLoanIds.size === 0) {
