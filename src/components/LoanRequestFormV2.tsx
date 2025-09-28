@@ -39,12 +39,17 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
           formData.loanToken,
           formData.collateralToken
         );
-        setCalculatedCollateral(requiredCollateral.toFixed(6));
+        // Use appropriate decimal places for the collateral token
+        const collateralTokenInfo = TOKEN_INFO[formData.collateralToken];
+        const decimalPlaces = Math.min(collateralTokenInfo.decimals, 8); // Max 8 decimal places for display
+        setCalculatedCollateral(Number(requiredCollateral.toFixed(decimalPlaces)).toString());
         setCrossCollateralEnabled(true);
       } else {
         // Same token collateral - 120% ratio (contract uses 120% for all)
         const requiredCollateral = loanAmount * 1.2;
-        setCalculatedCollateral(requiredCollateral.toFixed(6));
+        const loanTokenInfo = TOKEN_INFO[formData.loanToken];
+        const decimalPlaces = Math.min(loanTokenInfo.decimals, 8); // Max 8 decimal places for display
+        setCalculatedCollateral(Number(requiredCollateral.toFixed(decimalPlaces)).toString());
         setCrossCollateralEnabled(false);
       }
     }
@@ -80,26 +85,55 @@ const LoanRequestFormV2: React.FC<LoanRequestFormV2Props> = ({ onSubmit, isSubmi
       return;
     }
 
-    // Convert amounts to proper decimal format
-    const loanTokenInfo = TOKEN_INFO[formData.loanToken];
-    const collateralTokenInfo = TOKEN_INFO[formData.collateralToken];
-    
-    const totalAmount = ethers.parseUnits(formData.totalAmount, loanTokenInfo.decimals).toString();
-    const collateralAmount = ethers.parseUnits(formData.collateralAmount, collateralTokenInfo.decimals).toString();
-    
-    // Convert duration from days to seconds
-    const durationInSeconds = formData.duration * 24 * 60 * 60;
-    
-    // Convert interest rate from percentage to basis points
-    const interestRateInBasisPoints = formData.interestRate * 100;
+    try {
+      // Convert amounts to proper decimal format
+      const loanTokenInfo = TOKEN_INFO[formData.loanToken];
+      const collateralTokenInfo = TOKEN_INFO[formData.collateralToken];
+      
+      // Fix floating point precision issues by parsing and reformatting
+      const loanAmountFloat = parseFloat(formData.totalAmount);
+      const collateralAmountFloat = parseFloat(formData.collateralAmount);
+      
+      // Format to appropriate decimal places to avoid precision errors
+      const loanAmountFixed = loanAmountFloat.toFixed(loanTokenInfo.decimals);
+      const collateralAmountFixed = collateralAmountFloat.toFixed(collateralTokenInfo.decimals);
+      
+      // Convert to wei/token units
+      const totalAmount = ethers.parseUnits(loanAmountFixed, loanTokenInfo.decimals).toString();
+      const collateralAmount = ethers.parseUnits(collateralAmountFixed, collateralTokenInfo.decimals).toString();
+      
+      // Validation against min/max amounts
+      const minLoanAmount = BigInt(loanTokenInfo.minLoanAmount);
+      const maxLoanAmount = BigInt(loanTokenInfo.maxLoanAmount);
+      const totalAmountBigInt = BigInt(totalAmount);
+      
+      if (totalAmountBigInt < minLoanAmount) {
+        alert(`Loan amount must be at least ${ethers.formatUnits(minLoanAmount, loanTokenInfo.decimals)} ${loanTokenInfo.symbol}`);
+        return;
+      }
+      
+      if (totalAmountBigInt > maxLoanAmount) {
+        alert(`Loan amount cannot exceed ${ethers.formatUnits(maxLoanAmount, loanTokenInfo.decimals)} ${loanTokenInfo.symbol}`);
+        return;
+      }
+      
+      // Convert duration from days to seconds
+      const durationInSeconds = formData.duration * 24 * 60 * 60;
+      
+      // Convert interest rate from percentage to basis points
+      const interestRateInBasisPoints = formData.interestRate * 100;
 
-    onSubmit({
-      ...formData,
-      totalAmount,
-      collateralAmount,
-      duration: durationInSeconds,
-      interestRate: interestRateInBasisPoints,
-    });
+      onSubmit({
+        ...formData,
+        totalAmount,
+        collateralAmount,
+        duration: durationInSeconds,
+        interestRate: interestRateInBasisPoints,
+      });
+    } catch (error) {
+      console.error('Error processing loan request:', error);
+      alert('Error processing loan request. Please check your input values.');
+    }
   };
 
 

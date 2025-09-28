@@ -1,5 +1,6 @@
 // Test script for minting tokens and testing multi-token scenarios
-import { ethers } from "hardhat";
+import pkg from "hardhat";
+const { ethers } = pkg;
 
 async function main() {
   const [account1, account2] = await ethers.getSigners();
