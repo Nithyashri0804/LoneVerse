@@ -18,15 +18,27 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
+args = "Frontend"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
 args = "Backend API"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
 args = "Hardhat Node"
 
+[[workflows.workflow]]
+name = "Frontend"
+author = "agent"
+
 [[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Frontend"
+task = "shell.exec"
+args = "npm run dev"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
 
 [[workflows.workflow]]
 name = "Backend API"
@@ -52,32 +64,12 @@ waitForPort = 8000
 [workflows.workflow.metadata]
 outputType = "console"
 
-[[workflows.workflow]]
-name = "Frontend"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npm run dev"
-waitForPort = 5000
-
-[workflows.workflow.metadata]
-outputType = "webview"
-
 [agent]
 expertMode = true
 
 [[ports]]
 localPort = 3001
 externalPort = 3001
-
-[[ports]]
-localPort = 5000
-externalPort = 80
-
-[[ports]]
-localPort = 8000
-externalPort = 8000
 
 [[ports]]
 localPort = 39493
@@ -126,3 +118,7 @@ externalPort = 5173
 [[ports]]
 localPort = 46803
 externalPort = 3003
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
