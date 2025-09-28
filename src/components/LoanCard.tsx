@@ -127,7 +127,8 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
           const tokenInfo = await contract.getSupportedToken(loan.loanToken);
           const tokenAddress = tokenInfo.contractAddress;
           
-          if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
+          // For native ETH (tokenType 0), zero address is expected and valid
+          if (loan.loanToken !== 0 && (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000')) {
             setError('Invalid token address for this token type');
             return;
           }
@@ -143,11 +144,12 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
           // Check current allowance
           const contractAddress = await contract.getAddress();
           const currentAllowance = await erc20Contract.allowance(account, contractAddress);
+          const fundingAmountBigInt = BigInt(fundingAmount);
           
-          if (currentAllowance < fundingAmount) {
+          if (currentAllowance < fundingAmountBigInt) {
             // Need to approve first
             console.log('Approving token spend...');
-            const approveTx = await erc20Contract.approve(contractAddress, fundingAmount);
+            const approveTx = await erc20Contract.approve(contractAddress, fundingAmountBigInt);
             await approveTx.wait();
             console.log('Token approval confirmed');
           }
