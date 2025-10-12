@@ -34,10 +34,11 @@ const AIChatbot: React.FC = () => {
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
+    const messageContent = inputMessage; // Save before clearing
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: inputMessage,
+      content: messageContent,
       timestamp: new Date(),
     };
 
@@ -52,7 +53,7 @@ const AIChatbot: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: inputMessage,
+          message: messageContent, // Use saved value
           conversationHistory: messages.map((m) => ({
             role: m.role,
             content: m.content,
