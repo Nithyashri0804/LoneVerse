@@ -47,14 +47,15 @@ const strictLimiter = rateLimit({
 app.use(helmet());
 app.use(generalLimiter); // Apply general rate limiting to all routes
 app.use(cors({
-  origin: [
-    'http://localhost:5000',
-    'https://*.repl.co',
-    'https://*.replit.dev',
-    'https://*.replit.com',
-    /^https:\/\/.*\.replit\.dev$/,
-    /^https:\/\/.*\.repl\.co$/
-  ],
+  origin: process.env.NODE_ENV === 'production' 
+    ? [
+        'https://*.repl.co',
+        'https://*.replit.dev',
+        'https://*.replit.com',
+        /^https:\/\/.*\.replit\.dev$/,
+        /^https:\/\/.*\.repl\.co$/
+      ]
+    : true, // Allow all origins in development
   credentials: true
 }));
 

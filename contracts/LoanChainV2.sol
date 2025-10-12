@@ -474,6 +474,85 @@ contract LoanChainV2 is ReentrancyGuard, Ownable {
     }
 
     /**
+     * @dev Repay a loan with interest (supports multi-lender repayment)
+     */
+    function repayLoan(uint256 _loanId) external payable nonReentrant {
+        Loan storage loan = loans[_loanId];
+        require(loan.borrower == msg.sender, "Only borrower can repay");
+        require(loan.status == LoanStatus.FUNDED, "Loan not active");
+        require(block.timestamp <= loan.dueDate, "Loan expired");
+        
+        // Calculate total repayment amount with interest
+        uint256 interest = (loan.totalAmount * loan.interestRate) / 10000;
+        uint256 totalRepayment = loan.totalAmount + interest;
+        
+        // Handle repayment based on loan token type
+        if (loan.loanToken == TokenType.NATIVE_ETH) {
+            require(msg.value >= totalRepayment, "Insufficient repayment amount");
+            
+            // Distribute repayment to all lenders proportionally
+            for (uint256 i = 0; i < loan.lenders.length; i++) {
+                address lender = loan.lenders[i];
+                uint256 lenderShare = loan.lenderAmounts[i];
+                uint256 lenderInterest = (lenderShare * loan.interestRate) / 10000;
+                uint256 lenderRepayment = lenderShare + lenderInterest;
+                
+                (bool success, ) = payable(lender).call{value: lenderRepayment}("");
+                require(success, "Transfer to lender failed");
+                
+                // Update lender position
+                lenderPositions[_loanId][lender].repaid = true;
+                lenderPositions[_loanId][lender].repaidAmount = lenderRepayment;
+            }
+            
+            // Return excess ETH to borrower
+            if (msg.value > totalRepayment) {
+                (bool success, ) = payable(msg.sender).call{value: msg.value - totalRepayment}("");
+                require(success, "Excess return failed");
+            }
+        } else {
+            require(msg.value == 0, "ETH not needed for ERC20 repayment");
+            Token memory loanToken = supportedTokens[loan.loanToken];
+            IERC20 tokenContract = IERC20(loanToken.contractAddress);
+            
+            // Distribute repayment to all lenders proportionally
+            for (uint256 i = 0; i < loan.lenders.length; i++) {
+                address lender = loan.lenders[i];
+                uint256 lenderShare = loan.lenderAmounts[i];
+                uint256 lenderInterest = (lenderShare * loan.interestRate) / 10000;
+                uint256 lenderRepayment = lenderShare + lenderInterest;
+                
+                tokenContract.safeTransferFrom(msg.sender, lender, lenderRepayment);
+                
+                // Update lender position
+                lenderPositions[_loanId][lender].repaid = true;
+                lenderPositions[_loanId][lender].repaidAmount = lenderRepayment;
+            }
+        }
+        
+        // Update loan status
+        loan.status = LoanStatus.REPAID;
+        
+        // Return collateral to borrower
+        _returnCollateral(_loanId);
+        
+        emit LoanRepaid(_loanId, msg.sender, totalRepayment);
+    }
+
+    /**
+     * @dev Return collateral to borrower
+     */
+    function _returnCollateral(uint256 _loanId) internal {
+        Loan storage loan = loans[_loanId];
+        require(!loan.collateralClaimed, "Collateral already claimed");
+        
+        if (loan.collateralAmount > 0) {
+            _transferTokens(loan.collateralToken, loan.borrower, loan.collateralAmount);
+            loan.collateralClaimed = true;
+        }
+    }
+
+    /**
      * @dev Internal function to transfer tokens
      */
     function _transferTokens(TokenType _tokenType, address _to, uint256 _amount) internal {

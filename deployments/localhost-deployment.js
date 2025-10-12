@@ -8,7 +8,7 @@ export const TOKEN_ADDRESSES = {
 
 export const DEPLOYMENT_INFO = {
   "network": "localhost",
-  "timestamp": "2025-09-28T18:00:27.043Z",
+  "timestamp": "2025-10-12T19:02:33.702Z",
   "contracts": {
     "loanChainV2": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
     "tokenSwap": "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
