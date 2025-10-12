@@ -14,6 +14,7 @@ import liquidationRoutes from './routes/liquidation.js';
 import matchingRoutes from './routes/matching.js';
 import creditScoreRoutes from './routes/creditScore.js';
 import chatbotRoutes from './routes/chatbot.js';
+import datasetRoutes from './routes/dataset.js';
 import { initializeMLModel, getMlStatus } from './services/mlService.js';
 import { startRiskMonitoring } from './services/monitoringService.js';
 import { startLiquidationMonitoring } from './services/liquidationService.js';
@@ -81,6 +82,7 @@ app.use('/api/liquidation', strictLimiter, liquidationRoutes);  // Critical oper
 app.use('/api/matching', matchingRoutes);                       // General limit
 app.use('/api/credit-score', creditScoreRoutes);                // Credit scoring - general limit
 app.use('/api/chatbot', chatbotRoutes);                         // AI chatbot - general limit
+app.use('/api/dataset', strictLimiter, datasetRoutes);          // Dataset generation - limited
 
 // Health check with service status (excluded from rate limiting)
 const healthLimiter = rateLimit({
