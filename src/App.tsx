@@ -6,6 +6,7 @@ import Dashboard from './components/Dashboard';
 import BrowseLoans from './components/BrowseLoans';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
 import NotificationCenter from './components/NotificationCenter';
+import AIChatbot from './components/AIChatbot';
 import { useWallet } from './hooks/useWallet';
 import { NotificationProvider } from './hooks/useNotifications';
 
@@ -177,6 +178,9 @@ function App() {
           </div>
         </div>
       </footer>
+
+      {/* AI Chatbot - Available everywhere */}
+      <AIChatbot />
       </div>
     </NotificationProvider>
   );

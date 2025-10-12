@@ -124,7 +124,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         const { ethers } = await import('ethers');
         
         try {
-          const tokenInfo = await contract.getSupportedToken(loan.loanToken);
+          const tokenInfo = await contract.supportedTokens(loan.loanToken);
           const tokenAddress = tokenInfo.contractAddress;
           
           // For native ETH (tokenType 0), zero address is expected and valid
@@ -195,7 +195,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         const { ethers } = await import('ethers');
         
         try {
-          const tokenInfo = await contract.getSupportedToken(loan.loanToken);
+          const tokenInfo = await contract.supportedTokens(loan.loanToken);
           const tokenAddress = tokenInfo.contractAddress;
           
           if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
