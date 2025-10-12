@@ -13,6 +13,7 @@ import emailNotificationRoutes from './routes/emailNotifications.js';
 import liquidationRoutes from './routes/liquidation.js';
 import matchingRoutes from './routes/matching.js';
 import creditScoreRoutes from './routes/creditScore.js';
+import chatbotRoutes from './routes/chatbot.js';
 import { initializeMLModel, getMlStatus } from './services/mlService.js';
 import { startRiskMonitoring } from './services/monitoringService.js';
 import { startLiquidationMonitoring } from './services/liquidationService.js';
@@ -79,6 +80,7 @@ app.use('/api/email-notifications', strictLimiter, emailNotificationRoutes); // 
 app.use('/api/liquidation', strictLimiter, liquidationRoutes);  // Critical operations - limited
 app.use('/api/matching', matchingRoutes);                       // General limit
 app.use('/api/credit-score', creditScoreRoutes);                // Credit scoring - general limit
+app.use('/api/chatbot', chatbotRoutes);                         // AI chatbot - general limit
 
 // Health check with service status (excluded from rate limiting)
 const healthLimiter = rateLimit({

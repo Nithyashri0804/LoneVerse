@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@google/genai": "^1.24.0",
     "@tensorflow/tfjs-node": "^4.15.0",
     "axios": "^1.6.0",
     "cors": "^2.8.5",
