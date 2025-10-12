@@ -1,0 +1,74 @@
+check if thse exist and work well and are actually working smooothly.
+dont forget that i will be running locally on vscode only.
+give me the setup steps at the end 
+1. The AI Credit Scoring Engine (Your Crown Jewel)
+What you need:
+
+A working Python script/model that takes a wallet address and returns a credit score (300-850)
+
+It must implement your weighted algorithm with real metrics:
+
+Transaction Analysis (30%): Tx count, volume, frequency, time between transactions
+
+Portfolio Stability (25%): Stablecoin ratio, holding period diversity, volatility metrics
+
+Lending History (25%): Previous loan repayment data (you'll need to simulate this)
+
+DeFi Behavior (20%): Protocol interactions, yield farming patterns, smart contract calls
+
+How to represent it in paper:
+
+python
+# ACTUAL CODE YOU SHOULD IMPLEMENT
+def calculate_credit_score(wallet_address):
+    # Real implementation with actual on-chain data queries
+    tx_score = analyze_transaction_metrics(wallet_address)
+    portfolio_score = analyze_holdings_diversity(wallet_address) 
+    history_score = check_loan_history(wallet_address)  # From your testnet
+    behavior_score = analyze_defi_engagement(wallet_address)
+    
+    return weighted_score  # Real number between 300-850
+2. Deployed Smart Contracts on Testnet
+What you need:
+
+LendingPool.sol - Actually deployed and verified on Sepolia/Polygon Mumbai
+
+RiskEngine.sol - With functioning calculateCreditScore() that integrates with your AI model
+
+CollateralManager.sol - With real Chainlink price feed integration
+
+All contracts must have:
+
+Comprehensive test coverage (>90%)
+
+Gas optimization metrics
+
+Security analysis (Slither report)
+
+3. Working Frontend DApp
+What you need:
+
+React.js interface that connects to your deployed contracts
+
+Functional loan request flow with real credit scoring
+
+Live collateral requirement calculator
+
+AI chatbot integration (can use GPT-4 API with custom prompts)
+
+How to represent it:
+
+Screenshots/Videos of complete user journey
+
+Demo link for reviewers to test
+
+Mobile responsiveness proof
+
+4. Experimental Data & Results
+What you need:
+
+Dataset of 1000+ wallet addresses with historical data
+
+Performance metrics comparing your system vs benchmarks
+
+Statistical validation of your credit scoring model
