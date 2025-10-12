@@ -37,7 +37,7 @@ contract LoanVerse is ReentrancyGuard, Ownable, Pausable {
     }
     
     struct CreditScore {
-        uint256 score;           // 0-1000 credit score
+        uint256 score;           // 300-850 credit score (standard credit score range)
         uint256 totalLoansCount;
         uint256 repaidLoansCount;
         uint256 defaultedLoansCount;
@@ -72,7 +72,7 @@ contract LoanVerse is ReentrancyGuard, Ownable, Pausable {
     uint256 public constant MAX_INTEREST_RATE = 3000;   // 30% max
     uint256 public constant MIN_LOAN_DURATION = 1 days;
     uint256 public constant MAX_LOAN_DURATION = 365 days;
-    uint256 public constant MIN_CREDIT_SCORE = 100;
+    uint256 public constant MIN_CREDIT_SCORE = 300; // Minimum credit score (300-850 range)
     
     // Protocol fees
     uint256 public protocolFeeRate = 50; // 0.5% in basis points
@@ -388,7 +388,7 @@ contract LoanVerse is ReentrancyGuard, Ownable, Pausable {
         CreditScore storage score = creditScores[_borrower];
         
         if (score.totalLoansCount == 0) {
-            score.score = 500; // Starting score
+            score.score = 575; // Starting score (middle of 300-850 range)
         }
         
         score.totalLoansCount++;
@@ -396,16 +396,12 @@ contract LoanVerse is ReentrancyGuard, Ownable, Pausable {
         
         if (_repaid) {
             score.repaidLoansCount++;
-            // Increase score for successful repayment
-            if (score.score < 950) {
-                score.score += 10;
-            }
+            // Increase score for successful repayment (clamped to max 850)
+            score.score = score.score + 10 > 850 ? 850 : score.score + 10;
         } else {
             score.defaultedLoansCount++;
-            // Decrease score for default
-            if (score.score > 100) {
-                score.score = score.score > 50 ? score.score - 50 : 100;
-            }
+            // Decrease score for default (clamped to min 300)
+            score.score = score.score > 50 ? (score.score - 50 < 300 ? 300 : score.score - 50) : 300;
         }
         
         emit CreditScoreUpdated(_borrower, score.score);
