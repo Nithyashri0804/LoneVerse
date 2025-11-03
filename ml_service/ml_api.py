@@ -332,5 +332,5 @@ if __name__ == '__main__':
     print("  POST /retrain             - Retrain model with new data")
     print("")
     
-    # Run on port 5001 to avoid conflict with frontend
-    app.run(host='0.0.0.0', port=5001, debug=True)
+    # Run on port 3002
+    app.run(host='0.0.0.0', port=3002, debug=True)
