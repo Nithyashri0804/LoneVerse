@@ -1,0 +1,43 @@
+{
+  "logistic_regression": {
+    "model_name": "Logistic Regression",
+    "accuracy": 0.6665,
+    "precision": 0.21610738255033557,
+    "recall": 0.6598360655737705,
+    "f1_score": 0.32558139534883723,
+    "roc_auc": 0.7136282161395123,
+    "log_loss": 0.6206473770643811,
+    "confusion_matrix": {
+      "true_negatives": 1172,
+      "false_positives": 584,
+      "false_negatives": 83,
+      "true_positives": 161
+    },
+    "specificity": 0.6674259681093394
+  },
+  "heuristic": {
+    "model_name": "Heuristic",
+    "accuracy": 0.1685,
+    "precision": 0.126775381378222,
+    "recall": 0.9877049180327869,
+    "f1_score": 0.2247086247086247,
+    "roc_auc": 0.681696711975802,
+    "log_loss": 1.4055249094558084,
+    "confusion_matrix": {
+      "true_negatives": 96,
+      "false_positives": 1660,
+      "false_negatives": 3,
+      "true_positives": 241
+    },
+    "specificity": 0.05466970387243736
+  },
+  "improvements": {
+    "accuracy": 295.54896142433233,
+    "precision": 70.46478598679995,
+    "recall": -33.19502074688797,
+    "f1_score": 44.890475730965946,
+    "roc_auc": 4.684121780661287,
+    "log_loss": 55.842306821535914
+  },
+  "comparison_date": "2025-11-03T19:54:07.226132"
+}

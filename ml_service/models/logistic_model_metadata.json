@@ -1,0 +1,78 @@
+{
+  "feature_names": [
+    "tx_count",
+    "total_volume",
+    "avg_frequency",
+    "avg_time_between",
+    "stablecoin_ratio",
+    "avg_holding_period",
+    "volatility_index",
+    "diversity_score",
+    "total_loans",
+    "repaid_loans",
+    "defaulted_loans",
+    "avg_repayment_time",
+    "protocol_count",
+    "yield_farming_activity",
+    "smart_contract_calls",
+    "defi_experience",
+    "loan_amount",
+    "collateral_amount",
+    "loan_to_collateral_ratio",
+    "duration_days",
+    "interest_rate",
+    "account_age_days"
+  ],
+  "training_date": "2025-11-03T19:53:29.615966",
+  "model_type": "LogisticRegression",
+  "metrics": {
+    "accuracy": 0.6665,
+    "precision": 0.21610738255033557,
+    "recall": 0.6598360655737705,
+    "f1_score": 0.32558139534883723,
+    "roc_auc": 0.7134204974046828,
+    "log_loss": 0.6203750829576125,
+    "confusion_matrix": [
+      [
+        1172,
+        584
+      ],
+      [
+        83,
+        161
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.9338645418326693,
+        "recall": 0.6674259681093394,
+        "f1-score": 0.77847891066091,
+        "support": 1756.0
+      },
+      "1": {
+        "precision": 0.21610738255033557,
+        "recall": 0.6598360655737705,
+        "f1-score": 0.32558139534883723,
+        "support": 244.0
+      },
+      "accuracy": 0.6665,
+      "macro avg": {
+        "precision": 0.5749859621915024,
+        "recall": 0.6636310168415549,
+        "f1-score": 0.5520301530048737,
+        "support": 2000.0
+      },
+      "weighted avg": {
+        "precision": 0.8462981684002245,
+        "recall": 0.6665,
+        "f1-score": 0.7232254137928371,
+        "support": 2000.0
+      }
+    },
+    "true_negatives": 1172,
+    "false_positives": 584,
+    "false_negatives": 83,
+    "true_positives": 161,
+    "specificity": 0.6674259681093394
+  }
+}

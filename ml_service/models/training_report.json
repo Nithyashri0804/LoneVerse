@@ -1,0 +1,168 @@
+{
+  "training_date": "2025-11-03T19:53:29.619003",
+  "dataset_info": {
+    "total_samples": 10000,
+    "training_samples": 8000,
+    "test_samples": 2000,
+    "default_rate": 0.1218
+  },
+  "test_metrics": {
+    "accuracy": 0.6665,
+    "precision": 0.21610738255033557,
+    "recall": 0.6598360655737705,
+    "f1_score": 0.32558139534883723,
+    "roc_auc": 0.7134204974046828,
+    "log_loss": 0.6203750829576125,
+    "confusion_matrix": [
+      [
+        1172,
+        584
+      ],
+      [
+        83,
+        161
+      ]
+    ],
+    "classification_report": {
+      "0": {
+        "precision": 0.9338645418326693,
+        "recall": 0.6674259681093394,
+        "f1-score": 0.77847891066091,
+        "support": 1756.0
+      },
+      "1": {
+        "precision": 0.21610738255033557,
+        "recall": 0.6598360655737705,
+        "f1-score": 0.32558139534883723,
+        "support": 244.0
+      },
+      "accuracy": 0.6665,
+      "macro avg": {
+        "precision": 0.5749859621915024,
+        "recall": 0.6636310168415549,
+        "f1-score": 0.5520301530048737,
+        "support": 2000.0
+      },
+      "weighted avg": {
+        "precision": 0.8462981684002245,
+        "recall": 0.6665,
+        "f1-score": 0.7232254137928371,
+        "support": 2000.0
+      }
+    },
+    "true_negatives": 1172,
+    "false_positives": 584,
+    "false_negatives": 83,
+    "true_positives": 161,
+    "specificity": 0.6674259681093394
+  },
+  "cross_validation": {
+    "accuracy": {
+      "mean": 0.6658,
+      "std": 0.00811541742610941,
+      "scores": [
+        0.6525,
+        0.662,
+        0.676,
+        0.667,
+        0.6715
+      ]
+    },
+    "precision": {
+      "mean": 0.21402509535489994,
+      "std": 0.009592401500966255,
+      "scores": [
+        0.20367936925098554,
+        0.20572207084468666,
+        0.2292225201072386,
+        0.22060766182298547,
+        0.21089385474860337
+      ]
+    },
+    "recall": {
+      "mean": 0.6527120016191054,
+      "std": 0.03446374949846636,
+      "scores": [
+        0.6352459016393442,
+        0.6188524590163934,
+        0.7008196721311475,
+        0.6872427983539094,
+        0.6213991769547325
+      ]
+    },
+    "f1": {
+      "mean": 0.3223234157872616,
+      "std": 0.014843502473782234,
+      "scores": [
+        0.30845771144278605,
+        0.30879345603271985,
+        0.34545454545454546,
+        0.334,
+        0.3149113660062565
+      ]
+    },
+    "roc_auc": {
+      "mean": 0.7304766508653966,
+      "std": 0.010591127379949316,
+      "scores": [
+        0.7202355390417865,
+        0.7170334030396952,
+        0.7460206691810747,
+        0.7350515632941484,
+        0.7340420797702781
+      ]
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "repaid_loans",
+      "coefficient": -0.6889055582297638,
+      "abs_coefficient": 0.6889055582297638
+    },
+    {
+      "feature": "interest_rate",
+      "coefficient": 0.39508990622707824,
+      "abs_coefficient": 0.39508990622707824
+    },
+    {
+      "feature": "account_age_days",
+      "coefficient": -0.3897349216205749,
+      "abs_coefficient": 0.3897349216205749
+    },
+    {
+      "feature": "total_loans",
+      "coefficient": 0.3722433723912027,
+      "abs_coefficient": 0.3722433723912027
+    },
+    {
+      "feature": "stablecoin_ratio",
+      "coefficient": -0.3259766808462815,
+      "abs_coefficient": 0.3259766808462815
+    },
+    {
+      "feature": "defaulted_loans",
+      "coefficient": 0.22567623806163134,
+      "abs_coefficient": 0.22567623806163134
+    },
+    {
+      "feature": "collateral_amount",
+      "coefficient": 0.20080077012669514,
+      "abs_coefficient": 0.20080077012669514
+    },
+    {
+      "feature": "loan_amount",
+      "coefficient": -0.18953683786186418,
+      "abs_coefficient": 0.18953683786186418
+    },
+    {
+      "feature": "tx_count",
+      "coefficient": -0.15598533001717715,
+      "abs_coefficient": 0.15598533001717715
+    },
+    {
+      "feature": "loan_to_collateral_ratio",
+      "coefficient": 0.10359723260628018,
+      "abs_coefficient": 0.10359723260628018
+    }
+  ]
+}
