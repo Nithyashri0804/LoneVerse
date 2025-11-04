@@ -29,14 +29,14 @@ async function main() {
     
     // Deploy USDC mock
     console.log("Deploying Mock USDC...");
-    const usdc = await MockERC20.deploy("USD Coin", "USDC", 6);
+    const usdc = await MockERC20.deploy("USD Coin", "USDC", 6, 1000000);
     await usdc.waitForDeployment();
     const usdcAddress = await usdc.getAddress();
     console.log("✅ Mock USDC deployed to:", usdcAddress);
     
     // Deploy DAI mock
     console.log("Deploying Mock DAI...");
-    const dai = await MockERC20.deploy("Dai Stablecoin", "DAI", 18);
+    const dai = await MockERC20.deploy("Dai Stablecoin", "DAI", 18, 1000000);
     await dai.waitForDeployment();
     const daiAddress = await dai.getAddress();
     console.log("✅ Mock DAI deployed to:", daiAddress);
@@ -86,15 +86,9 @@ async function main() {
     await tx2.wait();
     console.log("✅ DAI added as token ID: 2");
     
-    // Mint some tokens to deployer for testing
-    console.log("\n💰 Minting test tokens to deployer...");
-    const mintAmount = ethers.parseUnits("10000", 6); // 10,000 USDC
-    await usdc.mint(deployer.address, mintAmount);
-    console.log("✅ Minted 10,000 USDC to deployer");
-    
-    const mintAmountDai = ethers.parseEther("10000"); // 10,000 DAI
-    await dai.mint(deployer.address, mintAmountDai);
-    console.log("✅ Minted 10,000 DAI to deployer");
+    console.log("\n💰 Initial token supply:");
+    console.log("✅ Deployer has 1,000,000 USDC (via initial supply)");
+    console.log("✅ Deployer has 1,000,000 DAI (via initial supply)");
     
     console.log("\n" + "=".repeat(60));
     console.log("🎉 LoanVerseV4 Deployment Summary");
