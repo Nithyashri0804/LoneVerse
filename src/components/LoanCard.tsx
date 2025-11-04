@@ -134,14 +134,30 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         const erc20Contract = new ethers.Contract(
           tokenAddress,
           ['function approve(address spender, uint256 amount) external returns (bool)',
-           'function allowance(address owner, address spender) external view returns (uint256)'],
+           'function allowance(address owner, address spender) external view returns (uint256)',
+           'function balanceOf(address account) external view returns (uint256)',
+           'function symbol() external view returns (string)',
+           'function faucet(uint256 amount) external'],
           contract.runner
         );
+
+        // Check token balance
+        const balance = await erc20Contract.balanceOf(account);
+        const contributionAmountBigInt = BigInt(contributionAmount);
+        
+        if (balance < contributionAmountBigInt) {
+          const tokenSymbol = await erc20Contract.symbol();
+          const balanceFormatted = ethers.formatUnits(balance, loanTokenDecimals);
+          const requiredFormatted = ethers.formatUnits(contributionAmount, loanTokenDecimals);
+          throw new Error(
+            `Insufficient ${tokenSymbol} balance. You have ${balanceFormatted} ${tokenSymbol} but need ${requiredFormatted} ${tokenSymbol}. ` +
+            `If this is a test token, try calling the faucet() function to get test tokens.`
+          );
+        }
 
         // Check current allowance
         const contractAddress = await contract.getAddress();
         const currentAllowance = await erc20Contract.allowance(account, contractAddress);
-        const contributionAmountBigInt = BigInt(contributionAmount);
         
         if (currentAllowance < contributionAmountBigInt) {
           // Need to approve first

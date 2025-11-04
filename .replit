@@ -25,10 +25,6 @@ args = "Frontend"
 task = "workflow.run"
 args = "Backend"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "ML Service"
-
 [[workflows.workflow]]
 name = "Frontend"
 author = "agent"
@@ -47,20 +43,8 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd backend && node server.js"
+args = "cd backend && npm start"
 waitForPort = 3001
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow]]
-name = "ML Service"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python main.py"
-waitForPort = 3002
 
 [workflows.workflow.metadata]
 outputType = "console"
@@ -77,16 +61,12 @@ localPort = 3001
 externalPort = 3001
 
 [[ports]]
-localPort = 3002
-externalPort = 3002
-
-[[ports]]
 localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 40691
-externalPort = 3000
+localPort = 36673
+externalPort = 8081
 
 [[ports]]
 localPort = 41159
