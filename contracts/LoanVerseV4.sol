@@ -275,12 +275,10 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
         (uint256 price, ) = getLatestPrice(_tokenId);
         Token memory token = supportedTokens[_tokenId];
         
-        // Adjust for token decimals and price feed decimals (8)
-        if (token.decimals <= 8) {
-            return (_amount * price) / (10 ** token.decimals);
-        } else {
-            return (_amount * price) / (10 ** token.decimals) / (10 ** (token.decimals - 8));
-        }
+        // Price feed returns 8 decimals
+        // Formula: (amount * price) / (10^token.decimals)
+        // This returns USD value with 8 decimals
+        return (_amount * price) / (10 ** token.decimals);
     }
     
     /**
