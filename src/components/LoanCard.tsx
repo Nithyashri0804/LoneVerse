@@ -5,6 +5,7 @@ import { Loan, LoanStatus, TokenType, TOKEN_INFO } from '../types/loan';
 import { calculateRiskScore, getRiskLevel } from '../utils/loanFilters';
 import { useContract } from '../hooks/useContract';
 import { useWallet } from '../hooks/useWallet';
+import PooledLoanFunding from './PooledLoanFunding';
 
 interface LoanCardProps {
   loan: Loan;
@@ -103,73 +104,62 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
            !loan.collateralClaimed;
   };
 
-  const handleFundLoan = async () => {
-    if (!contract) return;
+  const handleContribute = async (loanId: number, amount: string) => {
+    if (!contract) {
+      throw new Error('Contract not initialized');
+    }
 
     try {
-      setIsLoading(true);
       setError('');
-
+      const loanTokenDecimals = TOKEN_INFO[loan.loanToken].decimals;
+      const contributionAmount = ethers.parseUnits(amount, loanTokenDecimals);
       const isNativeETH = loan.loanToken === 0; // TokenType.NATIVE_ETH
-      const fundingAmount = loan.totalAmount; // Fund the full amount
       
       if (isNativeETH) {
         // For ETH loans, send ETH value with both loanId and amount parameters
-        const tx = await contract.contributeLoan(loan.id, fundingAmount, {
-          value: fundingAmount,
+        const tx = await contract.contributeLoan(loanId, contributionAmount, {
+          value: contributionAmount,
         });
         await tx.wait();
       } else {
         // For ERC20 loans, need token approval first
-        const { ethers } = await import('ethers');
+        const tokenInfo = await contract.supportedTokens(loan.loanToken);
+        const tokenAddress = tokenInfo.contractAddress;
         
-        try {
-          const tokenInfo = await contract.supportedTokens(loan.loanToken);
-          const tokenAddress = tokenInfo.contractAddress;
-          
-          // For native ETH (tokenType 0), zero address is expected and valid
-          if (loan.loanToken !== 0 && (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000')) {
-            setError('Invalid token address for this token type');
-            return;
-          }
-
-          // Create ERC20 contract instance
-          const erc20Contract = new ethers.Contract(
-            tokenAddress,
-            ['function approve(address spender, uint256 amount) external returns (bool)',
-             'function allowance(address owner, address spender) external view returns (uint256)'],
-            contract.runner
-          );
-
-          // Check current allowance
-          const contractAddress = await contract.getAddress();
-          const currentAllowance = await erc20Contract.allowance(account, contractAddress);
-          const fundingAmountBigInt = BigInt(fundingAmount);
-          
-          if (currentAllowance < fundingAmountBigInt) {
-            // Need to approve first
-            console.log('Approving token spend...');
-            const approveTx = await erc20Contract.approve(contractAddress, fundingAmountBigInt);
-            await approveTx.wait();
-            console.log('Token approval confirmed');
-          }
-
-          // Now fund the loan (no ETH value for ERC20 loans)
-          const tx = await contract.contributeLoan(loan.id, fundingAmount);
-          await tx.wait();
-        } catch (tokenError: any) {
-          console.error('Error with token operations:', tokenError);
-          setError('Failed to get token information or approve token spend');
-          return;
+        if (!tokenAddress || tokenAddress === '0x0000000000000000000000000000000000000000') {
+          throw new Error('Invalid token address for this token type');
         }
+
+        // Create ERC20 contract instance
+        const erc20Contract = new ethers.Contract(
+          tokenAddress,
+          ['function approve(address spender, uint256 amount) external returns (bool)',
+           'function allowance(address owner, address spender) external view returns (uint256)'],
+          contract.runner
+        );
+
+        // Check current allowance
+        const contractAddress = await contract.getAddress();
+        const currentAllowance = await erc20Contract.allowance(account, contractAddress);
+        const contributionAmountBigInt = BigInt(contributionAmount);
+        
+        if (currentAllowance < contributionAmountBigInt) {
+          // Need to approve first
+          console.log('Approving token spend...');
+          const approveTx = await erc20Contract.approve(contractAddress, contributionAmountBigInt);
+          await approveTx.wait();
+          console.log('Token approval confirmed');
+        }
+
+        // Now contribute to the loan (no ETH value for ERC20 loans)
+        const tx = await contract.contributeLoan(loanId, contributionAmount);
+        await tx.wait();
       }
 
       onUpdate();
     } catch (error: any) {
-      console.error('Error funding loan:', error);
-      setError(error.reason || error.message || 'Failed to fund loan');
-    } finally {
-      setIsLoading(false);
+      console.error('Error contributing to loan:', error);
+      throw new Error(error.reason || error.message || 'Failed to contribute to loan');
     }
   };
 
@@ -380,23 +370,14 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         </div>
       )}
 
+      {/* Pooled Funding Section for REQUESTED loans */}
+      {Number(loan.status) === LoanStatus.REQUESTED && account && account.toLowerCase() !== loan.borrower.toLowerCase() && (
+        <div className="mb-4">
+          <PooledLoanFunding loan={loan} onContribute={handleContribute} />
+        </div>
+      )}
+
       <div className="flex space-x-3">
-        {canFund() && (
-          <button
-            onClick={handleFundLoan}
-            disabled={isLoading}
-            className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-          >
-            {isLoading ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            ) : (
-              <>
-                <DollarSign size={16} />
-                <span>Fund Loan</span>
-              </>
-            )}
-          </button>
-        )}
 
         {canRepay() && (
           <button

@@ -21,6 +21,14 @@ author = "agent"
 task = "workflow.run"
 args = "Frontend"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "ML Service"
+
 [[workflows.workflow]]
 name = "Frontend"
 author = "agent"
@@ -32,6 +40,30 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow]]
+name = "Backend"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend && node server.js"
+waitForPort = 3001
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
+name = "ML Service"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python main.py"
+waitForPort = 3002
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [agent]
 expertMode = true
@@ -53,10 +85,6 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 40079
-externalPort = 8008
-
-[[ports]]
 localPort = 40691
 externalPort = 3000
 
@@ -67,6 +95,10 @@ externalPort = 4200
 [[ports]]
 localPort = 41339
 externalPort = 9000
+
+[[ports]]
+localPort = 43333
+externalPort = 8008
 
 [[ports]]
 localPort = 43543
