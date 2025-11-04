@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PlusCircle, AlertCircle, Calculator, Users } from 'lucide-react';
-import { parseEther, parseUnits } from 'ethers';
+import { parseUnits } from 'ethers';
 import { useContract } from '../hooks/useContract';
 import { LoanFormData, TOKEN_INFO } from '../types/loan';
 
