@@ -1,7 +1,7 @@
 # LoanVerse - DeFi Lending Platform with AI Credit Scoring
 
 ## Overview
-LoanVerse is a comprehensive DeFi lending platform featuring AI-powered credit scoring using on-chain wallet analysis. The system implements a 300-850 credit score range (similar to traditional FICO scores) based on transaction analysis, portfolio stability, lending history, and DeFi behavior. Built on Ethereum with multi-token support and Chainlink price feeds.
+LoanVerse is a comprehensive DeFi lending platform designed to provide decentralized lending and borrowing services. Its core innovation lies in an AI-powered credit scoring system that analyzes on-chain wallet data, assigning a credit score within a 300-850 range. This system aims to broaden access to DeFi lending by providing a robust, data-driven assessment of borrower trustworthiness. The project envisions reducing risk for lenders and offering competitive rates for borrowers, ultimately enhancing liquidity and participation in the DeFi ecosystem.
 
 ## User Preferences
 I prefer simple language and clear explanations. I want iterative development, with small, testable changes. Please ask before making any major architectural changes or refactoring large parts of the codebase.
@@ -13,316 +13,32 @@ I prefer simple language and clear explanations. I want iterative development, w
 ## System Architecture
 
 ### Core Features
-
-#### 1. AI-Powered Credit Scoring (300-850 Scale)
-- **Transaction Analysis (30%)**: Count, volume, frequency, patterns
-- **Portfolio Stability (25%)**: Stablecoin ratio, holding period, volatility, diversity
-- **Lending History (25%)**: Repayment rate, defaults, active loans, total borrowed/repaid
-- **DeFi Behavior (20%)**: Protocol interactions, yield farming, smart contract usage, DeFi experience
-
-#### 2. On-Chain Wallet Analysis
-- Real blockchain data integration via Etherscan API
-- Deterministic fallback for local development
-- Transaction metrics, portfolio analysis, DeFi behavior tracking
-- Support for multiple networks (mainnet, sepolia)
-
-#### 3. Multi-Token Support
-- ETH, USDC, USDT, DAI, WBTC, LINK
-- Chainlink price feeds for real-time valuation
-- Automated liquidation when collateral drops below threshold
-
-#### 4. AI Customer Support
-- Google Gemini chatbot integration (FREE tier)
-- Platform-specific knowledge about credit scoring
-- Intent analysis and FAQ suggestions
-- Conversation history support
-
-#### 5. Dataset Generator
-- Generate 1000+ deterministic wallet addresses
-- Realistic transaction data and risk profiles
-- JSON and CSV export formats
-- Statistical validation and performance metrics
-
-#### 6. Performance Metrics
-- Accuracy metrics: MAE, RMSE, MAPE, R²
-- Classification metrics: Precision, recall, F1-score
-- FICO benchmark comparison
-- Algorithm consistency validation
-
-#### 7. Logistic Regression ML Service
-- **Python-based ML service** using scikit-learn for loan default prediction
-- **ROC-AUC: 71.34%** - Excellent predictive capability
-- **295% accuracy improvement** over heuristic method (66.65% vs 16.85%)
-- **Real-time data collection** framework for continuous model improvement
-- **Flask REST API** on port 3002 with comprehensive endpoints
-- **Model comparison framework** with detailed metrics and visualizations
-- **Feature importance analysis** showing top predictive factors
-- **Synthetic data generation** (10,000 samples) for initial training
-
-#### 8. Connection Pooling (NEW!)
-- **HTTP Connection Pooling**: Axios with keep-alive agents (50 max sockets)
-- **Blockchain Provider Pooling**: Reusable ethers.js JsonRpcProvider instances
-- **Redis Connection Pooling**: Automatic reconnection with graceful degradation
-- **Database Connection Pooling**: SQLAlchemy QueuePool (size=10, max_overflow=20)
-- **Pool Monitoring**: Real-time stats via `/api/pools/stats` and `/pool/stats`
-- **Performance**: 30-50% reduction in API call latency
-- **Resource Efficiency**: Optimized connection reuse and automatic cleanup
+- **AI-Powered Credit Scoring (300-850 Scale)**: Utilizes transaction analysis (30%), portfolio stability (25%), lending history (25%), and DeFi behavior (20%) to determine a credit score, akin to traditional FICO scores.
+- **On-Chain Wallet Analysis**: Integrates with real blockchain data (e.g., via Etherscan API) for transaction metrics, portfolio analysis, and DeFi behavior tracking. Includes deterministic fallbacks for local development.
+- **Multi-Token Support**: Supports major tokens (ETH, USDC, USDT, DAI, WBTC, LINK) with real-time valuation via Chainlink price feeds and automated liquidation mechanisms.
+- **AI Customer Support**: Integrates Google Gemini chatbot for platform-specific knowledge, intent analysis, and FAQ suggestions.
+- **Dataset Generator**: Creates realistic, synthetic wallet transaction data (1000+ addresses) for testing and model training, exportable in JSON and CSV formats.
+- **Logistic Regression ML Service**: A Python-based Flask REST API service using scikit-learn for loan default prediction, achieving 71.34% ROC-AUC. It includes a real-time data collection framework for continuous model improvement.
+- **Multi-Lender Pooling (LoanVerseV4)**: Enables multiple lenders to fund a single loan, with proportional interest distribution, minimum contribution limits, funding deadlines with automatic refunds, and a voting mechanism for collateral liquidation.
+- **Connection Pooling**: Implements HTTP, Blockchain Provider, Redis, and Database connection pooling for enhanced performance and resource efficiency, reducing API call latency by 30-50%.
 
 ### Technical Stack
 - **Frontend**: React 18, TypeScript, Vite, Tailwind CSS, Ethers.js v6
 - **Smart Contracts**: Solidity 0.8.19/0.8.20, Hardhat, OpenZeppelin
 - **Backend API**: Node.js, Express
-- **AI/ML**: 
-  - Google Gemini AI (chatbot, free tier)
-  - Python ML Service (logistic regression, scikit-learn)
+- **AI/ML**: Google Gemini AI (chatbot), Python ML Service (scikit-learn, Flask)
 - **Blockchain**: Ethereum-compatible (Hardhat local, Sepolia testnet)
-- **Real Data**: Etherscan API integration
 
-### Local VS Code Development Setup
-
-#### Prerequisites
-- Node.js 20.x
-- MetaMask wallet extension
-- VS Code or any code editor
-
-#### Environment Variables
-Create a `.env` file in the project root:
-```bash
-# Blockchain
-RPC_URL=http://localhost:8000
-PRIVATE_KEY=your_private_key_here
-
-# Optional: Real blockchain data (FREE)
-ETHERSCAN_API_KEY=your_etherscan_api_key  # Get free at https://etherscan.io/apis
-
-# Optional: AI Chatbot (FREE)
-GEMINI_API_KEY=your_gemini_api_key  # Get free at https://aistudio.google.com/apikey
-
-# Backend Configuration
-PORT=3001
-NODE_ENV=development
-```
-
-#### Running the Project
-
-1. **Install Dependencies**
-```bash
-# Root dependencies
-npm install
-
-# Backend dependencies
-cd backend && npm install && cd ..
-```
-
-2. **Start Hardhat Node (Terminal 1)**
-```bash
-npx hardhat node --port 8000 --hostname 0.0.0.0
-```
-
-3. **Deploy Contracts (Terminal 2)**
-```bash
-npx hardhat run scripts/deployV2.js --network localhost
-```
-
-4. **Start Backend API (Terminal 3)**
-```bash
-cd backend && npm start
-```
-
-5. **Start Frontend (Terminal 4)**
-```bash
-npm run dev
-```
-
-#### Access Points
-- **Frontend**: http://localhost:5000
-- **Backend API**: http://localhost:3001
-- **Blockchain RPC**: http://localhost:8000
-- **Health Check**: http://localhost:3001/health
-
-#### MetaMask Configuration
-- **Network Name**: Hardhat Local
-- **RPC URL**: http://localhost:8000
-- **Chain ID**: 31337
-- **Currency Symbol**: ETH
-
-## API Endpoints
-
-### Credit Scoring
-- `POST /api/credit-score/calculate` - Calculate credit score for wallet
-- `GET /api/credit-score/analyze/:address` - Full wallet analysis
-- `POST /api/credit-score/transaction-analysis` - Transaction metrics
-- `POST /api/credit-score/portfolio-stability` - Portfolio analysis
-- `POST /api/credit-score/defi-behavior` - DeFi behavior metrics
-
-### AI Chatbot
-- `POST /api/chatbot/chat` - Generate AI responses
-- `POST /api/chatbot/analyze-intent` - Analyze question intent
-- `POST /api/chatbot/faq-suggestions` - Get FAQ suggestions
-- `GET /api/chatbot/status` - Check chatbot status
-
-### Dataset Generation
-- `POST /api/dataset/generate` - Generate wallet dataset
-- `GET /api/dataset/statistics` - Generator capabilities
-- `POST /api/dataset/validate` - Validate metrics
-
-### Performance Metrics
-- `GET /api/performance/benchmark/:score` - FICO comparison
-- `POST /api/performance/accuracy` - Calculate accuracy metrics
-- `POST /api/performance/classification` - Classification metrics
-- `POST /api/performance/system-stats` - System performance
-- `POST /api/performance/report` - Comprehensive report
-
-## Smart Contracts
-
-### Deployed Addresses (Local Hardhat)
-- **LoanVerseV3**: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
-- **TokenSwap**: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
-- **Mock USDC**: 0x5FbDB2315678afecb367f032d93F642f64180aa3
-- **Mock DAI**: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
-- **Mock USDT**: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
-
-### Key Features
-- Multi-token collateral support
-- Automated liquidation mechanism
-- Interest rate calculation based on credit scores
-- Chainlink price feed integration
-- Secure wei-based arithmetic
-
-## CLI Tools
-
-### Generate Dataset
-```bash
-# Generate 1000 wallets (JSON)
-node backend/scripts/generateDataset.js 1000 json
-
-# Generate 5000 wallets (CSV)
-node backend/scripts/generateDataset.js 5000 csv
-```
-
-## Recent Changes
-
-### November 4, 2025 - Connection Pooling Implementation
-- ✅ Implemented **comprehensive connection pooling** across all services
-- ✅ **HTTP Connection Pooling**: Keep-alive connections with 50 max sockets, 10 max free
-- ✅ **Blockchain Provider Pooling**: Reusable ethers.js providers with batch RPC support
-- ✅ **Redis Connection Pooling**: Automatic reconnection with exponential backoff, graceful degradation
-- ✅ **Database Connection Pooling**: SQLAlchemy QueuePool (size=10, max_overflow=20)
-- ✅ Created centralized pool manager (`backend/services/connectionPools.js`)
-- ✅ Updated all services to use pooled connections:
-  - blockchainDataService, liquidationService, contractService
-  - IPFS routes, ML risk prediction routes
-- ✅ Added pool monitoring endpoints:
-  - `/api/pools/stats` (Backend API)
-  - `/pool/stats` (ML API)
-- ✅ Implemented graceful shutdown handlers for all pools
-- ✅ **Performance improvement**: 30-50% reduction in API call latency
-- ✅ Created comprehensive documentation:
-  - `POOLING_IMPLEMENTATION.md` - Technical details
-  - `VS_CODE_SETUP_AND_RUN.md` - Complete local setup guide
-- ✅ Architect-approved with PASS verdict - no resource leaks or security concerns
-
-### November 3, 2025 - ML Service Implementation
-- ✅ Implemented **Logistic Regression ML Service** for loan risk assessment
-- ✅ Generated 10,000 synthetic training samples with realistic distributions
-- ✅ Achieved **71.34% ROC-AUC** score with trained model
-- ✅ **295% accuracy improvement** over heuristic method
-- ✅ Created Flask REST API service running on port 3002
-- ✅ Implemented comprehensive model evaluation metrics:
-  - Accuracy: 66.65%, Precision: 21.61%, Recall: 65.98%, F1: 32.56%
-  - ROC curve, confusion matrix, feature importance visualizations
-- ✅ Built real-time data collection framework for continuous improvement
-- ✅ Created model comparison framework showing detailed metric breakdowns
-- ✅ Integrated ML service with Node.js backend via `/api/ml/*` endpoints
-- ✅ Added comprehensive ML service documentation
-- ✅ Top feature: `repaid_loans` (-0.69 coefficient) - strongest default predictor
-
-### October 12, 2025
-- ✅ Implemented 300-850 credit score range with proper clamping
-- ✅ Added on-chain wallet analysis with Etherscan API integration
-- ✅ Created transaction, portfolio, and DeFi behavior analysis services
-- ✅ Integrated Google Gemini AI chatbot (FREE tier, no billing required)
-- ✅ Built deterministic dataset generator for 1000+ wallet addresses
-- ✅ Implemented performance metrics and statistical validation
-- ✅ Added FICO benchmark comparison
-- ✅ Fixed async/await bugs in portfolio stability analysis
-- ✅ Updated all documentation for VS Code local development
-
-### Credit Scoring Algorithm
-The weighted algorithm calculates credit scores from 300-850:
-1. Transaction Analysis: 30% weight
-2. Portfolio Stability: 25% weight
-3. Lending History: 25% weight
-4. DeFi Behavior: 20% weight
-
-Final score = 300 + (normalized_score × 550)
+### System Design
+- **Modular Architecture**: Clear separation between frontend, backend, and smart contracts.
+- **Data Handling**: Real blockchain data integration with robust deterministic fallbacks for development.
+- **AI Integration**: Leverages free-tier AI services for credit scoring and customer support.
+- **Credit Scoring Algorithm**: A weighted algorithm combining various on-chain metrics, normalized to a 300-850 range.
 
 ## External Dependencies
 
-### Required
-- **Ethereum Blockchain**: Smart contracts (Hardhat local, Sepolia)
-- **MetaMask**: Wallet interactions
-- **OpenZeppelin**: Security contracts
-- **Node.js**: Backend runtime
-- **Vite**: Frontend build tool
-- **Tailwind CSS**: Styling
-- **Ethers.js v6**: Ethereum interactions
-
-### Optional (FREE APIs)
-- **Etherscan API**: Real blockchain data (https://etherscan.io/apis)
-- **Google Gemini**: AI chatbot (https://aistudio.google.com/apikey)
-
-Both APIs are completely free with generous quotas - no billing required!
-
-## Development Notes
-
-### Getting Free API Keys
-
-#### Etherscan API (Optional - for real blockchain data)
-1. Visit https://etherscan.io/
-2. Create a free account
-3. Go to API-Keys section
-4. Generate a new API key
-5. Add to `.env`: `ETHERSCAN_API_KEY=your_key_here`
-
-#### Google Gemini AI (Optional - for chatbot)
-1. Visit https://aistudio.google.com/apikey
-2. Sign in with Google account
-3. Click "Create API Key"
-4. Add to `.env`: `GEMINI_API_KEY=your_key_here`
-
-### Testing Without API Keys
-The system works perfectly without API keys:
-- Uses deterministic mock data for wallet analysis
-- Chatbot returns helpful error messages
-- All core lending features work normally
-
-### Architecture Decisions
-- Modular separation: frontend, backend, smart contracts
-- Real blockchain data with deterministic fallbacks
-- Free AI integration (Google Gemini, no billing)
-- 300-850 credit score range (industry standard)
-- Weighted algorithm per research paper requirements
-- Comprehensive error handling and validation
-
-## Project Structure
-```
-loanverse/
-├── src/                    # Frontend React app
-├── contracts/              # Solidity smart contracts
-├── backend/
-│   ├── services/          # Business logic
-│   │   ├── mlService.js              # Credit scoring
-│   │   ├── walletAnalysisService.js  # On-chain analysis
-│   │   ├── blockchainDataService.js  # Etherscan integration
-│   │   ├── chatbotService.js         # AI chatbot
-│   │   ├── datasetGenerator.js       # Dataset generation
-│   │   └── performanceMetrics.js     # Statistics
-│   ├── routes/            # API endpoints
-│   └── scripts/           # CLI tools
-├── scripts/               # Deployment scripts
-└── data/                  # Generated datasets
-```
-
-## Support
-For issues or questions, use the AI chatbot (when configured) or check the inline documentation in each service file.
+- **Ethereum Blockchain**: For smart contract deployment and interaction (Hardhat local, Sepolia testnet).
+- **MetaMask**: Wallet extension for user authentication and transaction signing.
+- **OpenZeppelin Contracts**: For secure and audited smart contract components.
+- **Etherscan API**: (Optional) For fetching real-time blockchain data and transaction history.
+- **Google Gemini AI**: (Optional) For AI-powered chatbot functionalities.
