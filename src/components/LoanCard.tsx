@@ -115,7 +115,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       
       if (isNativeETH) {
         // For ETH loans, send ETH value with both loanId and amount parameters
-        const tx = await contract.fundLoan(loan.id, fundingAmount, {
+        const tx = await contract.contributeLoan(loan.id, fundingAmount, {
           value: fundingAmount,
         });
         await tx.wait();
@@ -155,7 +155,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
           }
 
           // Now fund the loan (no ETH value for ERC20 loans)
-          const tx = await contract.fundLoan(loan.id, fundingAmount);
+          const tx = await contract.contributeLoan(loan.id, fundingAmount);
           await tx.wait();
         } catch (tokenError: any) {
           console.error('Error with token operations:', tokenError);
