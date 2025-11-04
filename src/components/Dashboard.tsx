@@ -100,8 +100,8 @@ const Dashboard: React.FC = () => {
           return {
             id: Number(loanData.id.toString()),
             borrower: loanData.borrower,
-            lenders: loanData.lenders,
-            lenderAmounts: loanData.lenderAmounts.map((amt: any) => amt.toString()),
+            lenders: loanData.lenders || [],
+            lenderAmounts: (loanData.lenderAmounts || []).map((amt: any) => amt.toString()),
             totalAmount: loanData.totalAmount.toString(),
             totalFunded: loanData.totalFunded.toString(),
             loanToken: loanData.loanToken,
