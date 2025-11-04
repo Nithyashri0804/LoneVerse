@@ -1,10 +1,12 @@
 """
 Flask API for Machine Learning Service
 Provides endpoints for risk prediction and model management
+With optimized database connection pooling
 """
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_sqlalchemy import SQLAlchemy
 import os
 import sys
 
@@ -14,10 +16,15 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from logistic_model import LoanRiskLogisticModel
 from data_collector import LoanDataCollector
 from model_comparison import ModelComparison
+from db_pool import configure_database_pool, get_pool_stats
 import json
 
 app = Flask(__name__)
 CORS(app)
+
+# Configure database connection pooling
+app = configure_database_pool(app)
+db = SQLAlchemy(app) if app.config.get('SQLALCHEMY_DATABASE_URI') else None
 
 # Initialize model and data collector
 ml_model = LoanRiskLogisticModel()
@@ -307,6 +314,28 @@ def retrain_model():
         }), 500
 
 
+@app.route('/pool/stats', methods=['GET'])
+def pool_stats():
+    """
+    Get database connection pool statistics
+    """
+    try:
+        if not db:
+            return jsonify({
+                'pool_configured': False,
+                'message': 'Database not configured'
+            })
+        
+        stats = get_pool_stats(db)
+        return jsonify(stats)
+        
+    except Exception as e:
+        return jsonify({
+            'error': 'Failed to get pool stats',
+            'message': str(e)
+        }), 500
+
+
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({'error': 'Endpoint not found'}), 404
@@ -330,6 +359,7 @@ if __name__ == '__main__':
     print("  POST /data/update         - Update loan outcome")
     print("  GET  /data/statistics     - Get data collection stats")
     print("  POST /retrain             - Retrain model with new data")
+    print("  GET  /pool/stats          - Get database pool statistics")
     print("")
     
     # Run on port 3002

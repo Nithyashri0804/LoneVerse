@@ -20,6 +20,7 @@ import mlRiskPredictionRoutes from './routes/mlRiskPrediction.js';
 import { initializeMLModel, getMlStatus } from './services/mlService.js';
 import { startRiskMonitoring } from './services/monitoringService.js';
 import { startLiquidationMonitoring } from './services/liquidationService.js';
+import { initializePools, getPoolStats, closeAllPools } from './services/connectionPools.js';
 
 dotenv.config();
 
@@ -109,6 +110,22 @@ app.get('/health', healthLimiter, (req, res) => {
   });
 });
 
+app.get('/api/pools/stats', (req, res) => {
+  try {
+    const stats = getPoolStats();
+    res.json({
+      success: true,
+      pools: stats,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: 'Failed to get pool stats',
+      message: error.message
+    });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
@@ -127,6 +144,9 @@ app.use((req, res) => {
 async function startServer() {
   try {
     console.log('🚀 Starting LoanVerse Backend...');
+    
+    // Initialize connection pools
+    await initializePools();
     
     // Initialize ML model (optional - graceful fallback)
     const mlStatus = await initializeMLModel();
@@ -163,6 +183,19 @@ async function startServer() {
     process.exit(1);
   }
 }
+
+// Graceful shutdown handler
+process.on('SIGTERM', async () => {
+  console.log('📴 SIGTERM received, shutting down gracefully...');
+  await closeAllPools();
+  process.exit(0);
+});
+
+process.on('SIGINT', async () => {
+  console.log('📴 SIGINT received, shutting down gracefully...');
+  await closeAllPools();
+  process.exit(0);
+});
 
 startServer();
 

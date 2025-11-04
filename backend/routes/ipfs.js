@@ -1,8 +1,8 @@
 import express from 'express';
 import multer from 'multer';
-import axios from 'axios';
 import crypto from 'crypto';
 import FormData from 'form-data';
+import { pooledAxios } from '../services/connectionPools.js';
 
 const router = express.Router();
 
@@ -80,7 +80,7 @@ router.post('/upload', upload.single('document'), async (req, res) => {
     });
     formData.append('pinataMetadata', pinataMetadata);
 
-    const response = await axios.post(
+    const response = await pooledAxios.post(
       `${PINATA_BASE_URL}/pinning/pinFileToIPFS`,
       formData,
       {
@@ -126,7 +126,7 @@ router.get('/metadata/:hash', async (req, res) => {
       });
     }
 
-    const response = await axios.get(
+    const response = await pooledAxios.get(
       `${PINATA_BASE_URL}/data/pinList?hashContains=${hash}`,
       {
         headers: {
@@ -174,7 +174,7 @@ router.delete('/unpin/:hash', async (req, res) => {
       return res.json({ message: 'File unpin simulated (no keys configured)' });
     }
 
-    await axios.delete(
+    await pooledAxios.delete(
       `${PINATA_BASE_URL}/pinning/unpin/${hash}`,
       {
         headers: {

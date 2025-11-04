@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import { ethers } from 'ethers';
+import { blockchainPool } from './connectionPools.js';
 
 // Contract ABI for LoanVerseV3 (simplified for key functions)
 const LOANVERSE_V3_ABI = [
@@ -40,13 +41,14 @@ class LiquidationService {
 
   initializeProvider() {
     try {
-      // Initialize provider and contract
-      this.provider = new ethers.JsonRpcProvider(this.rpcUrl);
-      this.signer = new ethers.Wallet(this.privateKey, this.provider);
+      // Use pooled provider and signer
+      this.provider = blockchainPool.getProvider(this.rpcUrl);
+      this.signer = blockchainPool.getSigner(this.privateKey, this.rpcUrl);
       this.contract = new ethers.Contract(this.contractAddress, LOANVERSE_V3_ABI, this.signer);
       
-      console.log('🔗 Liquidation service initialized with contract:', this.contractAddress);
-      console.log('🔑 Using liquidator account:', this.signer.address);
+      console.log('🔗 Liquidation service initialized with pooled provider');
+      console.log('📍 Contract:', this.contractAddress);
+      console.log('🔑 Liquidator account:', this.signer.address);
     } catch (error) {
       console.error('❌ Failed to initialize liquidation service:', error);
     }

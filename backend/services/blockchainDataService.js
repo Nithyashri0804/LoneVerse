@@ -1,14 +1,15 @@
-import axios from 'axios';
 import { ethers } from 'ethers';
+import { pooledAxios, redisPool } from './connectionPools.js';
 
 /**
  * Blockchain Data Service
  * Fetches real on-chain data from various sources (Etherscan, Alchemy, etc.)
  * Falls back to deterministic mock data for local development
+ * Uses connection pooling for improved performance
  */
 
 /**
- * Fetch transaction history from Etherscan API
+ * Fetch transaction history from Etherscan API with caching
  * @param {string} address - Wallet address
  * @param {string} network - Network name (mainnet, sepolia, etc.)
  * @returns {Array} Transaction history
@@ -21,6 +22,13 @@ export async function fetchTransactionHistory(address, network = 'mainnet') {
     return null; // Will trigger mock data fallback
   }
   
+  const cacheKey = `tx_history:${network}:${address}`;
+  const cached = await redisPool.get(cacheKey);
+  if (cached) {
+    console.log(`✅ Cache hit for transaction history: ${address}`);
+    return JSON.parse(cached);
+  }
+  
   try {
     const baseUrls = {
       mainnet: 'https://api.etherscan.io/api',
@@ -30,8 +38,8 @@ export async function fetchTransactionHistory(address, network = 'mainnet') {
     
     const baseUrl = baseUrls[network] || baseUrls.mainnet;
     
-    // Fetch normal transactions
-    const normalTxResponse = await axios.get(baseUrl, {
+    // Fetch normal transactions using pooled axios
+    const normalTxResponse = await pooledAxios.get(baseUrl, {
       params: {
         module: 'account',
         action: 'txlist',
@@ -46,8 +54,8 @@ export async function fetchTransactionHistory(address, network = 'mainnet') {
       timeout: 10000
     });
     
-    // Fetch internal transactions  
-    const internalTxResponse = await axios.get(baseUrl, {
+    // Fetch internal transactions using pooled axios
+    const internalTxResponse = await pooledAxios.get(baseUrl, {
       params: {
         module: 'account',
         action: 'txlistinternal',
@@ -72,7 +80,7 @@ export async function fetchTransactionHistory(address, network = 'mainnet') {
     
     console.log(`✅ Fetched ${allTx.length} real transactions from Etherscan`);
     
-    return allTx.map(tx => ({
+    const result = allTx.map(tx => ({
       hash: tx.hash,
       from: tx.from,
       to: tx.to || tx.contractAddress,
@@ -83,6 +91,10 @@ export async function fetchTransactionHistory(address, network = 'mainnet') {
       gasUsed: tx.gasUsed,
       isError: tx.isError === '1'
     }));
+    
+    await redisPool.set(cacheKey, JSON.stringify(result), 300);
+    
+    return result;
     
   } catch (error) {
     console.error('Error fetching from Etherscan:', error.message);
@@ -103,6 +115,13 @@ export async function fetchTokenBalances(address, network = 'mainnet') {
     return null;
   }
   
+  const cacheKey = `token_balances:${network}:${address}`;
+  const cached = await redisPool.get(cacheKey);
+  if (cached) {
+    console.log(`✅ Cache hit for token balances: ${address}`);
+    return JSON.parse(cached);
+  }
+  
   try {
     const baseUrls = {
       mainnet: 'https://api.etherscan.io/api',
@@ -112,7 +131,7 @@ export async function fetchTokenBalances(address, network = 'mainnet') {
     
     const baseUrl = baseUrls[network] || baseUrls.mainnet;
     
-    const response = await axios.get(baseUrl, {
+    const response = await pooledAxios.get(baseUrl, {
       params: {
         module: 'account',
         action: 'tokentx',
@@ -142,7 +161,11 @@ export async function fetchTokenBalances(address, network = 'mainnet') {
     });
     
     console.log(`✅ Found ${tokens.size} unique tokens`);
-    return Array.from(tokens.values());
+    const result = Array.from(tokens.values());
+    
+    await redisPool.set(cacheKey, JSON.stringify(result), 300);
+    
+    return result;
     
   } catch (error) {
     console.error('Error fetching token balances:', error.message);

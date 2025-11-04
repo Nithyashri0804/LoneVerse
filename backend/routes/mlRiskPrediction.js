@@ -1,5 +1,5 @@
 import express from 'express';
-import axios from 'axios';
+import { pooledAxios } from '../services/connectionPools.js';
 
 const router = express.Router();
 
@@ -9,7 +9,7 @@ router.post('/predict', async (req, res) => {
   try {
     const features = req.body;
     
-    const response = await axios.post(`${ML_SERVICE_URL}/predict`, features, {
+    const response = await pooledAxios.post(`${ML_SERVICE_URL}/predict`, features, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 10000
     });
@@ -35,7 +35,7 @@ router.post('/predict/batch', async (req, res) => {
   try {
     const loans = req.body.loans || [];
     
-    const response = await axios.post(`${ML_SERVICE_URL}/predict/batch`, { loans }, {
+    const response = await pooledAxios.post(`${ML_SERVICE_URL}/predict/batch`, { loans }, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 30000
     });
@@ -54,7 +54,7 @@ router.post('/predict/batch', async (req, res) => {
 
 router.get('/model/info', async (req, res) => {
   try {
-    const response = await axios.get(`${ML_SERVICE_URL}/model/info`, {
+    const response = await pooledAxios.get(`${ML_SERVICE_URL}/model/info`, {
       timeout: 5000
     });
     
@@ -72,7 +72,7 @@ router.get('/model/info', async (req, res) => {
 
 router.get('/model/metrics', async (req, res) => {
   try {
-    const response = await axios.get(`${ML_SERVICE_URL}/model/metrics`, {
+    const response = await pooledAxios.get(`${ML_SERVICE_URL}/model/metrics`, {
       timeout: 5000
     });
     
@@ -90,7 +90,7 @@ router.get('/model/metrics', async (req, res) => {
 
 router.get('/comparison', async (req, res) => {
   try {
-    const response = await axios.get(`${ML_SERVICE_URL}/comparison`, {
+    const response = await pooledAxios.get(`${ML_SERVICE_URL}/comparison`, {
       timeout: 5000
     });
     
@@ -110,7 +110,7 @@ router.post('/data/record', async (req, res) => {
   try {
     const loanData = req.body;
     
-    const response = await axios.post(`${ML_SERVICE_URL}/data/record`, loanData, {
+    const response = await pooledAxios.post(`${ML_SERVICE_URL}/data/record`, loanData, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 5000
     });
@@ -131,7 +131,7 @@ router.post('/data/update', async (req, res) => {
   try {
     const updateData = req.body;
     
-    const response = await axios.post(`${ML_SERVICE_URL}/data/update`, updateData, {
+    const response = await pooledAxios.post(`${ML_SERVICE_URL}/data/update`, updateData, {
       headers: { 'Content-Type': 'application/json' },
       timeout: 5000
     });
@@ -150,7 +150,7 @@ router.post('/data/update', async (req, res) => {
 
 router.get('/data/statistics', async (req, res) => {
   try {
-    const response = await axios.get(`${ML_SERVICE_URL}/data/statistics`, {
+    const response = await pooledAxios.get(`${ML_SERVICE_URL}/data/statistics`, {
       timeout: 5000
     });
     
@@ -168,7 +168,7 @@ router.get('/data/statistics', async (req, res) => {
 
 router.get('/health', async (req, res) => {
   try {
-    const response = await axios.get(`${ML_SERVICE_URL}/health`, {
+    const response = await pooledAxios.get(`${ML_SERVICE_URL}/health`, {
       timeout: 3000
     });
     

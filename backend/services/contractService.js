@@ -1,20 +1,17 @@
 import { ethers } from 'ethers';
 import LoanVerseABI from '../contracts/LoanVerse.json' with { type: 'json' };
+import { blockchainPool } from './connectionPools.js';
 
 // Contract configuration
 const SEPOLIA_RPC = process.env.SEPOLIA_RPC_URL || 'https://sepolia.infura.io/v3/demo';
 const CONTRACT_ADDRESS = process.env.LOANVERSE_CONTRACT_ADDRESS;
 
-let provider;
 let contract;
 
-// Initialize contract connection
+// Initialize contract connection using pooled provider
 function initializeContract() {
-  if (!provider) {
-    provider = new ethers.JsonRpcProvider(SEPOLIA_RPC);
-  }
-  
   if (CONTRACT_ADDRESS && !contract) {
+    const provider = blockchainPool.getProvider(SEPOLIA_RPC);
     contract = new ethers.Contract(CONTRACT_ADDRESS, LoanVerseABI.abi, provider);
   }
 }
