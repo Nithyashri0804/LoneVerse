@@ -127,8 +127,14 @@ export function TokenSwap() {
     try {
       setIsLoading(true);
       const signer = await provider.getSigner();
+      
+      const tokenSwapAddress = CONTRACT_ADDRESSES[31337].tokenSwap;
+      if (!tokenSwapAddress) {
+        throw new Error('TokenSwap contract not deployed');
+      }
+      
       const swapContract = new ethers.Contract(
-        CONTRACT_ADDRESSES[31337].tokenSwap,
+        tokenSwapAddress,
         TOKEN_SWAP_ABI,
         signer
       );

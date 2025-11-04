@@ -23,13 +23,13 @@ export const CONTRACT_ADDRESSES: Record<number, {
   },
   [SUPPORTED_CHAINS.HARDHAT]: {
     loanChain: "",     // V1 not deployed locally
-    loanChainV2: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // LoanChainV2 (local deployment)
+    loanChainV2: "",   // V2 not currently in use
     loanChainV3: "",   // V3 not deployed locally
-    loanVerseV4: "",   // Will be set after deploying with deployV4.js
-    tokenSwap: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",    // TokenSwap contract (local)
-    mockUSDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Mock USDC token (local)
-    mockDAI: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",      // Mock DAI token (local)
-    mockUSDT: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",     // Mock USDT token (local)
+    loanVerseV4: "0x5FbDB2315678afecb367f032d93F642f64180aa3",   // LoanVerseV4 (deployed via deployV4.js)
+    tokenSwap: "",    // TokenSwap contract (not deployed)
+    mockUSDC: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",     // Mock USDC token (local)
+    mockDAI: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",      // Mock DAI token (local)
+    mockUSDT: "",     // Mock USDT token (not deployed)
   },
 };
 
@@ -50,7 +50,7 @@ export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' 
     return null;
   }
   
-  // Return the requested version, fallback to v1 if version not available
+  // Return the requested version, with smart fallback to best available version
   let contractAddress: string | undefined;
   switch (version) {
     case 'v4':
@@ -69,9 +69,10 @@ export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' 
   }
   
   if (!contractAddress) {
-    console.warn(`LoanChain ${version} not deployed on chain ${chainId}`);
-    // Fallback to v1 if requested version not available
-    return addresses.loanChain || null;
+    console.warn(`LoanChain ${version} not deployed on chain ${chainId}, using fallback`);
+    // Smart fallback: use getPrimaryContractAddress to find best available version
+    const { address } = getPrimaryContractAddress(chainId);
+    return address;
   }
   
   return contractAddress;
