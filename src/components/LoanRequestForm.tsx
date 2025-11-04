@@ -319,20 +319,32 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Collateral Amount (ETH)
+            Collateral Amount
           </label>
-          <input
-            type="number"
-            step="0.0001"
-            min="0.0001"
-            value={formData.collateralAmount}
-            onChange={(e) => handleInputChange('collateralAmount', e.target.value)}
-            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="0.0000"
-            required
-          />
+          <div className="flex space-x-3">
+            <input
+              type="number"
+              step="0.0001"
+              min="0.0001"
+              value={formData.collateralAmount}
+              onChange={(e) => handleInputChange('collateralAmount', e.target.value)}
+              className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="0.0000"
+              required
+            />
+            <select
+              value={formData.collateralToken}
+              onChange={(e) => handleInputChange('collateralToken', parseInt(e.target.value))}
+              className="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value={0}>ETH</option>
+              <option value={1}>USDC</option>
+              <option value={2}>DAI</option>
+              <option value={3}>USDT</option>
+            </select>
+          </div>
           <div className="mt-2 text-sm text-gray-400">
-            Minimum required: {calculateRequiredCollateral()} ETH (120% of loan amount)
+            Minimum required: {calculateRequiredCollateral()} {TOKEN_INFO[formData.collateralToken].symbol} (120% of loan amount)
           </div>
         </div>
 
@@ -345,11 +357,11 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <span className="text-gray-400">Loan Amount:</span>
-                <div className="text-white font-medium">{formData.totalAmount} ETH</div>
+                <div className="text-white font-medium">{formData.totalAmount} {TOKEN_INFO[formData.loanToken].symbol}</div>
               </div>
               <div>
                 <span className="text-gray-400">Total Repayment:</span>
-                <div className="text-white font-medium">{calculateTotalRepayment()} ETH</div>
+                <div className="text-white font-medium">{calculateTotalRepayment()} {TOKEN_INFO[formData.loanToken].symbol}</div>
               </div>
               <div>
                 <span className="text-gray-400">Interest:</span>
@@ -358,6 +370,14 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
               <div>
                 <span className="text-gray-400">Duration:</span>
                 <div className="text-white font-medium">{formData.duration} days</div>
+              </div>
+              <div>
+                <span className="text-gray-400">Collateral:</span>
+                <div className="text-white font-medium">{formData.collateralAmount || '0'} {TOKEN_INFO[formData.collateralToken].symbol}</div>
+              </div>
+              <div>
+                <span className="text-gray-400">Collateral Ratio:</span>
+                <div className="text-white font-medium">120%</div>
               </div>
             </div>
           </div>
