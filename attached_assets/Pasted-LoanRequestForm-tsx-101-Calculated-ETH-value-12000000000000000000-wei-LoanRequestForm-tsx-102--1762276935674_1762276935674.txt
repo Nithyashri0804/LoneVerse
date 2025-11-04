@@ -1,0 +1,117 @@
+LoanRequestForm.tsx:101 💰 Calculated ETH value: 12000000000000000000 wei
+LoanRequestForm.tsx:102 📋 Loan details: {amount: '10000000000000000000', collateralAmount: '12000000000000000000', tokenId: 1, collateralTokenId: 0, minContribution: '4980000000000000000', …}
+inpage.js:1 MetaMask - RPC Error: Internal JSON-RPC error. {code: -32603, message: 'Internal JSON-RPC error.', data: {…}, stack: '{\n  "code": -32603,\n  "message": "Internal JSON-RP…hfbeogaeaoehlefnkodbefgpgknn/common-2.js:3:145610'}
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+p @ inpage.js:1
+f @ inpage.js:1
+await in f
+l @ inpage.js:1
+handle @ inpage.js:1
+_rpcRequest @ inpage.js:1
+(anonymous) @ inpage.js:1
+request @ inpage.js:1
+#request @ ethers.js?v=d2f9d122:21506
+_send @ ethers.js?v=d2f9d122:21529
+(anonymous) @ ethers.js?v=d2f9d122:18745
+(anonymous) @ ethers.js?v=d2f9d122:18774
+setTimeout
+#scheduleDrain @ ethers.js?v=d2f9d122:18724
+send @ ethers.js?v=d2f9d122:19211
+send @ ethers.js?v=d2f9d122:21524
+await in send
+_perform @ ethers.js?v=d2f9d122:18842
+#perform @ ethers.js?v=d2f9d122:17067
+estimateGas @ ethers.js?v=d2f9d122:17429
+estimateGas @ ethers.js?v=d2f9d122:18302
+await in estimateGas
+estimateGas @ ethers.js?v=d2f9d122:14681
+await in estimateGas
+handleSubmit @ LoanRequestForm.tsx:115
+callCallback2 @ chunk-NXESFFTV.js?v=d2f9d122:3680
+invokeGuardedCallbackDev @ chunk-NXESFFTV.js?v=d2f9d122:3705
+invokeGuardedCallback @ chunk-NXESFFTV.js?v=d2f9d122:3739
+invokeGuardedCallbackAndCatchFirstError @ chunk-NXESFFTV.js?v=d2f9d122:3742
+executeDispatch @ chunk-NXESFFTV.js?v=d2f9d122:7046
+processDispatchQueueItemsInOrder @ chunk-NXESFFTV.js?v=d2f9d122:7066
+processDispatchQueue @ chunk-NXESFFTV.js?v=d2f9d122:7075
+dispatchEventsForPlugins @ chunk-NXESFFTV.js?v=d2f9d122:7083
+(anonymous) @ chunk-NXESFFTV.js?v=d2f9d122:7206
+batchedUpdates$1 @ chunk-NXESFFTV.js?v=d2f9d122:18966
+batchedUpdates @ chunk-NXESFFTV.js?v=d2f9d122:3585
+dispatchEventForPluginEventSystem @ chunk-NXESFFTV.js?v=d2f9d122:7205
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NXESFFTV.js?v=d2f9d122:5484
+dispatchEvent @ chunk-NXESFFTV.js?v=d2f9d122:5478
+dispatchDiscreteEvent @ chunk-NXESFFTV.js?v=d2f9d122:5455Understand this warning
+LoanRequestForm.tsx:118 ❌ Gas estimation failed: Error: execution reverted (no data present; likely require(false) occurred (action="estimateGas", data="0x", reason="require(false)", transaction={ "data": "0x22e69226000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008ac7230489e8000000000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000278d00000000000000000000000000000000000000000000000000451c839d657200000000000000000000000000000000000000000000000000000000000000093a8000000000000000000000000000000000000000000000000000000000000000c80000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000000d516d506c616365686f6c64657200000000000000000000000000000000000000", "from": "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc", "to": "0x5FbDB2315678afecb367f032d93F642f64180aa3" }, invocation=null, revert=null, code=CALL_EXCEPTION, version=6.15.0)
+    at makeError (ethers.js?v=d2f9d122:331:15)
+    at getBuiltinCallException (ethers.js?v=d2f9d122:11903:10)
+    at _AbiCoder.getBuiltinCallException (ethers.js?v=d2f9d122:12003:12)
+    at _BrowserProvider.getRpcError (ethers.js?v=d2f9d122:19130:26)
+    at _BrowserProvider.getRpcError (ethers.js?v=d2f9d122:21548:18)
+    at ethers.js?v=d2f9d122:18763:29
+handleSubmit @ LoanRequestForm.tsx:118
+await in handleSubmit
+callCallback2 @ chunk-NXESFFTV.js?v=d2f9d122:3680
+invokeGuardedCallbackDev @ chunk-NXESFFTV.js?v=d2f9d122:3705
+invokeGuardedCallback @ chunk-NXESFFTV.js?v=d2f9d122:3739
+invokeGuardedCallbackAndCatchFirstError @ chunk-NXESFFTV.js?v=d2f9d122:3742
+executeDispatch @ chunk-NXESFFTV.js?v=d2f9d122:7046
+processDispatchQueueItemsInOrder @ chunk-NXESFFTV.js?v=d2f9d122:7066
+processDispatchQueue @ chunk-NXESFFTV.js?v=d2f9d122:7075
+dispatchEventsForPlugins @ chunk-NXESFFTV.js?v=d2f9d122:7083
+(anonymous) @ chunk-NXESFFTV.js?v=d2f9d122:7206
+batchedUpdates$1 @ chunk-NXESFFTV.js?v=d2f9d122:18966
+batchedUpdates @ chunk-NXESFFTV.js?v=d2f9d122:3585
+dispatchEventForPluginEventSystem @ chunk-NXESFFTV.js?v=d2f9d122:7205
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NXESFFTV.js?v=d2f9d122:5484
+dispatchEvent @ chunk-NXESFFTV.js?v=d2f9d122:5478
+dispatchDiscreteEvent @ chunk-NXESFFTV.js?v=d2f9d122:5455Understand this error
+inpage.js:1 MetaMask - RPC Error: Internal JSON-RPC error. {code: -32603, message: 'Internal JSON-RPC error.', data: {…}, stack: '{\n  "code": -32603,\n  "message": "Internal JSON-RP…hfbeogaeaoehlefnkodbefgpgknn/common-2.js:3:145610'}
+(anonymous) @ inpage.js:1
+(anonymous) @ inpage.js:1
+p @ inpage.js:1
+f @ inpage.js:1
+await in f
+l @ inpage.js:1
+handle @ inpage.js:1
+_rpcRequest @ inpage.js:1
+(anonymous) @ inpage.js:1
+request @ inpage.js:1
+#request @ ethers.js?v=d2f9d122:21506
+_send @ ethers.js?v=d2f9d122:21529
+(anonymous) @ ethers.js?v=d2f9d122:18745
+(anonymous) @ ethers.js?v=d2f9d122:18774
+setTimeout
+#scheduleDrain @ ethers.js?v=d2f9d122:18724
+send @ ethers.js?v=d2f9d122:19211
+send @ ethers.js?v=d2f9d122:21524
+await in send
+_perform @ ethers.js?v=d2f9d122:18842
+#call @ ethers.js?v=d2f9d122:17441
+call @ ethers.js?v=d2f9d122:17503
+await in call
+call @ ethers.js?v=d2f9d122:18305
+await in call
+staticCallResult @ ethers.js?v=d2f9d122:14689
+await in staticCallResult
+staticCall @ ethers.js?v=d2f9d122:14665
+handleSubmit @ LoanRequestForm.tsx:121
+await in handleSubmit
+callCallback2 @ chunk-NXESFFTV.js?v=d2f9d122:3680
+invokeGuardedCallbackDev @ chunk-NXESFFTV.js?v=d2f9d122:3705
+invokeGuardedCallback @ chunk-NXESFFTV.js?v=d2f9d122:3739
+invokeGuardedCallbackAndCatchFirstError @ chunk-NXESFFTV.js?v=d2f9d122:3742
+executeDispatch @ chunk-NXESFFTV.js?v=d2f9d122:7046
+processDispatchQueueItemsInOrder @ chunk-NXESFFTV.js?v=d2f9d122:7066
+processDispatchQueue @ chunk-NXESFFTV.js?v=d2f9d122:7075
+dispatchEventsForPlugins @ chunk-NXESFFTV.js?v=d2f9d122:7083
+(anonymous) @ chunk-NXESFFTV.js?v=d2f9d122:7206
+batchedUpdates$1 @ chunk-NXESFFTV.js?v=d2f9d122:18966
+batchedUpdates @ chunk-NXESFFTV.js?v=d2f9d122:3585
+dispatchEventForPluginEventSystem @ chunk-NXESFFTV.js?v=d2f9d122:7205
+dispatchEventWithEnableCapturePhaseSelectiveHydrationWithoutDiscreteEventReplay @ chunk-NXESFFTV.js?v=d2f9d122:5484
+dispatchEvent @ chunk-NXESFFTV.js?v=d2f9d122:5478
+dispatchDiscreteEvent @ chunk-NXESFFTV.js?v=d2f9d122:5455Understand this warning
+LoanRequestForm.tsx:158 Error requesting loan: Error: Contract validation failed: require(false)
+    at handleSubmit (LoanRequestForm.tsx:125:17)
