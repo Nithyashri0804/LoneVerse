@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { PlusCircle, AlertCircle, Calculator, Users } from 'lucide-react';
-import { parseEther } from 'ethers';
+import { parseEther, parseUnits } from 'ethers';
 import { useContract } from '../hooks/useContract';
-import { LoanFormData } from '../types/loan';
+import { LoanFormData, TOKEN_INFO } from '../types/loan';
 
 interface LoanRequestFormProps {
   onSuccess: () => void;
@@ -59,12 +59,19 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       // Prepare LoanVerseV4 contract arguments
       const tokenId = formData.loanToken; // 0 = NATIVE_ETH
       const collateralTokenId = formData.collateralToken; // 0 = NATIVE_ETH
-      const amount = parseEther(formData.totalAmount);
+      
+      // Get the correct decimals for each token
+      const loanTokenDecimals = TOKEN_INFO[tokenId].decimals;
+      const collateralTokenDecimals = TOKEN_INFO[collateralTokenId].decimals;
+      
+      // Parse amounts with correct decimals
+      const amount = parseUnits(formData.totalAmount, loanTokenDecimals);
       const interestRateBasisPoints = formData.interestRate * 100; // Convert to basis points
       const durationSeconds = formData.duration * 24 * 60 * 60; // Convert days to seconds
-      // Validate and calculate minContribution
+      
+      // Validate and calculate minContribution (use loan token decimals)
       const minContributionValue = formData.minContribution || '0.01';
-      const minContribution = parseEther(minContributionValue);
+      const minContribution = parseUnits(minContributionValue, loanTokenDecimals);
       
       // Ensure minContribution is not more than half the loan amount
       const maxMinContribution = amount / BigInt(2);
@@ -88,7 +95,8 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
         ipfsDocumentHash,                  // _ipfsDocumentHash
       ];
 
-      const collateralAmount = parseEther(formData.collateralAmount);
+      // Parse collateral amount with correct decimals
+      const collateralAmount = parseUnits(formData.collateralAmount, collateralTokenDecimals);
 
       // Calculate exact ETH value for collateral (LoanVerseV4 only uses collateral)
       let ethValue: bigint;
