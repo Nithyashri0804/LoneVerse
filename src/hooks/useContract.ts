@@ -3,6 +3,7 @@ import { BrowserProvider, Contract, Signer } from 'ethers';
 import { getPrimaryContractAddress, isChainSupported } from '../config/contracts';
 import LoanChainV1ABI from '../contracts/LoanChain.json';
 import LoanChainV2ABI from '../contracts/LoanChainV2.json';
+import LoanVerseV4ABI from '../contracts/LoanVerseV4.json';
 
 export const useContract = () => {
   const [contract, setContract] = useState<Contract | null>(null);
@@ -36,7 +37,14 @@ export const useContract = () => {
           const { address: contractAddress, version } = getPrimaryContractAddress(currentChainId);
           if (contractAddress) {
             // Select the correct ABI based on the deployed version
-            const abi = version === 'v2' ? LoanChainV2ABI.abi : LoanChainV1ABI.abi;
+            let abi;
+            if (version === 'v4') {
+              abi = LoanVerseV4ABI.abi;
+            } else if (version === 'v2') {
+              abi = LoanChainV2ABI.abi;
+            } else {
+              abi = LoanChainV1ABI.abi;
+            }
             
             const contractInstance = new Contract(
               contractAddress,
@@ -44,7 +52,7 @@ export const useContract = () => {
               web3Signer
             );
             setContract(contractInstance);
-            console.log(`✅ Connected to LoanChain ${version.toUpperCase()} at ${contractAddress}`);
+            console.log(`✅ Connected to LoanVerse ${version.toUpperCase()} at ${contractAddress}`);
           } else {
             console.warn(`No contract address available for chain ${currentChainId}`);
             setContract(null);

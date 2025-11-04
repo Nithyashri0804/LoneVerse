@@ -29,16 +29,20 @@ async function main() {
     
     // Deploy USDC mock
     console.log("Deploying Mock USDC...");
-    const usdc = await MockERC20.deploy("USD Coin", "USDC", 6, 1000000);
+    const usdc = await MockERC20.deploy("USD Coin", "USDC", 6); // MockERC20 constructor takes 3 params
     await usdc.waitForDeployment();
     const usdcAddress = await usdc.getAddress();
+    // Mint initial supply to deployer
+    await usdc.mint(deployer.address, ethers.parseUnits("1000000", 6)); // 1M USDC
     console.log("✅ Mock USDC deployed to:", usdcAddress);
     
     // Deploy DAI mock
     console.log("Deploying Mock DAI...");
-    const dai = await MockERC20.deploy("Dai Stablecoin", "DAI", 18, 1000000);
+    const dai = await MockERC20.deploy("Dai Stablecoin", "DAI", 18);
     await dai.waitForDeployment();
     const daiAddress = await dai.getAddress();
+    // Mint initial supply to deployer
+    await dai.mint(deployer.address, ethers.parseUnits("1000000", 18)); // 1M DAI
     console.log("✅ Mock DAI deployed to:", daiAddress);
     
     // Deploy Mock Price Feeds (for testing without Chainlink)
@@ -66,8 +70,20 @@ async function main() {
     // Add tokens to LoanVerseV4
     console.log("\n➕ Adding tokens to LoanVerseV4...");
     
-    // Add USDC
+    // Add ETH (Token ID 0) - TokenType.ETH = 0
+    const tx0 = await loanVerseV4.addSupportedToken(
+      0, // TokenType.ETH
+      "0x0000000000000000000000000000000000000000", // ETH has no contract address
+      "ETH",
+      18,
+      ethPriceFeedAddress
+    );
+    await tx0.wait();
+    console.log("✅ ETH added as token ID: 0");
+    
+    // Add USDC (TokenType.ERC20 = 1)
     const tx1 = await loanVerseV4.addSupportedToken(
+      1, // TokenType.ERC20
       usdcAddress,
       "USDC",
       6,
@@ -76,8 +92,9 @@ async function main() {
     await tx1.wait();
     console.log("✅ USDC added as token ID: 1");
     
-    // Add DAI
+    // Add DAI (TokenType.ERC20 = 1)
     const tx2 = await loanVerseV4.addSupportedToken(
+      1, // TokenType.ERC20
       daiAddress,
       "DAI",
       18,

@@ -863,6 +863,50 @@
       "artifacts": [
         "MockV3Aggregator"
       ]
+    },
+    "/home/runner/workspace/contracts/LoanVerseV4.sol": {
+      "lastModificationDate": 1762270654226,
+      "contentHash": "76ab60e1c73c25e7d67cb8f3cdcaf504",
+      "sourceName": "contracts/LoanVerseV4.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/utils/Pausable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "AggregatorV3Interface",
+        "LoanVerseV4"
+      ]
     }
   }
 }

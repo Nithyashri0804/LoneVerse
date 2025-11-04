@@ -8,6 +8,7 @@ export const CONTRACT_ADDRESSES: Record<number, {
   loanChain: string; 
   loanChainV2: string;
   loanChainV3?: string;
+  loanVerseV4?: string;
   tokenSwap?: string;
   mockUSDC: string;
   mockDAI: string; 
@@ -24,6 +25,7 @@ export const CONTRACT_ADDRESSES: Record<number, {
     loanChain: "",     // V1 not deployed locally
     loanChainV2: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",   // LoanChainV2 (local deployment)
     loanChainV3: "",   // V3 not deployed locally
+    loanVerseV4: "",   // Will be set after deploying with deployV4.js
     tokenSwap: "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",    // TokenSwap contract (local)
     mockUSDC: "0x5FbDB2315678afecb367f032d93F642f64180aa3",     // Mock USDC token (local)
     mockDAI: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",      // Mock DAI token (local)
@@ -41,7 +43,7 @@ export const RPC_URLS: Record<number, string> = {
   [SUPPORTED_CHAINS.HARDHAT]: "http://localhost:8000",
 };
 
-export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' = 'v2'): string | null {
+export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' | 'v4' = 'v2'): string | null {
   const addresses = CONTRACT_ADDRESSES[chainId];
   if (!addresses) {
     console.warn(`No contracts deployed on chain ${chainId}`);
@@ -51,6 +53,9 @@ export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' 
   // Return the requested version, fallback to v1 if version not available
   let contractAddress: string | undefined;
   switch (version) {
+    case 'v4':
+      contractAddress = addresses.loanVerseV4;
+      break;
     case 'v3':
       contractAddress = addresses.loanChainV3;
       break;
@@ -73,10 +78,20 @@ export function getContractAddress(chainId: number, version: 'v1' | 'v2' | 'v3' 
 }
 
 // Helper to get the best available contract version and address
-export function getPrimaryContractAddress(chainId: number): { address: string | null, version: 'v1' | 'v2' | 'v3' } {
+export function getPrimaryContractAddress(chainId: number): { address: string | null, version: 'v1' | 'v2' | 'v3' | 'v4' } {
   const addresses = CONTRACT_ADDRESSES[chainId];
   if (!addresses) {
     return { address: null, version: 'v1' };
+  }
+  
+  // Always prefer V4 if available
+  if (addresses.loanVerseV4) {
+    return { address: addresses.loanVerseV4, version: 'v4' };
+  }
+  
+  // Try V3 next
+  if (addresses.loanChainV3) {
+    return { address: addresses.loanChainV3, version: 'v3' };
   }
   
   // For Hardhat local network, always prefer V2 if available
