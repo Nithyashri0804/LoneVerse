@@ -1,6 +1,6 @@
 import React from 'react';
 import { formatEther } from 'ethers';
-import { User, DollarSign, Percent, Clock } from 'lucide-react';
+import { User, DollarSign, Percent, Clock, Users, TrendingUp } from 'lucide-react';
 import { Loan, LoanStatus } from '../types/loan';
 import { calculateRiskScore, getRiskLevel } from '../utils/loanFilters';
 
@@ -56,7 +56,7 @@ const LoanListView: React.FC<LoanListViewProps> = ({ loans }) => {
         <div className="col-span-2">Amount</div>
         <div className="col-span-1">Rate</div>
         <div className="col-span-2">Borrower</div>
-        <div className="col-span-2">Lender</div>
+        <div className="col-span-2">Lenders/Funding</div>
         <div className="col-span-1">Duration</div>
         <div className="col-span-1">Risk</div>
         <div className="col-span-1">Status</div>
@@ -102,14 +102,48 @@ const LoanListView: React.FC<LoanListViewProps> = ({ loans }) => {
               </div>
             </div>
 
-            {/* Lender */}
-            <div className="col-span-2 text-gray-300">
-              <div className="flex items-center space-x-1">
-                <User size={14} className="text-orange-400" />
-                <span>{loan.lender !== '0x0000000000000000000000000000000000000000' 
-                  ? formatAddress(loan.lender) 
-                  : 'None'}</span>
-              </div>
+            {/* Lenders/Funding */}
+            <div className="col-span-2">
+              {Number(loan.status) === LoanStatus.REQUESTED ? (
+                // Show funding progress for REQUESTED loans
+                <div className="space-y-1">
+                  <div className="flex items-center space-x-1 text-gray-300">
+                    <Users size={14} className="text-blue-400" />
+                    <span className="text-xs">{loan.lenders.length} lender{loan.lenders.length !== 1 ? 's' : ''}</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-1.5 overflow-hidden">
+                    <div
+                      className="h-full bg-blue-500 transition-all"
+                      style={{ 
+                        width: `${Math.min((parseFloat(formatEther(loan.totalFunded)) / parseFloat(formatEther(loan.totalAmount))) * 100, 100)}%` 
+                      }}
+                    />
+                  </div>
+                  <div className="text-xs text-gray-400">
+                    {parseFloat(formatEther(loan.totalFunded)).toFixed(2)} / {parseFloat(formatEther(loan.totalAmount)).toFixed(2)}
+                  </div>
+                </div>
+              ) : (
+                // Show lender count for FUNDED/REPAID loans
+                <div className="flex items-center space-x-1 text-gray-300">
+                  {loan.lenders.length > 1 ? (
+                    <>
+                      <Users size={14} className="text-cyan-400" />
+                      <span>{loan.lenders.length} lenders</span>
+                    </>
+                  ) : loan.lenders.length === 1 ? (
+                    <>
+                      <User size={14} className="text-orange-400" />
+                      <span>{formatAddress(loan.lenders[0])}</span>
+                    </>
+                  ) : (
+                    <>
+                      <User size={14} className="text-gray-500" />
+                      <span>None</span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Duration */}
