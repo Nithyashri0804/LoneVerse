@@ -1,10 +1,11 @@
 export enum LoanStatus {
   REQUESTED = 0,
-  FUNDED = 1,
-  PARTIALLY_FUNDED = 2,
+  FUNDING_FAILED = 1,
+  FUNDED = 2,
   REPAID = 3,
   DEFAULTED = 4,
   CANCELLED = 5,
+  VOTING = 6,
 }
 
 export enum TokenType {
@@ -51,6 +52,8 @@ export interface Loan {
   interestRate: number;
   isVariableRate: boolean;
   duration: number;
+  minContribution: string;
+  fundingDeadline: number;
   createdAt: number;
   fundedAt: number;
   dueDate: number;
@@ -59,6 +62,8 @@ export interface Loan {
   riskScore: number;
   hasInsurance: boolean;
   insuranceFee: string;
+  earlyRepaymentPenalty: number;
+  totalRepaid: string;
 }
 
 export interface LoanFormData {
@@ -70,6 +75,9 @@ export interface LoanFormData {
   duration: number;
   isVariableRate: boolean;
   hasInsurance: boolean;
+  minContribution: string;
+  fundingPeriod: number;
+  earlyRepaymentPenalty: number;
 }
 
 export interface FundingData {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlusCircle, AlertCircle, Calculator } from 'lucide-react';
+import { PlusCircle, AlertCircle, Calculator, Users } from 'lucide-react';
 import { parseEther } from 'ethers';
 import { useContract } from '../hooks/useContract';
 import { LoanFormData } from '../types/loan';
@@ -19,6 +19,9 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
     duration: 30,
     isVariableRate: false,
     hasInsurance: false,
+    minContribution: '',
+    fundingPeriod: 7,
+    earlyRepaymentPenalty: 2,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -47,52 +50,49 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       setIsLoading(true);
       setError('');
 
-      const loanAmount = parseEther(formData.totalAmount);
-      const collateralAmount = parseEther(formData.collateralAmount);
+      // Prepare LoanVerseV4 contract arguments
+      const tokenId = formData.loanToken; // 0 = NATIVE_ETH
+      const collateralTokenId = formData.collateralToken; // 0 = NATIVE_ETH
+      const amount = parseEther(formData.totalAmount);
       const interestRateBasisPoints = formData.interestRate * 100; // Convert to basis points
       const durationSeconds = formData.duration * 24 * 60 * 60; // Convert days to seconds
-      const loanToken = formData.loanToken; // 0 = NATIVE_ETH
-      const hasInsurance = formData.hasInsurance;
+      const minContribution = parseEther(formData.minContribution || '0.001');
+      const fundingPeriodSeconds = formData.fundingPeriod * 24 * 60 * 60; // Convert days to seconds
+      const earlyRepaymentPenaltyBasisPoints = Math.floor(formData.earlyRepaymentPenalty * 100); // Convert to basis points
+      const ipfsDocumentHash = "QmPlaceholder"; // TODO: Implement IPFS upload for loan documents
 
-      // Calculate required ETH based on contract logic
-      const collateralToken = formData.collateralToken; // 0 = NATIVE_ETH
-      const insuranceFee = hasInsurance ? loanAmount * BigInt(100) / BigInt(10000) : BigInt(0);
-
-      // Function arguments for requestLoan
+      // Function arguments for requestLoan (LoanVerseV4 signature)
       const args = [
-        loanAmount,              // _totalAmount
-        loanToken,               // _loanToken (NATIVE_ETH = 0)
-        collateralToken,         // _collateralToken (NATIVE_ETH = 0)  
-        collateralAmount,        // _collateralAmount
-        interestRateBasisPoints, // _interestRate
-        durationSeconds,         // _duration
-        formData.isVariableRate, // _isVariableRate
-        hasInsurance,            // _hasInsurance
+        tokenId,                           // _tokenId
+        collateralTokenId,                 // _collateralTokenId
+        amount,                            // _amount
+        interestRateBasisPoints,           // _interestRate
+        durationSeconds,                   // _duration
+        minContribution,                   // _minContribution
+        fundingPeriodSeconds,              // _fundingPeriod
+        earlyRepaymentPenaltyBasisPoints,  // _earlyRepaymentPenalty
+        ipfsDocumentHash,                  // _ipfsDocumentHash
       ];
 
-      // Calculate exact ETH value based on contract requirements
+      const collateralAmount = parseEther(formData.collateralAmount);
+
+      // Calculate exact ETH value for collateral (LoanVerseV4 only uses collateral)
       let ethValue: bigint;
-      if (collateralToken === 0) { // NATIVE_ETH collateral
+      if (collateralTokenId === 0) { // NATIVE_ETH collateral
         ethValue = collateralAmount;
-        if (hasInsurance && loanToken === 0) { // Insurance fee only if loan is also ETH
-          ethValue += insuranceFee;
-        }
       } else { // ERC20 collateral
-        if (hasInsurance && loanToken === 0) { // Insurance fee only if loan is ETH
-          ethValue = insuranceFee;
-        } else {
-          ethValue = BigInt(0); // No ETH should be sent
-        }
+        ethValue = BigInt(0); // No ETH should be sent
       }
 
       console.log(`💰 Calculated ETH value: ${ethValue.toString()} wei`);
       console.log(`📋 Loan details:`, {
-        loanAmount: loanAmount.toString(),
+        amount: amount.toString(),
         collateralAmount: collateralAmount.toString(),
-        loanToken,
-        collateralToken,
-        hasInsurance,
-        insuranceFee: insuranceFee.toString()
+        tokenId,
+        collateralTokenId,
+        minContribution: minContribution.toString(),
+        fundingPeriod: formData.fundingPeriod,
+        earlyRepaymentPenalty: formData.earlyRepaymentPenalty
       });
 
       // Estimate gas with the correct ETH value
@@ -136,6 +136,9 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
         duration: 30,
         isVariableRate: false,
         hasInsurance: false,
+        minContribution: '',
+        fundingPeriod: 7,
+        earlyRepaymentPenalty: 2,
       });
     } catch (error: any) {
       console.error('Error requesting loan:', error);
@@ -221,6 +224,74 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
             <option value={180}>180 days</option>
             <option value={365}>365 days</option>
           </select>
+        </div>
+
+        <div className="border-t border-gray-700 pt-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <Users size={20} className="text-blue-400" />
+            Multi-Lender Pool Settings
+          </h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Minimum Contribution per Lender
+              </label>
+              <input
+                type="number"
+                step="0.001"
+                min="0.001"
+                value={formData.minContribution}
+                onChange={(e) => handleInputChange('minContribution', e.target.value)}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="0.01"
+                required
+              />
+              <div className="mt-2 text-sm text-gray-400">
+                Prevents small contributions that leave minimal amounts for others
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Funding Period (Days)
+              </label>
+              <select
+                value={formData.fundingPeriod}
+                onChange={(e) => handleInputChange('fundingPeriod', parseInt(e.target.value))}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value={1}>1 day</option>
+                <option value={3}>3 days</option>
+                <option value={7}>7 days</option>
+                <option value={14}>14 days</option>
+                <option value={21}>21 days</option>
+                <option value={30}>30 days</option>
+              </select>
+              <div className="mt-2 text-sm text-gray-400">
+                Deadline for the loan to be fully funded, or contributions are refunded
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Early Repayment Penalty (%)
+              </label>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="5"
+                value={formData.earlyRepaymentPenalty}
+                onChange={(e) => handleInputChange('earlyRepaymentPenalty', parseFloat(e.target.value))}
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              />
+              <div className="mt-2 text-sm text-gray-400">
+                Penalty fee if loan is repaid before due date (distributed proportionally)
+              </div>
+            </div>
+          </div>
         </div>
 
         <div>
