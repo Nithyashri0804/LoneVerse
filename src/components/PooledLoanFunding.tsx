@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Users, Clock, TrendingUp, AlertCircle, DollarSign } from 'lucide-react';
-import { formatEther } from 'ethers';
-import { Loan } from '../types/loan';
+import { formatUnits } from 'ethers';
+import { Loan, TOKEN_INFO } from '../types/loan';
 
 interface PooledLoanFundingProps {
   loan: Loan;
@@ -13,13 +13,18 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
   const [isContributing, setIsContributing] = useState(false);
   const [error, setError] = useState('');
 
-  // Convert BigNumber strings to ETH for calculations
-  const totalAmountETH = parseFloat(formatEther(loan.totalAmount));
-  const totalFundedETH = parseFloat(formatEther(loan.totalFunded));
-  const minContributionETH = parseFloat(formatEther(loan.minContribution || '0'));
+  // Get token info for correct formatting
+  const tokenInfo = TOKEN_INFO[loan.loanToken];
+  const tokenDecimals = tokenInfo.decimals;
+  const tokenSymbol = tokenInfo.symbol;
+
+  // Convert BigNumber strings with correct token decimals
+  const totalAmount = parseFloat(formatUnits(loan.totalAmount, tokenDecimals));
+  const totalFunded = parseFloat(formatUnits(loan.totalFunded, tokenDecimals));
+  const minContribution = parseFloat(formatUnits(loan.minContribution || '0', tokenDecimals));
   
-  const fundingProgress = (totalFundedETH / totalAmountETH) * 100;
-  const remainingAmountETH = totalAmountETH - totalFundedETH;
+  const fundingProgress = (totalFunded / totalAmount) * 100;
+  const remainingAmount = totalAmount - totalFunded;
   const timeRemaining = loan.fundingDeadline ? loan.fundingDeadline - Date.now() / 1000 : 0;
   const daysRemaining = Math.floor(timeRemaining / (24 * 60 * 60));
   const hoursRemaining = Math.floor((timeRemaining % (24 * 60 * 60)) / (60 * 60));
@@ -31,19 +36,19 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
     }
 
     const amount = parseFloat(contributionAmount);
-    if (amount < minContributionETH) {
-      setError(`Minimum contribution is ${minContributionETH.toFixed(4)} ETH`);
+    if (amount < minContribution) {
+      setError(`Minimum contribution is ${minContribution.toFixed(4)} ${tokenSymbol}`);
       return;
     }
 
-    if (amount > remainingAmountETH) {
-      setError(`Maximum contribution is ${remainingAmountETH.toFixed(4)} ETH`);
+    if (amount > remainingAmount) {
+      setError(`Maximum contribution is ${remainingAmount.toFixed(4)} ${tokenSymbol}`);
       return;
     }
 
     // Check if remaining amount after contribution would be below minimum
-    if (remainingAmountETH - amount > 0 && remainingAmountETH - amount < minContributionETH) {
-      setError(`Would leave ${(remainingAmountETH - amount).toFixed(4)} ETH below minimum for others`);
+    if (remainingAmount - amount > 0 && remainingAmount - amount < minContribution) {
+      setError(`Would leave ${(remainingAmount - amount).toFixed(4)} ${tokenSymbol} below minimum for others`);
       return;
     }
 
@@ -85,7 +90,7 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
         <div className="flex justify-between text-sm mb-2">
           <span className="text-gray-400">Funded</span>
           <span className="text-white font-medium">
-            {formatEther(loan.totalFunded)} / {formatEther(loan.totalAmount)} ETH
+            {formatUnits(loan.totalFunded, tokenDecimals)} / {formatUnits(loan.totalAmount, tokenDecimals)} {tokenSymbol}
           </span>
         </div>
         <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
@@ -119,13 +124,13 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
         <div className="bg-gray-700/50 rounded-lg p-3">
           <div className="text-xs text-gray-400 mb-1">Remaining</div>
           <div className="text-lg font-semibold text-white">
-            {remainingAmountETH.toFixed(4)} ETH
+            {remainingAmount.toFixed(4)} {tokenSymbol}
           </div>
         </div>
         <div className="bg-gray-700/50 rounded-lg p-3">
           <div className="text-xs text-gray-400 mb-1">Min. Contrib.</div>
           <div className="text-lg font-semibold text-white">
-            {minContributionETH.toFixed(4)} ETH
+            {minContribution.toFixed(4)} {tokenSymbol}
           </div>
         </div>
       </div>
@@ -137,8 +142,8 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
           <div className="space-y-2 max-h-48 overflow-y-auto">
             {loan.lenders.map((lender, index) => {
               const lenderAmount = loan.lenderAmounts[index];
-              const lenderAmountETH = parseFloat(formatEther(lenderAmount));
-              const lenderPercentage = (lenderAmountETH / totalAmountETH) * 100;
+              const lenderAmountFormatted = parseFloat(formatUnits(lenderAmount, tokenDecimals));
+              const lenderPercentage = (lenderAmountFormatted / totalAmount) * 100;
               return (
                 <div key={index} className="bg-gray-700/30 rounded-lg p-3 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -156,7 +161,7 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
                   </div>
                   <div className="text-right">
                     <div className="text-sm font-medium text-white">
-                      {lenderAmountETH.toFixed(4)} ETH
+                      {lenderAmountFormatted.toFixed(4)} {tokenSymbol}
                     </div>
                   </div>
                 </div>
@@ -173,9 +178,9 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
           <div className="space-y-3">
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-sm text-gray-400">Your Contribution (ETH)</label>
+                <label className="text-sm text-gray-400">Your Contribution ({tokenSymbol})</label>
                 <button
-                  onClick={() => setContributionAmount(remainingAmountETH.toFixed(4))}
+                  onClick={() => setContributionAmount(remainingAmount.toFixed(4))}
                   className="text-xs text-blue-400 hover:text-blue-300"
                 >
                   Fund Remaining
@@ -184,15 +189,15 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
               <input
                 type="number"
                 step="0.001"
-                min={minContributionETH}
-                max={remainingAmountETH}
+                min={minContribution}
+                max={remainingAmount}
                 value={contributionAmount}
                 onChange={(e) => {
                   setContributionAmount(e.target.value);
                   setError('');
                 }}
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder={`Min: ${minContributionETH.toFixed(4)}`}
+                placeholder={`Min: ${minContribution.toFixed(4)}`}
               />
             </div>
 
@@ -205,18 +210,18 @@ const PooledLoanFunding: React.FC<PooledLoanFundingProps> = ({ loan, onContribut
                 <div className="space-y-1 text-gray-300">
                   <div className="flex justify-between">
                     <span>Your Contribution:</span>
-                    <span className="font-medium">{contributionAmount} ETH</span>
+                    <span className="font-medium">{contributionAmount} {tokenSymbol}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Interest ({loan.interestRate / 100}%):</span>
                     <span className="font-medium">
-                      {(parseFloat(contributionAmount) * loan.interestRate / 10000).toFixed(4)} ETH
+                      {(parseFloat(contributionAmount) * loan.interestRate / 10000).toFixed(4)} {tokenSymbol}
                     </span>
                   </div>
                   <div className="flex justify-between text-white font-semibold border-t border-gray-700 pt-1 mt-1">
                     <span>Total Return:</span>
                     <span>
-                      {(parseFloat(contributionAmount) * (1 + loan.interestRate / 10000)).toFixed(4)} ETH
+                      {(parseFloat(contributionAmount) * (1 + loan.interestRate / 10000)).toFixed(4)} {tokenSymbol}
                     </span>
                   </div>
                 </div>

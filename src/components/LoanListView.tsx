@@ -1,7 +1,7 @@
 import React from 'react';
-import { formatEther } from 'ethers';
+import { formatUnits } from 'ethers';
 import { User, DollarSign, Percent, Clock, Users, TrendingUp } from 'lucide-react';
-import { Loan, LoanStatus } from '../types/loan';
+import { Loan, LoanStatus, TOKEN_INFO } from '../types/loan';
 import { calculateRiskScore, getRiskLevel } from '../utils/loanFilters';
 
 interface LoanListViewProps {
@@ -67,6 +67,9 @@ const LoanListView: React.FC<LoanListViewProps> = ({ loans }) => {
       {loans.map((loan) => {
         const riskScore = calculateRiskScore(loan);
         const riskLevel = getRiskLevel(riskScore);
+        const tokenInfo = TOKEN_INFO[loan.loanToken];
+        const tokenSymbol = tokenInfo.symbol;
+        const tokenDecimals = tokenInfo.decimals;
         
         return (
           <div 
@@ -82,7 +85,7 @@ const LoanListView: React.FC<LoanListViewProps> = ({ loans }) => {
             <div className="col-span-2 text-white">
               <div className="flex items-center space-x-1">
                 <DollarSign size={14} className="text-green-400" />
-                <span>{parseFloat(formatEther(loan.amount)).toFixed(4)} ETH</span>
+                <span>{parseFloat(formatUnits(loan.amount, tokenDecimals)).toFixed(4)} {tokenSymbol}</span>
               </div>
             </div>
 
@@ -115,12 +118,12 @@ const LoanListView: React.FC<LoanListViewProps> = ({ loans }) => {
                     <div
                       className="h-full bg-blue-500 transition-all"
                       style={{ 
-                        width: `${Math.min((parseFloat(formatEther(loan.totalFunded)) / parseFloat(formatEther(loan.totalAmount))) * 100, 100)}%` 
+                        width: `${Math.min((parseFloat(formatUnits(loan.totalFunded, tokenDecimals)) / parseFloat(formatUnits(loan.totalAmount, tokenDecimals))) * 100, 100)}%` 
                       }}
                     />
                   </div>
                   <div className="text-xs text-gray-400">
-                    {parseFloat(formatEther(loan.totalFunded)).toFixed(2)} / {parseFloat(formatEther(loan.totalAmount)).toFixed(2)}
+                    {parseFloat(formatUnits(loan.totalFunded, tokenDecimals)).toFixed(2)} / {parseFloat(formatUnits(loan.totalAmount, tokenDecimals)).toFixed(2)} {tokenSymbol}
                   </div>
                 </div>
               ) : (
