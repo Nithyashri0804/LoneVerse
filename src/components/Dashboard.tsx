@@ -97,27 +97,32 @@ const Dashboard: React.FC = () => {
       const loanPromises = Array.from(allLoanIds).map(async (loanId) => {
         try {
           const loanData = await contract.loans(loanId);
+          
+          // Handle potential undefined values with safe access
+          const safeToString = (val: any) => val ? val.toString() : '0';
+          const safeNumber = (val: any) => val ? Number(val.toString()) : 0;
+          
           return {
-            id: Number(loanData.id.toString()),
-            borrower: loanData.borrower,
+            id: loanId,
+            borrower: loanData.borrower || '0x0000000000000000000000000000000000000000',
             lenders: loanData.lenders || [],
-            lenderAmounts: (loanData.lenderAmounts || []).map((amt: any) => amt.toString()),
-            totalAmount: loanData.totalAmount.toString(),
-            totalFunded: loanData.totalFunded.toString(),
-            loanToken: loanData.loanToken,
-            collateralToken: loanData.collateralToken,
-            collateralAmount: loanData.collateralAmount.toString(),
-            interestRate: Number(loanData.interestRate.toString()),
-            isVariableRate: loanData.isVariableRate,
-            duration: Number(loanData.duration.toString()),
-            createdAt: Number(loanData.createdAt.toString()),
-            fundedAt: Number(loanData.fundedAt.toString()),
-            dueDate: Number(loanData.dueDate.toString()),
+            lenderAmounts: (loanData.lenderAmounts || []).map((amt: any) => safeToString(amt)),
+            totalAmount: safeToString(loanData.totalAmount || loanData.amount),
+            totalFunded: safeToString(loanData.totalFunded || loanData.amountFunded || '0'),
+            loanToken: loanData.loanToken || loanData.tokenId || 0,
+            collateralToken: loanData.collateralToken || loanData.collateralTokenId || 0,
+            collateralAmount: safeToString(loanData.collateralAmount),
+            interestRate: safeNumber(loanData.interestRate),
+            isVariableRate: loanData.isVariableRate || false,
+            duration: safeNumber(loanData.duration),
+            createdAt: safeNumber(loanData.createdAt),
+            fundedAt: safeNumber(loanData.fundedAt),
+            dueDate: safeNumber(loanData.dueDate),
             status: loanData.status as LoanStatus,
-            collateralClaimed: loanData.collateralClaimed,
-            riskScore: Number(loanData.riskScore.toString()),
-            hasInsurance: loanData.hasInsurance,
-            insuranceFee: loanData.insuranceFee.toString(),
+            collateralClaimed: loanData.collateralClaimed || false,
+            riskScore: safeNumber(loanData.riskScore),
+            hasInsurance: loanData.hasInsurance || false,
+            insuranceFee: safeToString(loanData.insuranceFee),
           } as Loan;
         } catch (error) {
           console.warn(`Failed to load loan ${loanId}:`, error);
