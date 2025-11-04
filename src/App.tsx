@@ -8,6 +8,7 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 import NotificationCenter from './components/NotificationCenter';
 import AIChatbot from './components/AIChatbot';
 import TokenFaucet from './components/TokenFaucet';
+import TokenImportHelper from './components/TokenImportHelper';
 import { useWallet } from './hooks/useWallet';
 import { NotificationProvider } from './hooks/useNotifications';
 
@@ -128,6 +129,7 @@ function App() {
               <Dashboard key={refreshKey} />
             ) : activeTab === 'browse' ? (
               <>
+                <TokenImportHelper />
                 <TokenFaucet />
                 <BrowseLoans />
               </>
