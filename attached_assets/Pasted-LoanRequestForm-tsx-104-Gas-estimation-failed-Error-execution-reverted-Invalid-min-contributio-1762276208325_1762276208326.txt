@@ -1,0 +1,28 @@
+LoanRequestForm.tsx:104 ❌ Gas estimation failed: Error: execution reverted: "Invalid min contribution" (action="estimateGas", data="0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000018496e76616c6964206d696e20636f6e747269627574696f6e0000000000000000", reason="Invalid min contribution", transaction={ "data": "0x22e69226000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000163a06b6e04400000000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000278d00000000000000000000000000000000000000000000000002b5e021980cc180000000000000000000000000000000000000000000000000000000000000093a8000000000000000000000000000000000000000000000000000000000000000c80000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000000d516d506c616365686f6c64657200000000000000000000000000000000000000", "from": "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc", "to": "0x5FbDB2315678afecb367f032d93F642f64180aa3" }, invocation=null, revert={ "args": [ "Invalid min contribution" ], "name": "Error", "signature": "Error(string)" }, code=CALL_EXCEPTION, version=6.15.0)
+    at makeError (ethers.js?v=d2f9d122:331:15)
+    at getBuiltinCallException (ethers.js?v=d2f9d122:11903:10)
+    at _AbiCoder.getBuiltinCallException (ethers.js?v=d2f9d122:12003:12)
+    at _BrowserProvider.getRpcError (ethers.js?v=d2f9d122:19130:26)
+    at _BrowserProvider.getRpcError (ethers.js?v=d2f9d122:21548:18)
+    at ethers.js?v=d2f9d122:18763:29
+inpage.js:1 MetaMask - RPC Error: Internal JSON-RPC error. 
+Object
+code
+: 
+-32603
+data
+: 
+{code: -32603, message: "Error: VM Exception while processing transaction: …ted with reason string 'Invalid min contribution'", data: {…}, cause: null}
+message
+: 
+"Internal JSON-RPC error."
+stack
+: 
+"{\n  \"code\": -32603,\n  \"message\": \"Internal JSON-RPC error.\",\n  \"data\": {\n    \"code\": -32603,\n    \"message\": \"Error: VM Exception while processing transaction: reverted with reason string 'Invalid min contribution'\",\n    \"data\": {\n      \"message\": \"Error: VM Exception while processing transaction: reverted with reason string 'Invalid min contribution'\",\n      \"data\": \"0x08c379a000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000018496e76616c6964206d696e20636f6e747269627574696f6e0000000000000000\"\n    },\n    \"cause\": null\n  },\n  \"stack\": \"Error: Internal JSON-RPC error.\\n    at new i (chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-3.js:1:79660)\\n    at o (chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-3.js:1:82751)\\n    at Object.internal (chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-3.js:1:83360)\\n    at chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-2.js:3:533578\\n    at async chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-2.js:3:145610\"\n}\n  at new i (chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-3.js:1:79660)\n  at o (chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-3.js:1:82751)\n  at Object.internal (chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-3.js:1:83360)\n  at chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-2.js:3:533578\n  at async chrome-extension://nkbihfbeogaeaoehlefnkodbefgpgknn/common-2.js:3:145610"
+[[Prototype]]
+: 
+Object
+(anonymous)	@	inpage.js:1
+LoanRequestForm.tsx:144 Error requesting loan: Error: Contract validation failed: Invalid min contribution
+    at handleSubmit (LoanRequestForm.tsx:111:17)
+handleSubmit	@	LoanRequestForm.tsx:144

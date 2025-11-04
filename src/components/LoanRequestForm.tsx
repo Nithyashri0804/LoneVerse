@@ -39,6 +39,12 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
     return (amount + interest).toFixed(4);
   };
 
+  const calculateMaxMinContribution = () => {
+    if (!formData.totalAmount) return '0';
+    const amount = parseFloat(formData.totalAmount);
+    return (amount / 2).toFixed(4); // Max 50% of loan amount
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!contract) {
@@ -56,7 +62,15 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       const amount = parseEther(formData.totalAmount);
       const interestRateBasisPoints = formData.interestRate * 100; // Convert to basis points
       const durationSeconds = formData.duration * 24 * 60 * 60; // Convert days to seconds
-      const minContribution = parseEther(formData.minContribution || '0.001');
+      // Validate and calculate minContribution
+      const minContributionValue = formData.minContribution || '0.01';
+      const minContribution = parseEther(minContributionValue);
+      
+      // Ensure minContribution is not more than half the loan amount
+      const maxMinContribution = amount / BigInt(2);
+      if (minContribution > maxMinContribution) {
+        throw new Error(`Minimum contribution (${minContributionValue}) cannot be more than 50% of loan amount (${formData.totalAmount}). Max allowed: ${calculateMaxMinContribution()}`);
+      }
       const fundingPeriodSeconds = formData.fundingPeriod * 24 * 60 * 60; // Convert days to seconds
       const earlyRepaymentPenaltyBasisPoints = Math.floor(formData.earlyRepaymentPenalty * 100); // Convert to basis points
       const ipfsDocumentHash = "QmPlaceholder"; // TODO: Implement IPFS upload for loan documents
@@ -239,8 +253,9 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
               </label>
               <input
                 type="number"
-                step="0.001"
-                min="0.001"
+                step="0.01"
+                min="0.01"
+                max={calculateMaxMinContribution()}
                 value={formData.minContribution}
                 onChange={(e) => handleInputChange('minContribution', e.target.value)}
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -248,7 +263,7 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
                 required
               />
               <div className="mt-2 text-sm text-gray-400">
-                Prevents small contributions that leave minimal amounts for others
+                Must be between 0.01 and {calculateMaxMinContribution()} (50% of loan amount)
               </div>
             </div>
 
