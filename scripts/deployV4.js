@@ -29,20 +29,16 @@ async function main() {
     
     // Deploy USDC mock
     console.log("Deploying Mock USDC...");
-    const usdc = await MockERC20.deploy("USD Coin", "USDC", 6); // MockERC20 constructor takes 3 params
+    const usdc = await MockERC20.deploy("USD Coin", "USDC", 6, 1000000); // name, symbol, decimals, initialSupply
     await usdc.waitForDeployment();
     const usdcAddress = await usdc.getAddress();
-    // Mint initial supply to deployer
-    await usdc.mint(deployer.address, ethers.parseUnits("1000000", 6)); // 1M USDC
     console.log("✅ Mock USDC deployed to:", usdcAddress);
     
     // Deploy DAI mock
     console.log("Deploying Mock DAI...");
-    const dai = await MockERC20.deploy("Dai Stablecoin", "DAI", 18);
+    const dai = await MockERC20.deploy("Dai Stablecoin", "DAI", 18, 1000000); // name, symbol, decimals, initialSupply
     await dai.waitForDeployment();
     const daiAddress = await dai.getAddress();
-    // Mint initial supply to deployer
-    await dai.mint(deployer.address, ethers.parseUnits("1000000", 18)); // 1M DAI
     console.log("✅ Mock DAI deployed to:", daiAddress);
     
     // Deploy Mock Price Feeds (for testing without Chainlink)
