@@ -21,10 +21,6 @@ author = "agent"
 task = "workflow.run"
 args = "Frontend"
 
-[[workflows.workflow.tasks]]
-task = "workflow.run"
-args = "Hardhat Node"
-
 [[workflows.workflow]]
 name = "Frontend"
 author = "agent"
@@ -36,18 +32,6 @@ waitForPort = 5000
 
 [workflows.workflow.metadata]
 outputType = "webview"
-
-[[workflows.workflow]]
-name = "Hardhat Node"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx hardhat node --port 8000 --hostname 0.0.0.0"
-waitForPort = 8000
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [agent]
 expertMode = true
@@ -67,10 +51,6 @@ externalPort = 3002
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 8000
-externalPort = 8000
 
 [[ports]]
 localPort = 36297
