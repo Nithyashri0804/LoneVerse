@@ -55,8 +55,8 @@ const Dashboard: React.FC = () => {
       try {
         // First try the normal methods
         const activeLoanIds = await safeContractCall(() => contract.getActiveLoanRequests());
-        const borrowerLoanIds = await safeContractCall(() => contract.getBorrowerLoans(account));
-        const lenderLoanIds = await safeContractCall(() => contract.getLenderLoans(account));
+        const borrowerLoanIds = await safeContractCall(() => contract.borrowerLoans(account));
+        const lenderLoanIds = await safeContractCall(() => contract.lenderLoans(account));
 
         // Combine all unique loan IDs
         allLoanIds = new Set([
@@ -76,7 +76,7 @@ const Dashboard: React.FC = () => {
         // Try to find loans by checking IDs 1-10 directly
         for (let i = 1; i <= 10; i++) {
           try {
-            const loanData = await contract.getLoan(i);
+            const loanData = await contract.loans(i);
             if (loanData && loanData.borrower && loanData.borrower !== '0x0000000000000000000000000000000000000000') {
               allLoanIds.add(i);
               console.log(`Found loan ${i}:`, loanData);
@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
       // Fetch loan details
       const loanPromises = Array.from(allLoanIds).map(async (loanId) => {
         try {
-          const loanData = await contract.getLoan(loanId);
+          const loanData = await contract.loans(loanId);
           return {
             id: Number(loanData.id.toString()),
             borrower: loanData.borrower,

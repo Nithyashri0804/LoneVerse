@@ -37,7 +37,7 @@ const BrowseLoans: React.FC = () => {
       
       // Fetch loan details
       const loanPromises = activeLoanIds.map(async (loanId: any) => {
-        const loanData = await contract.getLoan(loanId);
+        const loanData = await contract.loans(loanId);
         return {
           id: Number(loanData.id.toString()),
           borrower: loanData.borrower,
@@ -87,7 +87,7 @@ const BrowseLoans: React.FC = () => {
       if (!contract) throw new Error('Contract not available');
       
       // Get all loans for this borrower
-      const borrowerLoans = await contract.getBorrowerLoans(borrowerAddress);
+      const borrowerLoans = await contract.borrowerLoans(borrowerAddress);
       
       let totalLoans = 0;
       let successfulLoans = 0;
@@ -100,7 +100,7 @@ const BrowseLoans: React.FC = () => {
 
       // Calculate reputation metrics from loan history
       for (const loanId of borrowerLoans) {
-        const loanData = await contract.getLoan(loanId);
+        const loanData = await contract.loans(loanId);
         totalLoans++;
 
         const loanAmount = parseFloat(formatEther(loanData.totalAmount.toString()));

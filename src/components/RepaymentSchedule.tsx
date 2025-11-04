@@ -27,10 +27,10 @@ const RepaymentSchedule: React.FC = () => {
       setIsLoading(true);
 
       // Get borrower's loans
-      const borrowerLoanIds = await contract.getBorrowerLoans(account);
+      const borrowerLoanIds = await contract.borrowerLoans(account);
       
       // Get lender's loans for portfolio tracking
-      const lenderLoanIds = await contract.getLenderLoans(account);
+      const lenderLoanIds = await contract.lenderLoans(account);
       
       // Combine for full schedule view
       const allLoanIds = new Set([
@@ -39,7 +39,7 @@ const RepaymentSchedule: React.FC = () => {
       ]);
 
       const schedulePromises = Array.from(allLoanIds).map(async (loanId) => {
-        const loanData = await contract.getLoan(loanId);
+        const loanData = await contract.loans(loanId);
         
         const loan: Loan = {
           id: Number(loanData.id.toString()),
