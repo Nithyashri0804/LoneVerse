@@ -66,20 +66,13 @@ async function main() {
     // Add tokens to LoanVerseV4
     console.log("\n➕ Adding tokens to LoanVerseV4...");
     
-    // Add ETH (Token ID 0) - TokenType.ETH = 0
-    const tx0 = await loanVerseV4.addSupportedToken(
-      0, // TokenType.ETH
-      "0x0000000000000000000000000000000000000000", // ETH has no contract address
-      "ETH",
-      18,
-      ethPriceFeedAddress
-    );
-    await tx0.wait();
-    console.log("✅ ETH added as token ID: 0");
+    // Note: ETH (Token ID 0) is already added in the constructor
+    // It uses a mock price of $2000 (no price feed needed for testing)
+    console.log("📝 ETH (Token ID 0) is already configured in constructor");
+    console.log("   Using mock price: $2000 (hardcoded in getLatestPrice)");
     
-    // Add USDC (TokenType.ERC20 = 1)
+    // Add USDC (Token ID 1)
     const tx1 = await loanVerseV4.addSupportedToken(
-      1, // TokenType.ERC20
       usdcAddress,
       "USDC",
       6,
@@ -88,9 +81,8 @@ async function main() {
     await tx1.wait();
     console.log("✅ USDC added as token ID: 1");
     
-    // Add DAI (TokenType.ERC20 = 1)
+    // Add DAI (Token ID 2)
     const tx2 = await loanVerseV4.addSupportedToken(
-      1, // TokenType.ERC20
       daiAddress,
       "DAI",
       18,
@@ -114,9 +106,9 @@ async function main() {
     console.log("  USDC Price Feed: ", usdcPriceFeedAddress);
     console.log("  DAI Price Feed:  ", daiPriceFeedAddress);
     console.log("\n📝 Supported Tokens:");
-    console.log("  Token ID 0: ETH (Native)");
-    console.log("  Token ID 1: USDC");
-    console.log("  Token ID 2: DAI");
+    console.log("  Token ID 0: ETH (Native) - Mock price: $2000");
+    console.log("  Token ID 1: USDC - Price feed: " + usdcPriceFeedAddress);
+    console.log("  Token ID 2: DAI - Price feed: " + daiPriceFeedAddress);
     console.log("\n✨ Features Enabled:");
     console.log("  ✅ Multi-lender pooled lending");
     console.log("  ✅ Proportional interest distribution");

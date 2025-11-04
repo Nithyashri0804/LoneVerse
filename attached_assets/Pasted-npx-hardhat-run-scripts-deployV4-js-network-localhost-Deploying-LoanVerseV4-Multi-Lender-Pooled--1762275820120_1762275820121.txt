@@ -1,0 +1,43 @@
+npx hardhat run scripts/deployV4.js --network localhost
+Deploying LoanVerseV4 (Multi-Lender Pooled Lending) contract...
+Deploying contracts with the account: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+Account balance: 10000.0
+
+📦 Deploying LoanVerseV4...
+✅ LoanVerseV4 deployed to: 0x5FbDB2315678afecb367f032d93F642f64180aa3
+Network: localhost
+
+🪙 Setting up supported tokens...
+Deploying Mock USDC...
+✅ Mock USDC deployed to: 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512
+Deploying Mock DAI...
+✅ Mock DAI deployed to: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
+
+📊 Deploying Mock Price Feeds...
+✅ ETH/USD Price Feed: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
+✅ USDC/USD Price Feed: 0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
+✅ DAI/USD Price Feed: 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
+
+➕ Adding tokens to LoanVerseV4...
+❌ Error setting up tokens: Error: no matching fragment (operation="fragment", info={ "args": [ 0, "0x0000000000000000000000000000000000000000", "ETH", 18, "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9" ], "key": "addSupportedToken" }, code=UNSUPPORTED_OPERATION, version=6.15.0)
+    at makeError (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\ethers\src.ts\utils\errors.ts:698:21)      
+    at assert (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\ethers\src.ts\utils\errors.ts:719:25)
+    at getFragment (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\ethers\src.ts\contract\contract.ts:270:15)
+    at Proxy.addSupportedToken (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\ethers\src.ts\contract\contract.ts:350:26)
+    at main (file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/scripts/deployV4.js:70:35)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5) {
+  code: 'UNSUPPORTED_OPERATION',
+  operation: 'fragment',
+  info: {
+    key: 'addSupportedToken',
+    args: [
+      0,
+      '0x0000000000000000000000000000000000000000',
+      'ETH',
+      18,
+      '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9'
+    ]
+  },
+  shortMessage: 'no matching fragment'
+}
+PS C:\Users\Administrator\OneDrive\Desktop\LoneVerse> 
