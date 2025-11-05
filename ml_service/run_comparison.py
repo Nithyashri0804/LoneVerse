@@ -62,8 +62,8 @@ def main():
             # Train model
             model.train(X_train, y_train)
             
-            # Evaluate
-            metrics = model.evaluate(X_test, y_test)
+            # Evaluate (returns tuple: metrics, y_pred, y_pred_proba)
+            metrics, _, _ = model.evaluate(X_test, y_test)
             print("\n📊 Training Metrics:")
             print(f"  Accuracy: {metrics['accuracy']:.4f}")
             print(f"  Precision: {metrics['precision']:.4f}")
