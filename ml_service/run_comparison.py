@@ -13,7 +13,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent))
 
 from model_comparison import run_full_comparison
-from data_generator import generate_synthetic_loan_data
+from data_generator import LoanDataGenerator
 from logistic_model import LoanRiskLogisticModel
 import pandas as pd
 
@@ -30,12 +30,17 @@ def main():
     if not os.path.exists(data_path):
         print("📊 Training data not found. Generating synthetic data...")
         try:
-            from data_generator import generate_synthetic_loan_data
-            df = generate_synthetic_loan_data(num_samples=10000)
+            generator = LoanDataGenerator()
+            df = generator.generate_training_data(n_samples=10000)
+            
+            # Ensure directory exists
+            os.makedirs(os.path.dirname(data_path), exist_ok=True)
             df.to_csv(data_path, index=False)
             print(f"✅ Generated {len(df)} synthetic loan records")
         except Exception as e:
             print(f"❌ Error generating data: {e}")
+            import traceback
+            traceback.print_exc()
             return
     else:
         df = pd.read_csv(data_path)
