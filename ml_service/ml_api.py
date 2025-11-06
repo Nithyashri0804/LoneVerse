@@ -314,6 +314,111 @@ def retrain_model():
         }), 500
 
 
+@app.route('/retrain/enhanced', methods=['POST'])
+def retrain_enhanced_model():
+    """
+    Retrain with enhanced model featuring:
+    - Feature engineering (ratios, interactions)
+    - L1/L2 regularization with hyperparameter tuning
+    - Automatic feature selection
+    """
+    try:
+        # Get options from request
+        options = request.json or {}
+        perform_tuning = options.get('perform_tuning', True)
+        data_path = options.get('data_path', 'ml_service/data/training_data.csv')
+        
+        print("🚀 Starting enhanced model training...")
+        print(f"  Hyperparameter tuning: {perform_tuning}")
+        
+        # Import enhanced training function
+        from enhanced_model import train_enhanced_model
+        
+        # Train enhanced model
+        model, metrics = train_enhanced_model(
+            data_path=data_path,
+            perform_tuning=perform_tuning
+        )
+        
+        # Get feature selection info
+        selection_report = model.get_feature_selection_report()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Enhanced model trained successfully',
+            'metrics': {
+                'accuracy': float(metrics['accuracy']),
+                'precision': float(metrics['precision']),
+                'recall': float(metrics['recall']),
+                'f1_score': float(metrics['f1_score']),
+                'roc_auc': float(metrics['roc_auc']),
+                'specificity': float(metrics['specificity'])
+            },
+            'feature_selection': {
+                'selected_count': selection_report['selected_count'],
+                'dropped_count': selection_report['dropped_count'],
+                'penalty_type': selection_report['penalty'],
+                'top_features': selection_report['selected_features'][:10]
+            },
+            'hyperparameters': model.tuning_results if hasattr(model, 'tuning_results') else None
+        })
+        
+    except Exception as e:
+        import traceback
+        return jsonify({
+            'error': 'Enhanced model training failed',
+            'message': str(e),
+            'traceback': traceback.format_exc()
+        }), 500
+
+
+@app.route('/model/comparison', methods=['GET'])
+def compare_models():
+    """
+    Compare standard and enhanced model performance
+    """
+    try:
+        # Load standard model metrics
+        standard_path = 'ml_service/models/logistic_model_metadata.json'
+        enhanced_path = 'ml_service/models/enhanced_model_metadata.json'
+        
+        comparison = {
+            'standard_model': {},
+            'enhanced_model': {},
+            'improvement': {}
+        }
+        
+        if os.path.exists(standard_path):
+            with open(standard_path, 'r') as f:
+                standard_meta = json.load(f)
+                comparison['standard_model'] = standard_meta.get('metrics', {})
+        
+        if os.path.exists(enhanced_path):
+            with open(enhanced_path, 'r') as f:
+                enhanced_meta = json.load(f)
+                comparison['enhanced_model'] = enhanced_meta.get('metrics', {})
+        
+        # Calculate improvements
+        if comparison['standard_model'] and comparison['enhanced_model']:
+            for metric in ['accuracy', 'precision', 'recall', 'f1_score', 'roc_auc']:
+                if metric in comparison['standard_model'] and metric in comparison['enhanced_model']:
+                    standard_val = comparison['standard_model'][metric]
+                    enhanced_val = comparison['enhanced_model'][metric]
+                    improvement = ((enhanced_val - standard_val) / standard_val) * 100
+                    comparison['improvement'][metric] = {
+                        'absolute': enhanced_val - standard_val,
+                        'percentage': improvement
+                    }
+        
+        return jsonify(comparison)
+        
+    except Exception as e:
+        return jsonify({
+            'error': 'Failed to compare models',
+            'message': str(e)
+        }), 500
+
+
 @app.route('/pool/stats', methods=['GET'])
 def pool_stats():
     """
