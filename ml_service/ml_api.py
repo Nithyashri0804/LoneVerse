@@ -332,7 +332,7 @@ def retrain_enhanced_model():
         print(f"  Hyperparameter tuning: {perform_tuning}")
         
         # Import enhanced training function
-        from enhanced_model import train_enhanced_model
+        from .enhanced_model import train_enhanced_model
         
         # Train enhanced model
         model, metrics = train_enhanced_model(

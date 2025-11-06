@@ -2,8 +2,8 @@
 Test script to compare standard vs enhanced model
 """
 import pandas as pd
-from enhanced_model import train_enhanced_model
-from logistic_model import train_and_evaluate_model
+from .enhanced_model import train_enhanced_model
+from .logistic_model import train_and_evaluate_model
 
 def compare_models():
     """Run comparison between standard and enhanced models"""

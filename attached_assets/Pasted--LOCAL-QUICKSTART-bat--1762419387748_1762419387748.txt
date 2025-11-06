@@ -1,0 +1,188 @@
+.\LOCAL_QUICKSTART.bat
+================================================================================
+LoanVerse ML Risk Assessment - Local Setup
+================================================================================
+
+Step 1: Creating virtual environment...
+Unable to copy 'C:\\Users\\Administrator\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\venv\\scripts\\nt\\venvlauncher.exe' to 'C:\\Users\\Administrator\\OneDrive\\Desktop\\LoneVerse\\venv\\Scripts\\python.exe'
+Γ£ô Virtual environment created
+
+Step 2: Activating virtual environment...
+Γ£ô Virtual environment activated
+
+Step 3: Installing Python dependencies...
+Requirement already satisfied: Flask==3.1.2 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 1)) (3.1.2)
+Requirement already satisfied: flask-cors==6.0.1 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 2)) (6.0.1)
+Requirement already satisfied: Flask-SQLAlchemy==3.1.1 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 3)) (3.1.1)
+Requirement already satisfied: gunicorn==23.0.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 4)) (23.0.0)
+Requirement already satisfied: psycopg2-binary==2.9.11 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 5)) (2.9.11)
+Requirement already satisfied: email-validator==2.3.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 6)) (2.3.0)
+Requirement already satisfied: scikit-learn==1.7.2 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 8)) (1.7.2)
+Requirement already satisfied: pandas==2.3.3 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 9)) (2.3.3)
+Requirement already satisfied: numpy==2.3.4 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 10)) (2.3.4)
+Requirement already satisfied: joblib==1.5.2 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 11)) (1.5.2)
+Requirement already satisfied: matplotlib==3.10.7 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 12)) (3.10.7)
+Requirement already satisfied: seaborn==0.13.2 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 13)) (0.13.2)
+Requirement already satisfied: python-dotenv==1.0.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from -r requirements.txt (line 14)) (1.0.0)
+Requirement already satisfied: blinker>=1.9.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from Flask==3.1.2->-r requirements.txt (line 1)) (1.9.0)
+Requirement already satisfied: click>=8.1.3 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from Flask==3.1.2->-r requirements.txt (line 1)) (8.3.0)
+Requirement already satisfied: itsdangerous>=2.2.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from Flask==3.1.2->-r requirements.txt (line 1)) (2.2.0)
+Requirement already satisfied: jinja2>=3.1.2 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from Flask==3.1.2->-r requirements.txt (line 1)) (3.1.6)
+Requirement already satisfied: markupsafe>=2.1.1 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from Flask==3.1.2->-r requirements.txt (line 1)) (3.0.3)
+Requirement already satisfied: werkzeug>=3.1.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from Flask==3.1.2->-r requirements.txt (line 1)) (3.1.3)
+Requirement already satisfied: sqlalchemy>=2.0.16 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from Flask-SQLAlchemy==3.1.1->-r requirements.txt (line 3)) (2.0.44)
+Requirement already satisfied: packaging in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from gunicorn==23.0.0->-r requirements.txt (line 4)) (25.0)
+Requirement already satisfied: dnspython>=2.0.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from email-validator==2.3.0->-r requirements.txt (line 6)) (2.8.0)
+Requirement already satisfied: idna>=2.0.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from email-validator==2.3.0->-r requirements.txt (line 6)) (3.11)
+Requirement already satisfied: scipy>=1.8.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from scikit-learn==1.7.2->-r requirements.txt (line 8)) (1.16.3)
+Requirement already satisfied: threadpoolctl>=3.1.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from scikit-learn==1.7.2->-r requirements.txt (line 8)) (3.6.0)
+Requirement already satisfied: python-dateutil>=2.8.2 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from pandas==2.3.3->-r requirements.txt (line 9)) (2.9.0.post0)
+Requirement already satisfied: pytz>=2020.1 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from pandas==2.3.3->-r requirements.txt (line 9)) (2025.2)
+Requirement already satisfied: tzdata>=2022.7 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from pandas==2.3.3->-r requirements.txt (line 9)) (2025.2)
+Requirement already satisfied: contourpy>=1.0.1 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from matplotlib==3.10.7->-r requirements.txt (line 12)) (1.3.3)
+Requirement already satisfied: cycler>=0.10 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from matplotlib==3.10.7->-r requirements.txt (line 12)) (0.12.1)
+Requirement already satisfied: fonttools>=4.22.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from matplotlib==3.10.7->-r requirements.txt (line 12)) (4.60.1)
+Requirement already satisfied: kiwisolver>=1.3.1 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from matplotlib==3.10.7->-r requirements.txt (line 12)) (1.4.9)
+Requirement already satisfied: pillow>=8 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from matplotlib==3.10.7->-r requirements.txt (line 12)) (12.0.0)
+Requirement already satisfied: pyparsing>=3 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from matplotlib==3.10.7->-r requirements.txt (line 12)) (3.2.5)
+Requirement already satisfied: colorama in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from click>=8.1.3->Flask==3.1.2->-r requirements.txt (line 1)) (0.4.6)
+Requirement already satisfied: six>=1.5 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from python-dateutil>=2.8.2->pandas==2.3.3->-r requirements.txt (line 9)) (1.17.0)
+Requirement already satisfied: greenlet>=1 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from sqlalchemy>=2.0.16->Flask-SQLAlchemy==3.1.1->-r requirements.txt (line 3)) (3.2.4)
+Requirement already satisfied: typing-extensions>=4.6.0 in c:\users\administrator\onedrive\desktop\loneverse\venv\lib\site-packages (from sqlalchemy>=2.0.16->Flask-SQLAlchemy==3.1.1->-r requirements.txt (line 3)) (4.15.0)
+
+[notice] A new release of pip is available: 25.1.1 -> 25.3
+[notice] To update, run: python.exe -m pip install --upgrade pip
+Γ£ô Dependencies installed
+
+Step 4: Setting up environment file...
+Γ£ô .env file already exists
+
+Step 5: Generating training data...
+✅ Dataset saved to ml_service/data/training_data.csv
+📊 Shape: (10000, 24)
+📈 Default rate: 12.18%
+
+📊 Dataset Statistics:
+           tx_count  total_volume  avg_frequency  ...  account_age_days       default  default_probability
+count   10000.00000  1.000000e+04   10000.000000  ...      10000.000000  10000.000000         10000.000000
+mean      950.41740  1.058684e+06       3.684776  ...        336.560900      0.121800             0.123010
+std      7229.81061  5.711163e+06       2.588291  ...        169.990466      0.327071             0.100607
+min         0.00000  3.728508e+01       0.012067  ...         27.000000      0.000000             0.010000
+25%        34.00000  3.925730e+04       1.763588  ...        213.000000      0.000000             0.028462
+50%       128.00000  1.533969e+05       3.127215  ...        309.000000      0.000000             0.106886
+75%       500.00000  5.956532e+05       4.974880  ...        431.000000      0.000000             0.190963
+max    511426.00000  2.974347e+08      21.246960  ...       1432.000000      1.000000             0.535023
+
+[8 rows x 24 columns]
+
+🎯 Target Distribution:
+default
+0    0.8782
+1    0.1218
+Name: proportion, dtype: float64
+Γ£ô Training data generated
+
+Step 6: Training standard ML model...
+🚀 Starting model training pipeline...
+📂 Loading data from ml_service/data/training_data.csv
+✅ Loaded 10000 samples
+📊 Features: 22, Samples: 10000
+✅ Train: 8000, Test: 2000
+🎯 Training Logistic Regression with params: {'C': 1.0, 'max_iter': 1000, 'solver': 'lbfgs', 'random_state': 42, 'class_weight': 'balanced'}
+✅ Model training completed
+
+📈 Evaluating on test set...
+
+============================================================
+📊 MODEL EVALUATION METRICS
+============================================================
+Accuracy:   0.6665
+Precision:  0.2161
+Recall:     0.6598
+F1 Score:   0.3256
+ROC-AUC:    0.7134
+Log Loss:   0.6204
+Specificity: 0.6674
+
+Confusion Matrix:
+  TN: 1172  FP:  584
+  FN:   83  TP:  161
+============================================================
+
+🔄 Performing 5-fold cross-validation...
+
+Cross-Validation Results:
+  ACCURACY: 0.6658 (+/- 0.0081)
+  PRECISION: 0.2140 (+/- 0.0096)
+  RECALL: 0.6527 (+/- 0.0345)
+  F1: 0.3223 (+/- 0.0148)
+  ROC_AUC: 0.7305 (+/- 0.0106)
+
+⭐ Top 10 Most Important Features:
+  1. repaid_loans                   -0.6889
+  2. interest_rate                  +0.3951
+  3. account_age_days               -0.3897
+  4. total_loans                    +0.3722
+  5. stablecoin_ratio               -0.3260
+  6. defaulted_loans                +0.2257
+  7. collateral_amount              +0.2008
+  8. loan_amount                    -0.1895
+  9. tx_count                       -0.1560
+  10. loan_to_collateral_ratio       +0.1036
+
+📊 Generating visualization plots...
+✅ ROC curve saved to ml_service/models/roc_curve.png
+✅ Confusion matrix saved to ml_service/models/confusion_matrix.png
+✅ Feature importance plot saved to ml_service/models/feature_importance.png
+
+💾 Saving model...
+✅ Model saved to ml_service/models/logistic_model.pkl
+✅ Scaler saved to ml_service/models/scaler.pkl
+✅ Metadata saved to ml_service/models/logistic_model_metadata.json
+✅ Training report saved to ml_service/models/training_report.json
+
+✨ Training pipeline completed successfully!
+Γ£ô Standard model trained successfully
+
+Step 7: Training enhanced model with feature engineering...
+(This includes hyperparameter tuning and may take 2-3 minutes)
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Administrator\OneDrive\Desktop\LoneVerse\ml_service\enhanced_model.py", line 15, in <module>
+    from logistic_model import LoanRiskLogisticModel
+ModuleNotFoundError: No module named 'logistic_model'
+WARNING: Enhanced model training failed, continuing with standard model
+You can manually train it later with: python -m ml_service.enhanced_model
+
+Step 8: Running model comparison...
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\Administrator\OneDrive\Desktop\LoneVerse\ml_service\test_enhanced_model.py", line 5, in <module>
+    from enhanced_model import train_enhanced_model
+ModuleNotFoundError: No module named 'enhanced_model'
+WARNING: Model comparison failed
+
+================================================================================
+Setup Complete!
+================================================================================
+
+Both models are ready:
+  ΓÇó Standard Model: ml_service/models/logistic_model.pkl
+  ΓÇó Enhanced Model: ml_service/models/enhanced_model.pkl
+
+Generated visualizations:
+  ΓÇó Feature importance: ml_service/models/enhanced_feature_importance.png
+  ΓÇó ROC curve: ml_service/models/enhanced_roc_curve.png
+  ΓÇó Confusion matrix: ml_service/models/enhanced_confusion_matrix.png
+
+To start the application:
+  python main.py
+
+To run model comparison again:
+  python -m ml_service.test_enhanced_model
+
+For more details, see: ml_service/MODEL_IMPROVEMENTS.md
+
+Press any key to continue . . .

@@ -12,7 +12,7 @@ from sklearn.metrics import make_scorer, f1_score, roc_auc_score
 import joblib
 import json
 from datetime import datetime
-from logistic_model import LoanRiskLogisticModel
+from .logistic_model import LoanRiskLogisticModel
 
 
 class EnhancedLoanRiskModel(LoanRiskLogisticModel):
