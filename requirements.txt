@@ -28,3 +28,8 @@ numpy
 pandas
 psycopg2-binary
 scikit-learn
+email_validator
+flask
+flask-sqlalchemy
+gunicorn
+psycopg2-binary
