@@ -1,0 +1,107 @@
+{
+  "timestamp": "2025-11-24T08:38:39.988073",
+  "your_models": {
+    "Logistic Regression": {
+      "accuracy": 0.6665,
+      "precision": 0.2161,
+      "recall": 0.6598,
+      "f1_score": 0.3256,
+      "roc_auc": 0.7134,
+      "specificity": 0.6674
+    },
+    "Random Forest": {
+      "accuracy": 0.7645,
+      "precision": 0.2342,
+      "recall": 0.4098,
+      "f1_score": 0.2981,
+      "roc_auc": 0.7051,
+      "specificity": 0.8138
+    }
+  },
+  "industry_benchmarks": {
+    "Traditional FICO": {
+      "accuracy": 0.775,
+      "precision": 0.65,
+      "recall": 0.55,
+      "f1_score": 0.597,
+      "roc_auc": 0.775,
+      "specificity": 0.85,
+      "description": "Traditional credit scoring",
+      "data_sources": "10-20 credit bureau variables",
+      "update_frequency": "Monthly",
+      "interpretability": "High"
+    },
+    "Industry ML (XGBoost)": {
+      "accuracy": 0.9,
+      "precision": 0.82,
+      "recall": 0.8,
+      "f1_score": 0.81,
+      "roc_auc": 0.88,
+      "specificity": 0.92,
+      "description": "State-of-art gradient boosting",
+      "data_sources": "100-2200 variables",
+      "update_frequency": "Real-time",
+      "interpretability": "Medium"
+    },
+    "Industry ML (Ensemble)": {
+      "accuracy": 0.937,
+      "precision": 0.956,
+      "recall": 0.955,
+      "f1_score": 0.9555,
+      "roc_auc": 0.92,
+      "specificity": 0.93,
+      "description": "Stacked ensemble models",
+      "data_sources": "150+ variables",
+      "update_frequency": "Real-time",
+      "interpretability": "Low"
+    },
+    "DeFi On-Chain Scoring": {
+      "accuracy": 0.85,
+      "precision": 0.75,
+      "recall": 0.72,
+      "f1_score": 0.735,
+      "roc_auc": 0.82,
+      "specificity": 0.88,
+      "description": "Blockchain-based credit scoring",
+      "data_sources": "14-250K wallet features",
+      "update_frequency": "Real-time",
+      "interpretability": "Medium"
+    },
+    "Typical Random Forest": {
+      "accuracy": 0.9,
+      "precision": 0.77,
+      "recall": 0.85,
+      "f1_score": 0.809,
+      "roc_auc": 0.92,
+      "specificity": 0.91,
+      "description": "Industry RF implementation",
+      "data_sources": "50-150 variables",
+      "update_frequency": "Batch",
+      "interpretability": "Medium"
+    },
+    "Typical Logistic Reg": {
+      "accuracy": 0.8,
+      "precision": 0.54,
+      "recall": 0.73,
+      "f1_score": 0.623,
+      "roc_auc": 0.74,
+      "specificity": 0.82,
+      "description": "Industry LR implementation",
+      "data_sources": "20-50 variables",
+      "update_frequency": "Batch",
+      "interpretability": "High"
+    }
+  },
+  "summary": {
+    "status": "Your models are functional but below industry best practices",
+    "lr_performance": "Competitive on recall, needs improvement on precision",
+    "rf_performance": "Good specificity, moderate overall performance",
+    "recommended_next_steps": [
+      "Implement XGBoost for 20-30% performance boost",
+      "Apply SMOTE for better class balance",
+      "Add more features (target 100+ variables)",
+      "Optimize hyperparameters with GridSearchCV",
+      "Consider ensemble stacking"
+    ]
+  }
+}
