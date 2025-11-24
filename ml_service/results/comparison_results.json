@@ -1,0 +1,29 @@
+{
+  "timestamp": "2025-11-24T08:32:13.981805",
+  "logistic_regression": {
+    "model": "Logistic Regression",
+    "accuracy": 0.6665,
+    "precision": 0.21610738255033557,
+    "recall": 0.6598360655737705,
+    "f1_score": 0.32558139534883723,
+    "roc_auc": 0.7134204974046828,
+    "true_negatives": 1172,
+    "false_positives": 584,
+    "false_negatives": 83,
+    "true_positives": 161,
+    "specificity": 0.6674259681093394
+  },
+  "random_forest": {
+    "model": "Random Forest",
+    "accuracy": 0.7645,
+    "precision": 0.234192037470726,
+    "recall": 0.4098360655737705,
+    "f1_score": 0.29806259314456035,
+    "roc_auc": 0.7050557339706486,
+    "true_negatives": 1429,
+    "false_positives": 327,
+    "false_negatives": 144,
+    "true_positives": 100,
+    "specificity": 0.8137813211845103
+  }
+}
