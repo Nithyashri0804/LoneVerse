@@ -110,15 +110,20 @@ class LiquidationService {
         console.log('🔍 Checking for liquidatable V4 loans...');
       }
       
-      let nextLoanId;
+      let maxLoanId = 100; // Fallback limit
+      
+      // Try to get nextLoanId
       try {
-        nextLoanId = await this.contract.nextLoanId();
+        const nextId = await this.contract.nextLoanId();
+        maxLoanId = Math.min(Number(nextId), 100);
       } catch (e) {
-        console.warn('⚠️ Could not fetch nextLoanId. Node might be restarting or unresponsive.');
-        return;
+        // Fallback: iterate through loans until we hit an error
+        if (Math.random() < 0.1) {
+          console.warn(`⚠️ Could not fetch nextLoanId, using fallback method: ${e.message}`);
+        }
       }
       
-      for (let i = 1; i < Number(nextLoanId); i++) {
+      for (let i = 1; i < maxLoanId; i++) {
         let rawLoan;
         try {
           rawLoan = await this.contract.loans(i);
