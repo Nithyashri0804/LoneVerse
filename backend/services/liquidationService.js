@@ -2,11 +2,11 @@ import cron from 'node-cron';
 import { ethers } from 'ethers';
 import { blockchainPool } from './connectionPools.js';
 
-    // Contract ABI for LoanVerseV4 (including the new liquidate function)
+    // Updated Contract ABI for LoanVerseV4 to match exact struct structure
     const LOANVERSE_V4_ABI = [
       "function liquidate(uint256 _loanId) external payable",
-      "function loans(uint256) external view returns (tuple(uint256 id, address borrower, uint256 tokenId, uint256 collateralTokenId, uint256 amount, uint256 amountFunded, uint256 collateralAmount, uint256 interestRate, uint256 duration, uint256 minContribution, uint256 fundingDeadline, uint256 createdAt, uint256 fundedAt, uint256 dueDate, uint8 status, string ipfsDocumentHash, uint256 riskScore, uint256 liquidationThreshold, uint256 totalRepaid, uint256 earlyRepaymentPenalty))",
-      "function supportedTokens(uint256) external view returns (tuple(uint8 tokenType, address contractAddress, string symbol, uint8 decimals, bool isActive, address priceFeed))",
+      "function loans(uint256) external view returns (uint256 id, address borrower, address lender, uint256 tokenId, uint256 collateralTokenId, uint256 amount, uint256 collateralAmount, uint256 interestRate, uint256 duration, uint256 createdAt, uint256 fundedAt, uint256 dueDate, uint8 status, string ipfsDocumentHash, uint256 riskScore, bool collateralClaimed)",
+      "function supportedTokens(uint256) external view returns (uint8 tokenType, address contractAddress, string symbol, uint8 decimals, bool isActive)",
       "function calculateUSDValue(uint256 _tokenId, uint256 _amount) public view returns (uint256)",
       "function nextLoanId() external view returns (uint256)",
       "function getLatestPrice(uint256 _tokenId) public view returns (uint256 price, uint256 updatedAt)"
@@ -133,7 +133,7 @@ class LiquidationService {
         // Only check active (2) or voting (6) loans
         if (status !== 2 && status !== 6) continue;
 
-        const isPastDue = Math.floor(Date.now() / 1000) > Number(loan.dueDate); // No grace period for demo
+        const isPastDue = Math.floor(Date.now() / 1000) > Number(loan.dueDate); 
         
         let loanValueUSD, collateralValueUSD;
         try {
@@ -141,11 +141,11 @@ class LiquidationService {
           collateralValueUSD = await this.contract.calculateUSDValue(loan.collateralTokenId, loan.collateralAmount);
         } catch (e) {
           console.warn(`⚠️ Could not calculate USD value for loan ${i}. Falling back to time-based liquidation.`);
-          loanValueUSD = 100000000n; // Large value to trigger undercollateralization if price fails
+          loanValueUSD = 100000000n; 
           collateralValueUSD = 1n;
         }
         
-        const isUndercollateralized = (collateralValueUSD * 100n) < (loanValueUSD * loan.liquidationThreshold);
+        const isUndercollateralized = (collateralValueUSD * 100n) < (loanValueUSD * 120n); // Use 120 as default threshold
 
         if (isPastDue || isUndercollateralized) {
           console.log(`🚨 LIQUIDATING loan ${i} (Past Due: ${isPastDue}, Undercollateralized: ${isUndercollateralized})`);
@@ -164,7 +164,7 @@ class LiquidationService {
   async processLiquidation(loanId, loan) {
     try {
       const interest = (loan.amount * loan.interestRate) / 10000n;
-      const totalOwed = loan.amount + interest - loan.totalRepaid;
+      const totalOwed = loan.amount + interest; // Simple total for demo
 
       console.log(`🔄 Attempting to liquidate loan ${loanId}. Total Owed: ${totalOwed.toString()}`);
 
