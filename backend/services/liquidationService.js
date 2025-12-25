@@ -43,10 +43,13 @@ class LiquidationService {
       this.contract = new ethers.Contract(this.contractAddress, LOANVERSE_V4_ABI, this.signer);
       
       console.log('🔗 Liquidation service initialized for LoanVerseV4');
-      console.log('📍 Contract:', this.contractAddress);
-      console.log('🔑 Liquidator account:', this.signer.address);
+      this._hasLoggedInitError = false; // Reset error flag on success
     } catch (error) {
-      console.error('❌ Failed to initialize liquidation service:', error);
+      if (!this._hasLoggedInitError) {
+        console.warn('📡 Liquidation service waiting for blockchain network...');
+        this._hasLoggedInitError = true;
+      }
+      setTimeout(() => this.initializeProvider(), 5000);
     }
   }
 
@@ -89,8 +92,12 @@ class LiquidationService {
   async checkLiquidatableLoans() {
     try {
       if (!this.contract) {
-        console.log('⚠️ Contract not initialized');
-        return;
+        console.log('🔍 Attempting to re-initialize contract...');
+        await this.initializeProvider();
+        if (!this.contract) {
+          console.log('⚠️ Contract still not initialized');
+          return;
+        }
       }
 
       console.log('🔍 Checking for liquidatable V4 loans...');

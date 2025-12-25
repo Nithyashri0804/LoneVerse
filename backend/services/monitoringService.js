@@ -33,7 +33,11 @@ export function startRiskMonitoring() {
 
   // Check for fraud patterns every 4 hours
   cron.schedule('0 */4 * * *', async () => {
-    await checkFraudPatterns();
+    try {
+      await checkFraudPatterns();
+    } catch (e) {
+      // Silent fail for monitoring if contract not ready
+    }
   });
 
   isMonitoringActive = true;

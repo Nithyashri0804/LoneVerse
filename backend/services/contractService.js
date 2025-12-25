@@ -11,8 +11,12 @@ let contract;
 // Initialize contract connection using pooled provider
 function initializeContract() {
   if (CONTRACT_ADDRESS && !contract) {
-    const provider = blockchainPool.getProvider(SEPOLIA_RPC);
-    contract = new ethers.Contract(CONTRACT_ADDRESS, LoanVerseABI.abi, provider);
+    try {
+      const provider = blockchainPool.getProvider(SEPOLIA_RPC);
+      contract = new ethers.Contract(CONTRACT_ADDRESS, LoanVerseABI.abi, provider);
+    } catch (e) {
+      // Silent fail, will retry on next data fetch
+    }
   }
 }
 
