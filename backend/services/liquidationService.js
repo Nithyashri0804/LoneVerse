@@ -2,17 +2,13 @@ import cron from 'node-cron';
 import { ethers } from 'ethers';
 import { blockchainPool } from './connectionPools.js';
 
-// Contract ABI for LoanVerseV3 (simplified for key functions)
-const LOANVERSE_V3_ABI = [
-  "function getLoansEligibleForLiquidation() external view returns (uint256[] memory)",
-  "function liquidateLoan(uint256 _loanId) external",
-  "function isLoanUnderwater(uint256 _loanId) external view returns (bool, uint256)",
-  "function finalizeAuction(uint256 _auctionId) external",
-  "function loans(uint256) external view returns (tuple(uint256 id, address borrower, address lender, uint256 tokenId, uint256 collateralTokenId, uint256 amount, uint256 collateralAmount, uint256 interestRate, uint256 duration, uint256 createdAt, uint256 fundedAt, uint256 dueDate, uint8 status, string ipfsDocumentHash, uint256 riskScore, bool collateralClaimed, uint256 liquidationThreshold, uint256 lastHealthCheck))",
-  "function liquidationAuctions(uint256) external view returns (tuple(uint256 loanId, uint256 startTime, uint256 endTime, uint256 startingPrice, uint256 reservePrice, address highestBidder, uint256 highestBid, bool active))",
-  "event LiquidationTriggered(uint256 indexed loanId, uint256 currentRatio, uint256 threshold)",
-  "event AuctionStarted(uint256 indexed auctionId, uint256 indexed loanId, uint256 startingPrice, uint256 endTime)",
-  "event AuctionFinalized(uint256 indexed auctionId, address indexed winner, uint256 finalPrice)"
+// Contract ABI for LoanVerseV4 (including the new liquidate function)
+const LOANVERSE_V4_ABI = [
+  "function liquidate(uint256 _loanId) external payable",
+  "function loans(uint256) external view returns (tuple(uint256 id, address borrower, uint256 tokenId, uint256 collateralTokenId, uint256 amount, uint256 amountFunded, uint256 collateralAmount, uint256 interestRate, uint256 duration, uint256 minContribution, uint256 fundingDeadline, uint256 createdAt, uint256 fundedAt, uint256 dueDate, uint8 status, string ipfsDocumentHash, uint256 riskScore, uint256 liquidationThreshold, uint256 totalRepaid, uint256 earlyRepaymentPenalty))",
+  "function supportedTokens(uint256) external view returns (tuple(uint8 tokenType, address contractAddress, string symbol, uint8 decimals, bool isActive, address priceFeed))",
+  "function calculateUSDValue(uint256 _tokenId, uint256 _amount) public view returns (uint256)",
+  "function nextLoanId() external view returns (uint256)"
 ];
 
 class LiquidationService {
@@ -24,8 +20,8 @@ class LiquidationService {
     this.activeAuctions = new Set();
     
     // Contract configuration
-    this.contractAddress = process.env.LOANVERSE_V3_ADDRESS || "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-    this.rpcUrl = process.env.RPC_URL || "http://localhost:8000";
+    this.contractAddress = process.env.VITE_LOANVERSE_V4_ADDRESS || process.env.LOANVERSE_V3_ADDRESS || "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+    this.rpcUrl = process.env.RPC_URL || "http://localhost:8545";
     
     // Security: Require private key from environment
     if (!process.env.LIQUIDATOR_PRIVATE_KEY) {
@@ -44,9 +40,9 @@ class LiquidationService {
       // Use pooled provider and signer
       this.provider = blockchainPool.getProvider(this.rpcUrl);
       this.signer = blockchainPool.getSigner(this.privateKey, this.rpcUrl);
-      this.contract = new ethers.Contract(this.contractAddress, LOANVERSE_V3_ABI, this.signer);
+      this.contract = new ethers.Contract(this.contractAddress, LOANVERSE_V4_ABI, this.signer);
       
-      console.log('🔗 Liquidation service initialized with pooled provider');
+      console.log('🔗 Liquidation service initialized for LoanVerseV4');
       console.log('📍 Contract:', this.contractAddress);
       console.log('🔑 Liquidator account:', this.signer.address);
     } catch (error) {
@@ -68,21 +64,11 @@ class LiquidationService {
       return;
     }
 
-    console.log('🚀 Starting automated liquidation monitoring...');
+    console.log('🚀 Starting LoanVerseV4 automated liquidation monitoring...');
     
-    // Check for liquidatable loans every 5 minutes
-    cron.schedule('*/5 * * * *', async () => {
+    // Check for liquidatable loans every 1 minute for V4
+    cron.schedule('*/1 * * * *', async () => {
       await this.checkLiquidatableLoans();
-    });
-
-    // Check for auction finalizations every 10 minutes
-    cron.schedule('*/10 * * * *', async () => {
-      await this.checkAuctionFinalizations();
-    });
-
-    // Health check every hour
-    cron.schedule('0 * * * *', async () => {
-      await this.performHealthCheck();
     });
 
     this.isActive = true;
@@ -98,7 +84,7 @@ class LiquidationService {
   }
 
   /**
-   * Check for loans eligible for liquidation
+   * Check for loans eligible for liquidation in V4
    */
   async checkLiquidatableLoans() {
     try {
@@ -107,21 +93,27 @@ class LiquidationService {
         return;
       }
 
-      console.log('🔍 Checking for liquidatable loans...');
+      console.log('🔍 Checking for liquidatable V4 loans...');
       
-      // Get all loans eligible for liquidation
-      const eligibleLoanIds = await this.contract.getLoansEligibleForLiquidation();
+      const nextLoanId = await this.contract.nextLoanId();
       
-      if (eligibleLoanIds.length === 0) {
-        console.log('✅ No loans eligible for liquidation');
-        return;
-      }
+      for (let i = 1; i < Number(nextLoanId); i++) {
+        const loan = await this.contract.loans(i);
+        const status = Number(loan.status);
+        
+        // Only check active (2) or voting (6) loans
+        if (status !== 2 && status !== 6) continue;
 
-      console.log(`⚠️ Found ${eligibleLoanIds.length} loans eligible for liquidation`);
+        const isPastDue = Math.floor(Date.now() / 1000) > Number(loan.dueDate) + (30 * 24 * 60 * 60);
+        
+        const loanValueUSD = await this.contract.calculateUSDValue(loan.tokenId, loan.amount);
+        const collateralValueUSD = await this.contract.calculateUSDValue(loan.collateralTokenId, loan.collateralAmount);
+        const isUndercollateralized = (collateralValueUSD * 100n) < (loanValueUSD * loan.liquidationThreshold);
 
-      // Process each eligible loan
-      for (const loanId of eligibleLoanIds) {
-        await this.processLiquidation(loanId);
+        if (isPastDue || isUndercollateralized) {
+          console.log(`🚨 Found liquidatable loan ${i} (Past Due: ${isPastDue}, Undercollateralized: ${isUndercollateralized})`);
+          await this.processLiquidation(i, loan);
+        }
       }
 
     } catch (error) {
@@ -130,98 +122,30 @@ class LiquidationService {
   }
 
   /**
-   * Process liquidation for a specific loan
+   * Process liquidation for V4
    */
-  async processLiquidation(loanId) {
+  async processLiquidation(loanId, loan) {
     try {
-      // Get loan details
-      const loan = await this.contract.loans(loanId);
-      
-      // Check if loan is actually underwater
-      const [isUnderwater, currentRatio] = await this.contract.isLoanUnderwater(loanId);
-      
-      if (!isUnderwater) {
-        console.log(`ℹ️ Loan ${loanId} is no longer underwater (ratio: ${currentRatio}%)`);
-        return;
-      }
+      const interest = (loan.amount * loan.interestRate) / 10000n;
+      const totalOwed = loan.amount + interest - loan.totalRepaid;
 
-      console.log(`🚨 Liquidating loan ${loanId} - Current ratio: ${currentRatio}%, Threshold: ${loan.liquidationThreshold}%`);
-
-      // Check if we have enough gas and get proper fee data
-      const gasEstimate = await this.contract.liquidateLoan.estimateGas(loanId);
-      const feeData = await this.provider.getFeeData();
+      const tokenInfo = await this.contract.supportedTokens(loan.tokenId);
       
-      // Handle EIP-1559 vs legacy transactions
-      let gasConfig = {};
-      if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas) {
-        gasConfig = {
-          maxFeePerGas: feeData.maxFeePerGas,
-          maxPriorityFeePerGas: feeData.maxPriorityFeePerGas
-        };
-      } else if (feeData.gasPrice) {
-        gasConfig = { gasPrice: feeData.gasPrice };
+      let tx;
+      if (tokenInfo.tokenType === 0) { // ETH
+        tx = await this.contract.liquidate(loanId, { value: totalOwed });
       } else {
-        throw new Error('Unable to determine gas pricing');
+        // Handle ERC20 approval if needed (simplification: assume liquidator has approved or uses ETH)
+        // In a real bot, we'd check allowance and balance here
+        tx = await this.contract.liquidate(loanId);
       }
-      
-      console.log(`⛽ Estimated gas: ${gasEstimate.toString()}`);
 
-      // Execute liquidation with proper gas configuration
-      const tx = await this.contract.liquidateLoan(loanId, {
-        gasLimit: gasEstimate * 120n / 100n, // Add 20% buffer
-        ...gasConfig
-      });
-
-      console.log(`🔄 Liquidation transaction sent: ${tx.hash}`);
-      
-      const receipt = await tx.wait();
-      console.log(`✅ Liquidation successful for loan ${loanId} - Gas used: ${receipt.gasUsed.toString()}`);
-
-      // Track metrics
-      await this.recordLiquidationMetrics(loanId, currentRatio, receipt.gasUsed);
+      console.log(`🔄 Liquidation transaction sent for loan ${loanId}: ${tx.hash}`);
+      await tx.wait();
+      console.log(`✅ Liquidation successful for loan ${loanId}`);
 
     } catch (error) {
       console.error(`❌ Failed to liquidate loan ${loanId}:`, error.message);
-      
-      // Log detailed error for debugging
-      if (error.reason) {
-        console.error(`Reason: ${error.reason}`);
-      }
-    }
-  }
-
-  /**
-   * Check for auctions that need finalization
-   */
-  async checkAuctionFinalizations() {
-    try {
-      console.log('🔍 Checking for auctions ready for finalization...');
-      
-      // This is a simplified check - in a full implementation, you'd maintain
-      // a database of active auctions or query events
-      const currentTime = Math.floor(Date.now() / 1000);
-      
-      // Check recent auctions (last 100 for example)
-      for (let auctionId = 1; auctionId <= 100; auctionId++) {
-        try {
-          const auction = await this.contract.liquidationAuctions(auctionId);
-          
-          // Skip inactive auctions or already finalized
-          if (!auction.active) continue;
-          
-          // Check if auction has ended
-          if (currentTime > Number(auction.endTime)) {
-            console.log(`⏰ Finalizing expired auction ${auctionId}`);
-            await this.finalizeAuction(auctionId);
-          }
-        } catch (error) {
-          // Auction doesn't exist, skip
-          continue;
-        }
-      }
-
-    } catch (error) {
-      console.error('❌ Error checking auction finalizations:', error.message);
     }
   }
 

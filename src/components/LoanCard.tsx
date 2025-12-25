@@ -34,7 +34,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
   };
 
   const getStatusText = (status: LoanStatus) => {
-    switch (status) {
+    switch (Number(status)) {
       case LoanStatus.REQUESTED:
         return 'Requested';
       case LoanStatus.FUNDED:
@@ -43,6 +43,8 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         return 'Repaid';
       case LoanStatus.DEFAULTED:
         return 'Defaulted';
+      case 6: // VOTING
+        return 'Voting';
       default:
         return 'Unknown';
     }
