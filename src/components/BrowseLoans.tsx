@@ -38,15 +38,29 @@ const BrowseLoans: React.FC = () => {
       // Fetch loan details
       const loanPromises = activeLoanIds.map(async (loanId: any) => {
         const loanData = await contract.loans(loanId);
+        
+        // Get lenders for this loan if function exists
+        let lenders: string[] = [];
+        let lenderAmounts: string[] = [];
+        try {
+          const lenderInfo = await contract.getLoanLenders(loanId);
+          if (lenderInfo && lenderInfo.length === 2) {
+            lenders = lenderInfo[0] || [];
+            lenderAmounts = (lenderInfo[1] || []).map((amount: any) => amount.toString());
+          }
+        } catch (e) {
+          // getLoanLenders might not exist, continue without lender info
+        }
+        
         return {
           id: Number(loanData.id.toString()),
           borrower: loanData.borrower,
-          lenders: loanData.lenders,
-          lenderAmounts: loanData.lenderAmounts.map((amount: any) => amount.toString()),
-          totalAmount: loanData.totalAmount.toString(),
-          totalFunded: loanData.totalFunded.toString(),
-          loanToken: Number(loanData.loanToken),
-          collateralToken: Number(loanData.collateralToken),
+          lenders,
+          lenderAmounts,
+          totalAmount: loanData.amount.toString(),
+          totalFunded: loanData.amountFunded.toString(),
+          loanToken: Number(loanData.tokenId),
+          collateralToken: Number(loanData.collateralTokenId),
           collateralAmount: loanData.collateralAmount.toString(),
           interestRate: Number(loanData.interestRate.toString()),
           isVariableRate: loanData.isVariableRate,
@@ -103,7 +117,7 @@ const BrowseLoans: React.FC = () => {
         const loanData = await contract.loans(loanId);
         totalLoans++;
 
-        const loanAmount = parseFloat(formatEther(loanData.totalAmount.toString()));
+        const loanAmount = parseFloat(formatEther(loanData.amount.toString()));
         totalBorrowed = (parseFloat(totalBorrowed) + loanAmount).toString();
 
         if (loanData.status === LoanStatus.REPAID) {

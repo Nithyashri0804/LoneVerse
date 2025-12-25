@@ -64,17 +64,31 @@ const AnalyticsDashboard: React.FC = () => {
       // Fetch all loan details
       const loanPromises = Array.from(combinedLoanIds).map(async (loanId) => {
         const loanData = await contract.loans(loanId);
+        
+        // Get lenders for this loan if function exists
+        let lenders: string[] = [];
+        let lenderAmounts: string[] = [];
+        try {
+          const lenderInfo = await contract.getLoanLenders(loanId);
+          if (lenderInfo && lenderInfo.length === 2) {
+            lenders = lenderInfo[0] || [];
+            lenderAmounts = (lenderInfo[1] || []).map((amt: any) => amt.toString());
+          }
+        } catch (e) {
+          // getLoanLenders might not exist, continue without lender info
+        }
+        
         return {
           id: Number(loanData.id.toString()),
           borrower: loanData.borrower,
-          lender: loanData.lenders.length > 0 ? loanData.lenders[0] : '',
-          lenders: loanData.lenders,
-          lenderAmounts: loanData.lenderAmounts.map((amt: any) => amt.toString()),
-          amount: loanData.totalAmount.toString(),
-          totalAmount: loanData.totalAmount.toString(),
-          totalFunded: loanData.totalFunded.toString(),
-          loanToken: loanData.loanToken,
-          collateralToken: loanData.collateralToken,
+          lender: lenders.length > 0 ? lenders[0] : '',
+          lenders,
+          lenderAmounts,
+          amount: loanData.amount.toString(),
+          totalAmount: loanData.amount.toString(),
+          totalFunded: loanData.amountFunded.toString(),
+          loanToken: loanData.tokenId,
+          collateralToken: loanData.collateralTokenId,
           collateral: loanData.collateralAmount.toString(),
           collateralAmount: loanData.collateralAmount.toString(),
           interestRate: Number(loanData.interestRate.toString()),

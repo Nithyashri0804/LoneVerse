@@ -102,22 +102,34 @@ const Dashboard: React.FC = () => {
           const safeToString = (val: any) => val ? val.toString() : '0';
           const safeNumber = (val: any) => val ? Number(val.toString()) : 0;
           
-          const lenders = loanData.lenders || [];
-          const totalAmount = safeToString(loanData.totalAmount || loanData.amount);
+          // Get lenders for this loan if function exists
+          let lenders: string[] = [];
+          let lenderAmounts: string[] = [];
+          try {
+            const lenderInfo = await contract.getLoanLenders(loanId);
+            if (lenderInfo && lenderInfo.length === 2) {
+              lenders = lenderInfo[0] || [];
+              lenderAmounts = (lenderInfo[1] || []).map((amt: any) => safeToString(amt));
+            }
+          } catch (e) {
+            // getLoanLenders might not exist, continue without lender info
+          }
+          
+          const totalAmount = safeToString(loanData.amount);
           const collateralAmount = safeToString(loanData.collateralAmount);
-          const totalFunded = safeToString(loanData.totalFunded || loanData.amountFunded || '0');
+          const totalFunded = safeToString(loanData.amountFunded || '0');
           
           return {
             id: loanId,
             borrower: loanData.borrower || '0x0000000000000000000000000000000000000000',
             lender: lenders.length > 0 ? lenders[0] : '0x0000000000000000000000000000000000000000',
             lenders,
-            lenderAmounts: (loanData.lenderAmounts || []).map((amt: any) => safeToString(amt)),
+            lenderAmounts,
             amount: totalAmount,
             totalAmount,
             totalFunded,
-            loanToken: loanData.loanToken || loanData.tokenId || 0,
-            collateralToken: loanData.collateralToken || loanData.collateralTokenId || 0,
+            loanToken: loanData.tokenId || 0,
+            collateralToken: loanData.collateralTokenId || 0,
             collateral: collateralAmount,
             collateralAmount,
             interestRate: safeNumber(loanData.interestRate),
