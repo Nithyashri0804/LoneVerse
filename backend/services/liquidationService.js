@@ -11,8 +11,8 @@ class LiquidationService {
     this.signer = null;
     this.activeAuctions = new Set();
     
-    // Contract configuration
-    this.contractAddress = process.env.VITE_LOANVERSE_V4_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    // Contract configuration - uses LOANVERSE_CONTRACT_ADDRESS if available (matches backend config)
+    this.contractAddress = process.env.LOANVERSE_CONTRACT_ADDRESS || process.env.VITE_LOANVERSE_V4_ADDRESS || "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
     this.rpcUrl = process.env.RPC_URL || "http://localhost:8000";
     
     // In Replit environment, if localhost:8080 fails, we might be using a public RPC or a different port
