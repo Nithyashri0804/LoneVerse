@@ -123,7 +123,7 @@ const BrowseLoans: React.FC = () => {
         const loanData = await contract.loans(loanId);
         totalLoans++;
 
-        const loanAmount = formatTokenAmount(loanData.amount.toString(, loan.loanToken)));
+        const loanAmount = formatTokenAmount(loanData.amount.toString(), loanData.tokenId);
         totalBorrowed = (parseFloat(totalBorrowed) + loanAmount).toString();
 
         if (loanData.status === LoanStatus.REPAID) {

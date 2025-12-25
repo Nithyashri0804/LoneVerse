@@ -114,7 +114,7 @@ const AnalyticsDashboard: React.FC = () => {
       const loans = await Promise.all(loanPromises);
       
       // Calculate analytics
-      const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatUnits(loan.totalAmount, TOKEN_INFO[loan.totalAmount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0);
+      const totalVolume = loans.reduce((sum, loan) => sum + formatTokenAmount(loan.totalAmount, loan.loanToken), 0);
       const totalLoans = loans.length;
       const activeLoans = loans.filter(l => l.status === LoanStatus.FUNDED).length;
       const repaidLoans = loans.filter(l => l.status === LoanStatus.REPAID).length;
@@ -144,7 +144,7 @@ const AnalyticsDashboard: React.FC = () => {
           l.lender.toLowerCase() === account.toLowerCase() && l.status === LoanStatus.REPAID
         );
         const totalEarned = userLenderLoans.reduce((sum, loan) => {
-          const principal = parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18));
+          const principal = formatTokenAmount(loan.amount, loan.loanToken);
           const interest = principal * toFraction(loan.interestRate);
           return sum + interest;
         }, 0);
@@ -153,13 +153,13 @@ const AnalyticsDashboard: React.FC = () => {
           l.lender.toLowerCase() === account.toLowerCase() && l.status === LoanStatus.FUNDED
         );
         const projectedMonthly = activeLenderLoans.reduce((sum, loan) => {
-          const principal = parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18));
+          const principal = formatTokenAmount(loan.amount, loan.loanToken);
           const annualInterest = principal * toFraction(loan.interestRate);
           return sum + (annualInterest / 12);
         }, 0);
 
         const activeInvestments = activeLenderLoans.reduce((sum, loan) => 
-          sum + parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0
+          sum + formatTokenAmount(loan.amount, loan.loanToken), 0
         );
 
         const projectedAnnual = projectedMonthly * 12;
@@ -237,7 +237,7 @@ const AnalyticsDashboard: React.FC = () => {
       
       const existing = volumeData.get(bucketKey);
       if (existing) {
-        existing.volume += parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18));
+        existing.volume += formatTokenAmount(loan.amount, loan.loanToken);
         existing.loans += 1;
       }
     });
@@ -283,21 +283,21 @@ const AnalyticsDashboard: React.FC = () => {
     if (loans.length === 0) return 0;
 
     const totalFunded = loans.reduce((sum, loan) => 
-      sum + parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0
+      sum + formatTokenAmount(loan.amount, loan.loanToken), 0
     );
     
     // Calculate realized PnL: interest from repaid loans minus principal lost to defaults
     const repaidInterest = loans
       .filter(l => l.status === LoanStatus.REPAID)
       .reduce((sum, loan) => {
-        const principal = parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18));
+        const principal = formatTokenAmount(loan.amount, loan.loanToken);
         const interest = principal * toFraction(loan.interestRate);
         return sum + interest;
       }, 0);
     
     const defaultedPrincipal = loans
       .filter(l => l.status === LoanStatus.DEFAULTED)
-      .reduce((sum, loan) => sum + parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0);
+      .reduce((sum, loan) => sum + formatTokenAmount(loan.amount, loan.loanToken), 0);
     
     const realizedPnL = repaidInterest - defaultedPrincipal;
 
@@ -327,7 +327,7 @@ const AnalyticsDashboard: React.FC = () => {
     let initialEarnings = 0;
     
     userLenderLoans.forEach(loan => {
-      const principal = parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18));
+      const principal = formatTokenAmount(loan.amount, loan.loanToken);
       if (loan.fundedAt <= windowStart) {
         if (loan.status === LoanStatus.FUNDED || 
            (loan.status === LoanStatus.REPAID && loan.dueDate > windowStart) ||
@@ -364,7 +364,7 @@ const AnalyticsDashboard: React.FC = () => {
       // Add funded loans in this bucket
       const fundedInBucket = userLenderLoans
         .filter(loan => loan.fundedAt >= bucketStart && loan.fundedAt < bucketEnd)
-        .reduce((sum, loan) => sum + parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0);
+        .reduce((sum, loan) => sum + formatTokenAmount(loan.amount, loan.loanToken), 0);
       
       runningPortfolio += fundedInBucket;
       
@@ -376,16 +376,16 @@ const AnalyticsDashboard: React.FC = () => {
       
       const repaidPrincipal = resolvedInBucket
         .filter(loan => loan.status === LoanStatus.REPAID)
-        .reduce((sum, loan) => sum + parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0);
+        .reduce((sum, loan) => sum + formatTokenAmount(loan.amount, loan.loanToken), 0);
       
       const defaultedPrincipal = resolvedInBucket
         .filter(loan => loan.status === LoanStatus.DEFAULTED)
-        .reduce((sum, loan) => sum + parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0);
+        .reduce((sum, loan) => sum + formatTokenAmount(loan.amount, loan.loanToken), 0);
       
       const bucketInterest = resolvedInBucket
         .filter(loan => loan.status === LoanStatus.REPAID)
         .reduce((sum, loan) => {
-          const principal = parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18));
+          const principal = formatTokenAmount(loan.amount, loan.loanToken);
           return sum + (principal * toFraction(loan.interestRate));
         }, 0);
       
@@ -398,7 +398,7 @@ const AnalyticsDashboard: React.FC = () => {
       // Calculate total funded to date for ROI
       const totalFundedToDate = userLenderLoans
         .filter(loan => loan.fundedAt < bucketEnd)
-        .reduce((sum, loan) => sum + parseFloat(formatUnits(loan.amount, TOKEN_INFO[loan.amount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0);
+        .reduce((sum, loan) => sum + formatTokenAmount(loan.amount, loan.loanToken), 0);
       
       const roi = totalFundedToDate > 0 ? (runningEarnings / totalFundedToDate) * 100 : 0;
       

@@ -1,0 +1,182 @@
+ npm run dev
+
+> vite-react-typescript-starter@0.0.0 dev
+> vite --host 0.0.0.0 --port 5000
+
+
+  VITE v7.1.6  ready in 228 ms
+
+  ➜  Local:   http://localhost:5000/
+  ➜  Network: http://172.23.48.1:5000/
+  ➜  Network: http://192.168.1.211:5000/
+  ➜  press h + enter to show help
+4:04:08 pm [vite] (client) Pre-transform error: C:\Users\Administrator\OneDrive\Desktop\LoneVerse\src\components\AnalyticsDashboard.tsx: Unexpected token (117:135)
+
+  115 |       
+  116 |       // Calculate analytics
+> 117 |       const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatUnits(loan.totalAmount, TOKEN_INFO[loan.totalAmount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0);
+      |                                                                                                                     
+                   ^
+  118 |       const totalLoans = loans.length;
+  119 |       const activeLoans = loans.filter(l => l.status === LoanStatus.FUNDED).length;
+  120 |       const repaidLoans = loans.filter(l => l.status === LoanStatus.REPAID).length;
+  Plugin: vite:react-babel
+  File: C:/Users/Administrator/OneDrive/Desktop/LoneVerse/src/components/AnalyticsDashboard.tsx:117:135
+  117 |        const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatUnits(loan.totalAmount, TOKEN_INFO[loan....
+  118 |        const totalLoans = loans.length;
+  119 |        const activeLoans = loans.filter(l => l.status === LoanStatus.FUNDED).length;
+      |      ^
+  120 |        const repaidLoans = loans.filter(l => l.status === LoanStatus.REPAID).length;
+  121 |        const defaultedLoans = loans.filter(l => l.status === LoanStatus.DEFAULTED).length;
+4:04:08 pm [vite] (client) Pre-transform error: C:\Users\Administrator\OneDrive\Desktop\LoneVerse\src\components\BrowseLoans.tsx: Unexpected token ','. (126:71)
+
+  124 |         totalLoans++;
+  125 |
+> 126 |         const loanAmount = formatTokenAmount(loanData.amount.toString(, loan.loanToken)));
+      |                                                                        ^
+  127 |         totalBorrowed = (parseFloat(totalBorrowed) + loanAmount).toString();
+  128 |
+  129 |         if (loanData.status === LoanStatus.REPAID) {
+  Plugin: vite:react-babel
+  File: C:/Users/Administrator/OneDrive/Desktop/LoneVerse/src/components/BrowseLoans.tsx:126:71
+  127 |          totalBorrowed = (parseFloat(totalBorrowed) + loanAmount).toString();
+  128 |
+  129 |          if (loanData.status === LoanStatus.REPAID) {
+      |                             ^
+  130 |            successfulLoans++;
+  131 |            const repaidAmount = loanAmount * (1 + loanData.interestRate / 10000);
+4:04:09 pm [vite] Internal server error: C:\Users\Administrator\OneDrive\Desktop\LoneVerse\src\components\BrowseLoans.tsx: Unexpected token ','. (126:71)
+
+  124 |         totalLoans++;
+  125 |
+> 126 |         const loanAmount = formatTokenAmount(loanData.amount.toString(, loan.loanToken)));
+      |                                                                        ^
+  127 |         totalBorrowed = (parseFloat(totalBorrowed) + loanAmount).toString();
+  128 |
+  129 |         if (loanData.status === LoanStatus.REPAID) {
+  Plugin: vite:react-babel
+  File: C:/Users/Administrator/OneDrive/Desktop/LoneVerse/src/components/BrowseLoans.tsx:126:71
+  127 |          totalBorrowed = (parseFloat(totalBorrowed) + loanAmount).toString();
+  128 |
+  129 |          if (loanData.status === LoanStatus.REPAID) {
+      |                             ^
+  130 |            successfulLoans++;
+  131 |            const repaidAmount = loanAmount * (1 + loanData.interestRate / 10000);
+      at constructor (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:367:19)     
+      at TypeScriptParserMixin.raise (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:6630:19)
+      at TypeScriptParserMixin.parseExprListItem (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12168:14)
+      at TypeScriptParserMixin.parseCallExpressionArguments (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11256:22)
+      at TypeScriptParserMixin.parseCoverCallAndAsyncArrowHead (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11190:29)
+      at TypeScriptParserMixin.parseSubscript (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11124:19)
+      at TypeScriptParserMixin.parseSubscript (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9358:18)
+      at TypeScriptParserMixin.parseSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11098:19)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11089:17)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11070:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11050:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9857:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10903:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10908:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10885:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10835:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9806:20)
+      at C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10804:39
+      at TypeScriptParserMixin.allowInAnd (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12436:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10804:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12503:17)
+      at TypeScriptParserMixin.parseExprListItem (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12185:18)
+      at TypeScriptParserMixin.parseCallExpressionArguments (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11256:22)
+      at TypeScriptParserMixin.parseCoverCallAndAsyncArrowHead (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11190:29)
+      at TypeScriptParserMixin.parseSubscript (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11124:19)
+      at TypeScriptParserMixin.parseSubscript (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9358:18)
+      at TypeScriptParserMixin.parseSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11098:19)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11089:17)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11070:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11050:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9857:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10903:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10908:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10885:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10835:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9806:20)
+      at C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10804:39
+      at TypeScriptParserMixin.allowInAnd (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12431:16)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10804:17)
+      at TypeScriptParserMixin.parseVar (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:13393:91)
+      at TypeScriptParserMixin.parseVarStatement (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:13239:10)
+      at TypeScriptParserMixin.parseVarStatement (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9498:31)
+      at TypeScriptParserMixin.parseStatementContent (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12860:23)
+      at TypeScriptParserMixin.parseStatementContent (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9532:18)
+      at TypeScriptParserMixin.parseStatementLike (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12776:17)
+      at TypeScriptParserMixin.parseStatementListItem (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12756:17)
+      at TypeScriptParserMixin.parseBlockOrModuleBlockBody (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:13325:61)
+      at TypeScriptParserMixin.parseBlockBody (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:13318:10)
+      at TypeScriptParserMixin.parseBlock (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:13306:10)
+      at TypeScriptParserMixin.parseStatementContent (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12867:21)
+4:04:09 pm [vite] Internal server error: C:\Users\Administrator\OneDrive\Desktop\LoneVerse\src\components\AnalyticsDashboard.tsx: Unexpected token (117:135)
+
+  115 |
+  116 |       // Calculate analytics
+> 117 |       const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatUnits(loan.totalAmount, TOKEN_INFO[loan.totalAmount.match(.loanToken.|.amount.)?.[1]|| loan.loanToken || 0]?.decimals || 18)), 0);
+      |                                                                                                                     
+                   ^
+  118 |       const totalLoans = loans.length;
+  119 |       const activeLoans = loans.filter(l => l.status === LoanStatus.FUNDED).length;
+  120 |       const repaidLoans = loans.filter(l => l.status === LoanStatus.REPAID).length;
+  Plugin: vite:react-babel
+  File: C:/Users/Administrator/OneDrive/Desktop/LoneVerse/src/components/AnalyticsDashboard.tsx:117:135
+  117 |        const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatUnits(loan.totalAmount, TOKEN_INFO[loan....
+  118 |        const totalLoans = loans.length;
+  119 |        const activeLoans = loans.filter(l => l.status === LoanStatus.FUNDED).length;
+      |      ^
+  120 |        const repaidLoans = loans.filter(l => l.status === LoanStatus.REPAID).length;
+  121 |        const defaultedLoans = loans.filter(l => l.status === LoanStatus.DEFAULTED).length;
+      at constructor (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:367:19)     
+      at TypeScriptParserMixin.raise (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:6630:19)
+      at TypeScriptParserMixin.unexpected (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:6650:16)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11451:16)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:4797:20)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11085:23)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11070:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11050:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9857:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10903:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10908:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10885:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10835:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9806:20)
+      at C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10804:39
+      at TypeScriptParserMixin.allowInAnd (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12436:12)
+      at TypeScriptParserMixin.parseMaybeAssignAllowIn (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10804:17)
+      at TypeScriptParserMixin.parseMaybeAssignAllowInOrVoidPattern (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12503:17)
+      at TypeScriptParserMixin.parseExprListItem (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12185:18)
+      at TypeScriptParserMixin.parseCallExpressionArguments (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11256:22)
+      at TypeScriptParserMixin.parseCoverCallAndAsyncArrowHead (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11190:29)
+      at TypeScriptParserMixin.parseSubscript (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11124:19)
+      at TypeScriptParserMixin.parseSubscript (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9358:18)
+      at TypeScriptParserMixin.parseSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11098:19)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11089:17)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11070:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11050:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9857:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10903:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10908:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10885:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10835:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9806:20)
+      at TypeScriptParserMixin.parseExpressionBase (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10788:23)
+      at C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10784:39
+      at TypeScriptParserMixin.allowInAnd (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12436:12)
+      at TypeScriptParserMixin.parseExpression (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10784:17)
+      at TypeScriptParserMixin.parseMember (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11143:28)
+      at TypeScriptParserMixin.parseSubscript (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11128:21)
+      at TypeScriptParserMixin.parseSubscript (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9358:18)
+      at TypeScriptParserMixin.parseSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11098:19)
+      at TypeScriptParserMixin.parseExprSubscripts (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11089:17)
+      at TypeScriptParserMixin.parseUpdate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11070:21)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11050:23)
+      at TypeScriptParserMixin.parseMaybeUnary (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9857:18)
+      at TypeScriptParserMixin.parseMaybeUnaryOrPrivate (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10903:61)
+      at TypeScriptParserMixin.parseExprOps (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10908:23)
+      at TypeScriptParserMixin.parseMaybeConditional (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10885:23)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:10835:21)
+      at TypeScriptParserMixin.parseMaybeAssign (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9806:20)
