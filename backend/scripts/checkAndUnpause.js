@@ -1,5 +1,10 @@
 import hre from "hardhat";
-import LoanVerseABI from "../contracts/LoanVerse.json" assert { type: "json" };
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const LoanVerseABI = JSON.parse(fs.readFileSync(path.join(__dirname, "../contracts/LoanVerse.json"), "utf-8"));
 
 async function main() {
   const { ethers } = hre;
