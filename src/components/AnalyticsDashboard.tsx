@@ -18,12 +18,6 @@ interface AnalyticsData {
   monthlyVolume: { month: string; volume: number; loans: number }[];
   riskDistribution: { risk: string; count: number; percentage: number }[];
   performanceMetrics: {
-
-// Helper function to format token amounts with correct decimals
-const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
-  const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
-  return parseFloat(formatUnits(amount, decimals));
-};
     successRate: number;
     averageRepaymentTime: number;
     platformFees: number;
@@ -33,6 +27,12 @@ const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): numbe
   riskVsReturn: { risk: number; expectedReturn: number; actualReturn: number }[];
   performanceComparison: { category: string; userValue: number; platformAverage: number }[];
 }
+
+// Helper function to format token amounts with correct decimals
+const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+  const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  return parseFloat(formatUnits(amount, decimals));
+};
 
 const AnalyticsDashboard: React.FC = () => {
   const { contract } = useContract();

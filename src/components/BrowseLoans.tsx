@@ -8,6 +8,12 @@ import LoanCard from './LoanCard';
 import LoanFilter, { LoanFilters } from './LoanFilter';
 import { filterLoans, sortLoans } from '../utils/loanFilters';
 
+// Helper function to format token amounts with correct decimals
+const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+  const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  return parseFloat(formatUnits(amount, decimals));
+};
+
 const BrowseLoans: React.FC = () => {
   const { contract } = useContract();
   const [loans, setLoans] = useState<Loan[]>([]);
@@ -18,12 +24,6 @@ const BrowseLoans: React.FC = () => {
     search: '',
     amountMin: '',
     amountMax: '',
-
-// Helper function to format token amounts with correct decimals
-const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
-  const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
-  return parseFloat(formatUnits(amount, decimals));
-};
     interestRateMin: '',
     interestRateMax: '',
     durationMin: '',
