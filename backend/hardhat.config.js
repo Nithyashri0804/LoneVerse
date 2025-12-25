@@ -1,0 +1,30 @@
+require("@nomicfoundation/hardhat-toolbox");
+
+module.exports = {
+  solidity: {
+    version: "0.8.20",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200,
+      },
+    },
+  },
+  networks: {
+    hardhat: {
+      chainId: 31337,
+      forking: {
+        enabled: false, // Set to true to fork mainnet
+      },
+    },
+    localhost: {
+      url: "http://localhost:8000",
+    },
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts",
+  },
+};

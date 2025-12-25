@@ -99,15 +99,16 @@ class LiquidationService {
   async checkLiquidatableLoans() {
     try {
       if (!this.contract) {
-        console.log('🔍 Attempting to re-initialize contract...');
         await this.initializeProvider();
         if (!this.contract) {
-          console.log('⚠️ Contract still not initialized');
           return;
         }
       }
 
-      console.log('🔍 Checking for liquidatable V4 loans...');
+      // Don't log every check in production/local - too verbose
+      if (Math.random() < 0.1) {
+        console.log('🔍 Checking for liquidatable V4 loans...');
+      }
       
       let nextLoanId;
       try {

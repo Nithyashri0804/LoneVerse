@@ -6,7 +6,9 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
+    "dev": "nodemon server.js",
+    "dev:simple": "node server.js",
+    "hardhat-node": "npx hardhat node --hostname localhost --port 8000",
     "test": "jest"
   },
   "dependencies": {
