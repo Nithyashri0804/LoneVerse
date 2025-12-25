@@ -18,7 +18,27 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const [timeLeft, setTimeLeft] = React.useState<number | null>(null);
+  const [isLiquidating, setIsLiquidating] = useState(false);
+
+  React.useEffect(() => {
+    if (Number(loan.status) === LoanStatus.FUNDED && loan.dueDate > 0) {
+      const timer = setInterval(() => {
+        const now = Math.floor(Date.now() / 1000);
+        const remaining = loan.dueDate - now;
+        setTimeLeft(remaining > 0 ? remaining : 0);
+        
+        // Show "Liquidating..." status if past due
+        if (remaining <= -30) {
+          setIsLiquidating(true);
+        }
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [loan.dueDate, loan.status]);
+
   const getStatusColor = (status: LoanStatus) => {
+    if (isLiquidating && Number(status) === LoanStatus.FUNDED) return 'text-red-400 bg-red-900/20 animate-pulse';
     switch (status) {
       case LoanStatus.REQUESTED:
         return 'text-yellow-400 bg-yellow-900/20';
@@ -34,6 +54,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
   };
 
   const getStatusText = (status: LoanStatus) => {
+    if (isLiquidating && Number(status) === LoanStatus.FUNDED) return 'Liquidating...';
     switch (Number(status)) {
       case LoanStatus.REQUESTED:
         return 'Requested';
@@ -429,6 +450,11 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <span className="text-gray-400">Due Date:</span>
               <div className="text-white">{formatDate(loan.dueDate)}</div>
+              {timeLeft !== null && (
+                <div className={`text-xs font-bold mt-1 ${timeLeft <= 0 ? 'text-red-400' : 'text-blue-400'}`}>
+                  {timeLeft > 0 ? `Time Remaining: ${Math.floor(timeLeft / 60)}m ${timeLeft % 60}s` : 'Status: Past Due'}
+                </div>
+              )}
             </div>
             <div>
               <span className="text-gray-400">Total Repayment:</span>
