@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Search, Filter, TrendingUp, Users, Star, Shield, DollarSign } from 'lucide-react';
 import { formatUnits } from 'ethers';
 import { useContract } from '../hooks/useContract';
+import { useWallet } from '../hooks/useWallet';
 import { Loan, LoanStatus, TokenType, TOKEN_INFO } from '../types/loan';
 import { BorrowerReputation } from '../types/reputation';
 import LoanCard from './LoanCard';
@@ -16,6 +17,7 @@ const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): numbe
 
 const BrowseLoans: React.FC = () => {
   const { contract } = useContract();
+  const { account } = useWallet();
   const [loans, setLoans] = useState<Loan[]>([]);
   const [reputations, setReputations] = useState<Map<string, BorrowerReputation>>(new Map());
   const [isLoading, setIsLoading] = useState(false);
@@ -38,11 +40,21 @@ const BrowseLoans: React.FC = () => {
     try {
       setIsLoading(true);
 
-      // Get only active loan requests (REQUESTED status)
+      // Get active loan requests and funded loans for borrower/lender
+      let loanIdsToFetch: any[] = [];
       const activeLoanIds = await contract.getActiveLoanRequests();
+      loanIdsToFetch = [...activeLoanIds.map((id: any) => id.toString())];
+
+      if (account) {
+        const borrowerLoans = await contract.borrowerLoans(account);
+        const lenderLoans = await contract.lenderLoans(account);
+        const myLoans = [...borrowerLoans, ...lenderLoans].map((id: any) => id.toString());
+        // Use a Set to avoid duplicates
+        loanIdsToFetch = Array.from(new Set([...loanIdsToFetch, ...myLoans]));
+      }
       
       // Fetch loan details
-      const loanPromises = activeLoanIds.map(async (loanId: any) => {
+      const loanPromises = loanIdsToFetch.map(async (loanId: any) => {
         const loanData = await contract.loans(loanId);
         
         // Get lenders for this loan if function exists
@@ -220,7 +232,7 @@ const BrowseLoans: React.FC = () => {
 
   useEffect(() => {
     loadLoans();
-  }, [contract]);
+  }, [contract, account]);
 
   const getCategoryFilteredLoans = () => {
     switch (selectedCategory) {
