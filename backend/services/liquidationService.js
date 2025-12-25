@@ -239,12 +239,9 @@ class LiquidationService {
       
       let tx;
       if (Number(tokenInfo.tokenType) === 0) { // ETH
-        // Get current nonce to avoid nonce mismatch
-        const nonce = await this.provider.getTransactionCount(this.signer.address, 'pending');
         tx = await this.contract.liquidate(loanId, { 
           value: totalOwed,
-          gasLimit: 1000000,
-          nonce: nonce
+          gasLimit: 1000000
         });
       } else {
         // For ERC20, the liquidator must have tokens and approve the contract
@@ -253,17 +250,19 @@ class LiquidationService {
         
         console.log(`🔓 Approving ${tokenAddress} for liquidation...`);
         
-        // Get current nonce for approve
-        let approveNonce = await this.provider.getTransactionCount(this.signer.address, 'pending');
-        const approveTx = await tokenContract.approve(this.contractAddress, totalOwed, { nonce: approveNonce });
+        const approveTx = await tokenContract.approve(this.contractAddress, totalOwed);
         const approveReceipt = await approveTx.wait();
         console.log(`✅ Approved successfully: ${approveReceipt.hash}`);
         
-        // Get nonce for liquidate (should be incremented after approve)
-        const liquidateNonce = await this.provider.getTransactionCount(this.signer.address, 'pending');
-        tx = await this.contract.liquidate(loanId, {
-          gasLimit: 1000000,
-          nonce: liquidateNonce
+        // Wait a short moment and create a fresh signer to reset nonce tracking
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Create a fresh signer instance to force ethers.js to recalculate nonce
+        const freshSigner = new ethers.Wallet(this.privateKey, this.provider);
+        const freshContract = new ethers.Contract(this.contractAddress, LoanVerseABI.abi, freshSigner);
+        
+        tx = await freshContract.liquidate(loanId, {
+          gasLimit: 1000000
         });
       }
 

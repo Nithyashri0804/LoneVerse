@@ -1,0 +1,29 @@
+  💵 Loan 1: LoanUSD=30000000000, CollateralUSD=45000000000 (66ms)
+🚨 [LIQUIDATION] LIQUIDATING loan 1 (Past Due: true, Undercollateralized: false)
+🔄 Attempting to liquidate loan 1. Principal: 300000000, Interest: 15000000, Total Owed: 315000000
+🔓 Approving 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 for liquidation...
+✅ Approved successfully: 0xe0d41368c9b82095178401f0ae82e923a117802f395ed9bcac91ac71cebc48f6
+❌ Failed to liquidate loan 1: nonce has already been used (transaction="0x02f891827a6908843b9aca008457ed137e830f4240945fbdb2315678afecb367f032d93f642f64180aa380a4415f12400000000000000000000000000000000000000000000000000000000000000001c080a05e1922706cd3b18b835ee804e45d5250fdadd0fd95d7cb1675fbf88d1ae3c77aa01a2373e14c753eb7a323ce0799d5633dcef912abd954dec73660fafa5f26b92a", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 9 but got 8. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 9 but got 8. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.15.0)
+✅ [LIQUIDATION] Check complete: Checked=1, Found=1, Liquidatable=1, Time=491ms
+📍 [LIQUIDATION] Starting loan check...
+✅ [LIQUIDATION] Fetched nextLoanId: 2 (37ms)
+  📋 Loan 1: Borrower=0x9965507D..., Status=2, TokenID=1, Amount=300000000 (23ms)
+  🔍 Loan 1: Checking liquidation criteria... (Past Due: true)
+  💵 Loan 1: LoanUSD=30000000000, CollateralUSD=45000000000 (32ms)
+🚨 [LIQUIDATION] LIQUIDATING loan 1 (Past Due: true, Undercollateralized: false)
+🔄 Attempting to liquidate loan 1. Principal: 300000000, Interest: 15000000, Total Owed: 315000000
+🔓 Approving 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 for liquidation...
+✅ Approved successfully: 0x52641a3cec0dcba62fdc2e693e7bd701b715d197116352b94c07ec18e856167a
+❌ Failed to liquidate loan 1: nonce has already been used (transaction="0x02f891827a6909843b9aca0084548ec568830f4240945fbdb2315678afecb367f032d93f642f64180aa380a4415f12400000000000000000000000000000000000000000000000000000000000000001c001a0eee834f86daeee1fab9a612d7a371f0d800452f537bbc9af5b6c30933b2e7a09a073e10c174d3c792dbe7bd939a2860d795237ad669ad0e1e79e8fbfba803e367a", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 10 but got 9. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 10 but got 9. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.15.0)
+✅ [LIQUIDATION] Check complete: Checked=1, Found=1, Liquidatable=1, Time=304ms
+📍 [LIQUIDATION] Starting loan check...
+✅ [LIQUIDATION] Fetched nextLoanId: 2 (20ms)
+  📋 Loan 1: Borrower=0x9965507D..., Status=2, TokenID=1, Amount=300000000 (25ms)
+  🔍 Loan 1: Checking liquidation criteria... (Past Due: true)
+  💵 Loan 1: LoanUSD=30000000000, CollateralUSD=45000000000 (33ms)
+🚨 [LIQUIDATION] LIQUIDATING loan 1 (Past Due: true, Undercollateralized: false)
+🔄 Attempting to liquidate loan 1. Principal: 300000000, Interest: 15000000, Total Owed: 315000000
+🔓 Approving 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512 for liquidation...
+✅ Approved successfully: 0x052fd47a251c96b9850e3ccaeda63a88743e7b5a7079c37e961ae6fc83c24393
+❌ Failed to liquidate loan 1: nonce has already been used (transaction="0x02f891827a690a843b9aca008451766380830f4240945fbdb2315678afecb367f032d93f642f64180aa380a4415f12400000000000000000000000000000000000000000000000000000000000000001c001a041ddc5690cf58576bec6804d54174972be82b27bc094dd5a850975dc7a462fcda064eaa19906e5eacc84fc2fae22e5ae596f82c98f623066a7032a607ed3cf3e2d", info={ "error": { "code": -32000, "data": { "data": null, "message": "Nonce too low. Expected nonce to be 11 but got 10. Note that transactions can't be queued when automining." }, "message": "Nonce too low. Expected nonce to be 11 but got 10. Note that transactions can't be queued when automining." } }, code=NONCE_EXPIRED, version=6.15.0)
+✅ [LIQUIDATION] Check complete: Checked=1, Found=1, Liquidatable=1, Time=313ms
