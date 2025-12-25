@@ -658,6 +658,54 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
     }
     
     /**
+     * @dev External liquidation: Anyone can liquidate a defaulted loan
+     * Liquidator repays the debt + interest and receives collateral
+     */
+    function liquidate(uint256 _loanId) external payable nonReentrant {
+        Loan storage loan = loans[_loanId];
+        require(loan.status == LoanStatus.FUNDED || loan.status == LoanStatus.VOTING, "Invalid status");
+        
+        // Check if it's liquidatable (past due date + grace or below threshold)
+        bool isPastDue = block.timestamp > loan.dueDate + 30 days;
+        
+        uint256 loanValueUSD = calculateUSDValue(loan.tokenId, loan.amount);
+        uint256 collateralValueUSD = calculateUSDValue(loan.collateralTokenId, loan.collateralAmount);
+        bool isUndercollateralized = (collateralValueUSD * 100) < (loanValueUSD * loan.liquidationThreshold);
+        
+        require(isPastDue || isUndercollateralized, "Not liquidatable yet");
+
+        uint256 interest = (loan.amount * loan.interestRate) / 10000;
+        uint256 totalOwed = loan.amount + interest - loan.totalRepaid;
+
+        // Transfer repayment from liquidator
+        if (supportedTokens[loan.tokenId].tokenType == TokenType.ETH) {
+            require(msg.value >= totalOwed, "Insufficient ETH to liquidate");
+            if (msg.value > totalOwed) {
+                (bool refundSuccess, ) = payable(msg.sender).call{value: msg.value - totalOwed}("");
+                require(refundSuccess, "Refund failed");
+            }
+        } else {
+            IERC20(supportedTokens[loan.tokenId].contractAddress).safeTransferFrom(msg.sender, address(this), totalOwed);
+        }
+
+        loan.status = LoanStatus.DEFAULTED;
+        
+        // Distribute proceeds to lenders
+        _distributeRepayment(_loanId, totalOwed);
+        
+        // Transfer collateral to liquidator
+        if (supportedTokens[loan.collateralTokenId].tokenType == TokenType.ETH) {
+            (bool success, ) = payable(msg.sender).call{value: loan.collateralAmount}("");
+            require(success, "Collateral transfer failed");
+        } else {
+            IERC20(supportedTokens[loan.collateralTokenId].contractAddress).safeTransfer(msg.sender, loan.collateralAmount);
+        }
+
+        emit DefaultActionExecuted(_loanId, DefaultAction.LIQUIDATE);
+        _updateCreditScore(loan.borrower, false);
+    }
+
+    /**
      * @dev Cancel unfunded loan
      */
     function cancelLoan(uint256 _loanId) external nonReentrant {
