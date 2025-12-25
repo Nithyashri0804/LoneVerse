@@ -128,11 +128,16 @@ class LiquidationService {
         try {
           rawLoan = await this.contract.loans(i);
           if (!rawLoan || rawLoan.length < 16) {
-            console.warn(`⚠️ Loan ${i} returned incomplete data. Skipping.`);
-            continue;
+            // Silent break instead of logging every single error for non-existent loans
+            break;
           }
         } catch (e) {
-          console.error(`❌ Failed to fetch loan ${i}:`, e.message);
+          // Stop iterating if we hit non-existent loans (expected)
+          if (i > 1) break;
+          // Only log if it's a different kind of error
+          if (!e.message.includes('require(false)')) {
+            console.error(`⚠️ Error checking loans:`, e.message);
+          }
           continue;
         }
         
