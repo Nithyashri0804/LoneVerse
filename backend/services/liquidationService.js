@@ -129,44 +129,42 @@ class LiquidationService {
       for (let i = 1; i < maxLoanId; i++) {
         let loan;
         try {
-          // Use raw call to get encoded data, then decode manually to handle string field
-          const encodedData = await this.provider.call({
-            to: this.contractAddress,
-            data: this.contract.interface.encodeFunctionData('loans', [i])
-          });
+          // Call the contract function - let ethers handle the Result object
+          const loanResult = await this.contract.loans(i);
           
-          if (!encodedData || encodedData === '0x') {
-            break;
-          }
-          
-          // Manual decode using the ABI
-          const decoded = this.contract.interface.decodeFunctionResult('loans', encodedData);
-          
-          // Map decoded result to named fields
+          // Handle ethers Result object - extract values directly
           loan = {
-            id: decoded[0],
-            borrower: decoded[1],
-            lender: decoded[2],
-            tokenId: decoded[3],
-            collateralTokenId: decoded[4],
-            amount: decoded[5],
-            collateralAmount: decoded[6],
-            interestRate: decoded[7],
-            duration: decoded[8],
-            createdAt: decoded[9],
-            fundedAt: decoded[10],
-            dueDate: decoded[11],
-            status: decoded[12],
-            ipfsDocumentHash: decoded[13],
-            riskScore: decoded[14],
-            collateralClaimed: decoded[15]
+            id: loanResult.id ? BigInt(loanResult.id) : BigInt(0),
+            borrower: loanResult.borrower || ethers.ZeroAddress,
+            lender: loanResult.lender || ethers.ZeroAddress,
+            tokenId: loanResult.tokenId ? BigInt(loanResult.tokenId) : BigInt(0),
+            collateralTokenId: loanResult.collateralTokenId ? BigInt(loanResult.collateralTokenId) : BigInt(0),
+            amount: loanResult.amount ? BigInt(loanResult.amount) : BigInt(0),
+            collateralAmount: loanResult.collateralAmount ? BigInt(loanResult.collateralAmount) : BigInt(0),
+            interestRate: loanResult.interestRate ? BigInt(loanResult.interestRate) : BigInt(0),
+            duration: loanResult.duration ? BigInt(loanResult.duration) : BigInt(0),
+            createdAt: loanResult.createdAt ? BigInt(loanResult.createdAt) : BigInt(0),
+            fundedAt: loanResult.fundedAt ? BigInt(loanResult.fundedAt) : BigInt(0),
+            dueDate: loanResult.dueDate ? BigInt(loanResult.dueDate) : BigInt(0),
+            status: loanResult.status ? Number(loanResult.status) : 0,
+            ipfsDocumentHash: loanResult.ipfsDocumentHash || '',
+            riskScore: loanResult.riskScore ? BigInt(loanResult.riskScore) : BigInt(0),
+            collateralClaimed: Boolean(loanResult.collateralClaimed)
           };
+          
+          // Verify we got valid data
+          if (!loan.borrower || loan.borrower === ethers.ZeroAddress) {
+            if (i > 1) break; // Stop if we hit an empty loan slot
+            continue;
+          }
         } catch (e) {
           // Stop iterating if we hit non-existent loans (expected)
           if (i > 1) break;
-          // Only log if it's a different kind of error
-          if (!e.message.includes('require(false)') && !e.message.includes('Could not decode')) {
-            console.error(`⚠️ Error checking loans:`, e.message);
+          // Only log actual errors, not expected reverts
+          if (!e.message.includes('require(false)') && !e.message.includes('Bad data')) {
+            if (Math.random() < 0.05) {
+              console.warn(`⚠️ Could not read loan ${i}: ${e.message.substring(0, 100)}`);
+            }
           }
           continue;
         }
