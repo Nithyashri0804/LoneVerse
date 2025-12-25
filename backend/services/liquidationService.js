@@ -104,7 +104,7 @@ class LiquidationService {
         // Only check active (2) or voting (6) loans
         if (status !== 2 && status !== 6) continue;
 
-        const isPastDue = Math.floor(Date.now() / 1000) > Number(loan.dueDate) + (30 * 24 * 60 * 60);
+        const isPastDue = Math.floor(Date.now() / 1000) > Number(loan.dueDate) + (2 * 60);
         
         const loanValueUSD = await this.contract.calculateUSDValue(loan.tokenId, loan.amount);
         const collateralValueUSD = await this.contract.calculateUSDValue(loan.collateralTokenId, loan.collateralAmount);

@@ -865,8 +865,8 @@
       ]
     },
     "/home/runner/workspace/contracts/LoanVerseV4.sol": {
-      "lastModificationDate": 1766647178427,
-      "contentHash": "63f2f7e1d24ed28e49044d4fbb019b0c",
+      "lastModificationDate": 1766648050877,
+      "contentHash": "53262a81a7acad1dc10314ad2e09ed9b",
       "sourceName": "contracts/LoanVerseV4.sol",
       "solcConfig": {
         "version": "0.8.20",

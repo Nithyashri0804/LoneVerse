@@ -110,11 +110,11 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
     uint256 public constant MIN_COLLATERAL_RATIO = 150; // 150%
     uint256 public constant LIQUIDATION_THRESHOLD = 120; // 120%
     uint256 public constant MAX_INTEREST_RATE = 3000;   // 30% max
-    uint256 public constant MIN_LOAN_DURATION = 1 days;
+    uint256 public constant MIN_LOAN_DURATION = 1 minutes;
     uint256 public constant MAX_LOAN_DURATION = 365 days;
     uint256 public constant MIN_CREDIT_SCORE = 300;
-    uint256 public constant DEFAULT_FUNDING_PERIOD = 7 days;
-    uint256 public constant VOTING_PERIOD = 3 days;
+    uint256 public constant DEFAULT_FUNDING_PERIOD = 2 minutes;
+    uint256 public constant VOTING_PERIOD = 2 minutes;
     uint256 public constant PRICE_STALENESS_THRESHOLD = 3600; // 1 hour
     
     // Protocol fees
@@ -302,7 +302,7 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
         require(supportedTokens[_collateralTokenId].isActive, "Collateral token not supported");
         require(bytes(_ipfsDocumentHash).length > 0, "IPFS hash required");
         require(_minContribution > 0 && _minContribution <= _amount / 2, "Invalid min contribution");
-        require(_fundingPeriod >= 1 days && _fundingPeriod <= 30 days, "Invalid funding period");
+        require(_fundingPeriod >= 1 minutes && _fundingPeriod <= 30 days, "Invalid funding period");
         require(_earlyRepaymentPenalty <= 500, "Penalty too high"); // Max 5%
         
         // Check minimum credit score
@@ -470,7 +470,7 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
         require(loan.status == LoanStatus.FUNDED, "Loan not active");
         
         bool isEarly = block.timestamp < loan.dueDate;
-        require(isEarly || block.timestamp <= loan.dueDate + 30 days, "Too late to repay");
+        require(isEarly || block.timestamp <= loan.dueDate + 2 minutes, "Too late to repay");
         
         uint256 interest = (loan.amount * loan.interestRate) / 10000;
         uint256 totalOwed = loan.amount + interest;
@@ -559,7 +559,7 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
     function triggerDefault(uint256 _loanId) external nonReentrant {
         Loan storage loan = loans[_loanId];
         require(loan.status == LoanStatus.FUNDED, "Loan not active");
-        require(block.timestamp > loan.dueDate + 30 days, "Grace period not ended");
+        require(block.timestamp > loan.dueDate + 2 minutes, "Grace period not ended");
         
         loan.status = LoanStatus.VOTING;
         votingDeadline[_loanId] = block.timestamp + VOTING_PERIOD;
