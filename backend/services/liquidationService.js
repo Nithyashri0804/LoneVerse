@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import { ethers } from 'ethers';
 import { blockchainPool } from './connectionPools.js';
-import LoanVerseABI from '../contracts/LoanVerse.json' with { type: 'json' };
+import LoanVerseABI from '../../artifacts/contracts/LoanVerseV4.sol/LoanVerseV4.json' with { type: 'json' };
 
 class LiquidationService {
   constructor() {

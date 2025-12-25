@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import LoanVerseABI from '../contracts/LoanVerse.json' with { type: 'json' };
+import LoanVerseABI from '../../artifacts/contracts/LoanVerseV4.sol/LoanVerseV4.json' with { type: 'json' };
 import { blockchainPool } from './connectionPools.js';
 
 // Contract configuration

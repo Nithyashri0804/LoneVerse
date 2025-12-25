@@ -4,7 +4,7 @@ async function main() {
   console.log("🚀 Deploying LoanVerse contract...");
 
   // Get the contract factory from the compiled artifact
-  const LoanVerseABI = require("../contracts/LoanVerse.json");
+  const LoanVerseABI = require("../../artifacts/contracts/LoanVerseV4.sol/LoanVerseV4.json");
   const accounts = await ethers.getSigners();
   
   // Deploy the contract

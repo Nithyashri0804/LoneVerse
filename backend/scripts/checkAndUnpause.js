@@ -4,7 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const LoanVerseABI = JSON.parse(fs.readFileSync(path.join(__dirname, "../contracts/LoanVerse.json"), "utf-8"));
+const LoanVerseABI = JSON.parse(fs.readFileSync(path.join(__dirname, "../../../artifacts/contracts/LoanVerseV4.sol/LoanVerseV4.json"), "utf-8"));
 
 async function main() {
   const { ethers } = hre;
