@@ -554,21 +554,75 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
     }
     
     /**
-     * @dev Trigger default and start voting process
+     * @dev Liquidate loan (can be called by anyone if past due or undercollateralized)
      */
-    function triggerDefault(uint256 _loanId) external nonReentrant {
+    function liquidate(uint256 _loanId) external payable nonReentrant {
         Loan storage loan = loans[_loanId];
-        require(loan.status == LoanStatus.FUNDED, "Loan not active");
-        require(block.timestamp > loan.dueDate + 2 minutes, "Grace period not ended");
+        require(loan.status == LoanStatus.FUNDED || loan.status == LoanStatus.VOTING, "Loan not liquidatable");
         
-        loan.status = LoanStatus.VOTING;
-        votingDeadline[_loanId] = block.timestamp + VOTING_PERIOD;
+        bool isPastDue = block.timestamp > loan.dueDate + 30; // Using 30s for demo
         
-        // Update credit score for default
+        uint256 loanValueUSD = calculateUSDValue(loan.tokenId, loan.amount);
+        uint256 collateralValueUSD = calculateUSDValue(loan.collateralTokenId, loan.collateralAmount);
+        bool isUndercollateralized = (collateralValueUSD * 100) < (loanValueUSD * loan.liquidationThreshold);
+        
+        require(isPastDue || isUndercollateralized, "Liquidation criteria not met");
+
+        uint256 interest = (loan.amount * loan.interestRate) / 10000;
+        uint256 totalOwed = loan.amount + interest - loan.totalRepaid;
+        
+        // Liquidator must provide the funds to cover the debt
+        if (supportedTokens[loan.tokenId].tokenType == TokenType.ETH) {
+            require(msg.value >= totalOwed, "Insufficient ETH to liquidate");
+        } else {
+            IERC20 token = IERC20(supportedTokens[loan.tokenId].contractAddress);
+            token.safeTransferFrom(msg.sender, address(this), totalOwed);
+        }
+
+        loan.status = LoanStatus.DEFAULTED;
+        
+        // Distribute debt payment to lenders
+        _distributeRepayment(_loanId, totalOwed);
+
+        // Return collateral: Proportional to lenders, excess to borrower
+        // In this model, the liquidator bought the debt, so lenders are repaid in the loan token.
+        // The collateral itself is then distributed. 
+        // User asked: "share to be returend to the lenders proportional to the money invested . and rest of the money to be returned to the borrower in the remaining ETH"
+        // This implies the lenders get the COLLATERAL, not just the debt repayment.
+        
+        uint256 collateralToDistribute = loan.collateralAmount;
+        LenderContribution[] storage contributions = loanContributions[_loanId];
+        
+        for (uint256 i = 0; i < contributions.length; i++) {
+            uint256 lenderCollateralShare = (collateralToDistribute * contributions[i].amount) / loan.amount;
+            if (lenderCollateralShare > 0) {
+                _transferToken(loan.collateralTokenId, contributions[i].lender, lenderCollateralShare);
+            }
+        }
+        
+        // Update credit score
         _updateCreditScore(loan.borrower, false);
         
-        emit DefaultVotingStarted(_loanId, votingDeadline[_loanId]);
         emit LoanDefaulted(_loanId);
+        emit DefaultActionExecuted(_loanId, DefaultAction.LIQUIDATE);
+    }
+
+    function _transferToken(uint256 _tokenId, address _to, uint256 _amount) internal {
+        if (supportedTokens[_tokenId].tokenType == TokenType.ETH) {
+            (bool success, ) = payable(_to).call{value: _amount}("");
+            require(success, "ETH transfer failed");
+        } else {
+            IERC20(supportedTokens[_tokenId].contractAddress).safeTransfer(_to, _amount);
+        }
+    }
+
+    function _returnCollateral(uint256 _loanId) internal {
+        Loan storage loan = loans[_loanId];
+        if (loan.collateralAmount > 0) {
+            uint256 amount = loan.collateralAmount;
+            loan.collateralAmount = 0;
+            _transferToken(loan.collateralTokenId, loan.borrower, amount);
+        }
     }
     
     /**

@@ -287,7 +287,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
       const interest = (BigInt(loan.totalAmount) * BigInt(loan.interestRate)) / BigInt(10000);
       const totalOwed = BigInt(loan.totalAmount) + interest - BigInt(loan.totalRepaid);
       
-      const isNativeETH = loan.loanToken === 0;
+      const isNativeETH = Number(loan.loanToken) === 0;
 
       if (isNativeETH) {
         const tx = await contract.liquidate(loan.id, {
