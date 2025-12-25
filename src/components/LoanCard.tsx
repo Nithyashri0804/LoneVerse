@@ -351,7 +351,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Loan Amount</div>
               <div className="text-white font-medium">
-                {parseFloat(formatUnits(loan.totalAmount, TOKEN_INFO[loan.loanToken]?.decimals || 18)).toFixed(4)} {getTokenSymbol(loan.loanToken)}
+                {parseFloat(formatUnits(loan.totalAmount, TOKEN_INFO[loan.loanToken]?.decimals || 18)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })} {getTokenSymbol(loan.loanToken)}
               </div>
             </div>
           </div>
@@ -361,7 +361,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Collateral</div>
               <div className="text-white font-medium">
-                {parseFloat(formatUnits(loan.collateralAmount, TOKEN_INFO[loan.collateralToken]?.decimals || 18)).toFixed(4)} {getTokenSymbol(loan.collateralToken)}
+                {parseFloat(formatUnits(loan.collateralAmount, TOKEN_INFO[loan.collateralToken]?.decimals || 18)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 })} {getTokenSymbol(loan.collateralToken)}
               </div>
             </div>
           </div>

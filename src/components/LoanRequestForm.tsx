@@ -29,7 +29,8 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
   const calculateRequiredCollateral = () => {
     if (!formData.totalAmount) return '0';
     const amount = parseFloat(formData.totalAmount);
-    return (amount * 1.2).toFixed(4); // 120% collateralization for V2 contract
+    // LoanVerseV4 requires 120% collateralization
+    return (amount * 1.2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   };
 
   const calculateTotalRepayment = () => {
