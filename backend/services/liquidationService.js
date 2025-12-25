@@ -2,10 +2,10 @@ import cron from 'node-cron';
 import { ethers } from 'ethers';
 import { blockchainPool } from './connectionPools.js';
 
-    // Updated Contract ABI for LoanVerseV4 to match exact public mapping return types
+    // Contract ABI for LoanVerseV4 - matches actual contract struct with 16 fields
     const LOANVERSE_V4_ABI = [
       "function liquidate(uint256 _loanId) external payable",
-      "function loans(uint256) external view returns (uint256, address, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint8, string, uint256, uint256, uint256, uint256)",
+      "function loans(uint256) external view returns (uint256, address, address, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint8, string, uint256, bool)",
       "function supportedTokens(uint256) external view returns (uint8, address, string, uint8, bool, address)",
       "function calculateUSDValue(uint256 _tokenId, uint256 _amount) public view returns (uint256)",
       "function nextLoanId() external view returns (uint256)",
@@ -130,7 +130,7 @@ class LiquidationService {
         let rawLoan;
         try {
           rawLoan = await this.contract.loans(i);
-          if (!rawLoan || rawLoan.length < 20) {
+          if (!rawLoan || rawLoan.length < 16) {
             console.warn(`⚠️ Loan ${i} returned incomplete data. Skipping.`);
             continue;
           }
@@ -139,28 +139,24 @@ class LiquidationService {
           continue;
         }
         
-        // Map raw array/object to named fields based on struct order
+        // Map raw array/object to named fields based on actual contract struct (16 fields)
         const loan = {
           id: rawLoan[0],
           borrower: rawLoan[1],
-          tokenId: rawLoan[2],
-          collateralTokenId: rawLoan[3],
-          amount: rawLoan[4],
-          amountFunded: rawLoan[5],
+          lender: rawLoan[2],
+          tokenId: rawLoan[3],
+          collateralTokenId: rawLoan[4],
+          amount: rawLoan[5],
           collateralAmount: rawLoan[6],
           interestRate: rawLoan[7],
           duration: rawLoan[8],
-          minContribution: rawLoan[9],
-          fundingDeadline: rawLoan[10],
-          createdAt: rawLoan[11],
-          fundedAt: rawLoan[12],
-          dueDate: rawLoan[13],
-          status: rawLoan[14],
-          ipfsDocumentHash: rawLoan[15],
-          riskScore: rawLoan[16],
-          liquidationThreshold: rawLoan[17],
-          totalRepaid: rawLoan[18],
-          earlyRepaymentPenalty: rawLoan[19]
+          createdAt: rawLoan[9],
+          fundedAt: rawLoan[10],
+          dueDate: rawLoan[11],
+          status: rawLoan[12],
+          ipfsDocumentHash: rawLoan[13],
+          riskScore: rawLoan[14],
+          collateralClaimed: rawLoan[15]
         };
 
         const status = Number(loan.status);
@@ -180,7 +176,8 @@ class LiquidationService {
           collateralValueUSD = 1n;
         }
         
-        const isUndercollateralized = (collateralValueUSD * 100n) < (loanValueUSD * BigInt(loan.liquidationThreshold || 120));
+        // Standard liquidation threshold: 120% collateral value
+        const isUndercollateralized = (collateralValueUSD * 100n) < (loanValueUSD * 120n);
 
         if (isPastDue || isUndercollateralized) {
           console.log(`🚨 LIQUIDATING loan ${i} (Past Due: ${isPastDue}, Undercollateralized: ${isUndercollateralized})`);
@@ -198,10 +195,13 @@ class LiquidationService {
    */
   async processLiquidation(loanId, loan) {
     try {
-      const interest = (loan.amount * loan.interestRate) / 10000n;
-      const totalOwed = loan.amount + interest - loan.totalRepaid;
+      // Calculate interest based on interest rate (in basis points, divide by 10000)
+      const amount = BigInt(loan.amount);
+      const interestRate = BigInt(loan.interestRate);
+      const interest = (amount * interestRate) / 10000n;
+      const totalOwed = amount + interest;
 
-      console.log(`🔄 Attempting to liquidate loan ${loanId}. Total Owed: ${totalOwed.toString()}`);
+      console.log(`🔄 Attempting to liquidate loan ${loanId}. Principal: ${amount.toString()}, Interest: ${interest.toString()}, Total Owed: ${totalOwed.toString()}`);
 
       const rawTokenInfo = await this.contract.supportedTokens(loan.tokenId);
       const tokenInfo = {
