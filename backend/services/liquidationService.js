@@ -2,11 +2,11 @@ import cron from 'node-cron';
 import { ethers } from 'ethers';
 import { blockchainPool } from './connectionPools.js';
 
-    // Updated Contract ABI for LoanVerseV4 to match exact struct structure
+    // Updated Contract ABI for LoanVerseV4 to match exact public mapping return types
     const LOANVERSE_V4_ABI = [
       "function liquidate(uint256 _loanId) external payable",
-      "function loans(uint256) external view returns (uint256 id, address borrower, address lender, uint256 tokenId, uint256 collateralTokenId, uint256 amount, uint256 collateralAmount, uint256 interestRate, uint256 duration, uint256 createdAt, uint256 fundedAt, uint256 dueDate, uint8 status, string ipfsDocumentHash, uint256 riskScore, bool collateralClaimed)",
-      "function supportedTokens(uint256) external view returns (uint8 tokenType, address contractAddress, string symbol, uint8 decimals, bool isActive)",
+      "function loans(uint256) external view returns (uint256, address, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint8, string, uint256, uint256, uint256, uint256)",
+      "function supportedTokens(uint256) external view returns (uint8, address, string, uint8, bool, address)",
       "function calculateUSDValue(uint256 _tokenId, uint256 _amount) public view returns (uint256)",
       "function nextLoanId() external view returns (uint256)",
       "function getLatestPrice(uint256 _tokenId) public view returns (uint256 price, uint256 updatedAt)"
@@ -127,7 +127,42 @@ class LiquidationService {
       }
       
       for (let i = 1; i < Number(nextLoanId); i++) {
-        const loan = await this.contract.loans(i);
+        let rawLoan;
+        try {
+          rawLoan = await this.contract.loans(i);
+          if (!rawLoan || rawLoan.length < 20) {
+            console.warn(`⚠️ Loan ${i} returned incomplete data. Skipping.`);
+            continue;
+          }
+        } catch (e) {
+          console.error(`❌ Failed to fetch loan ${i}:`, e.message);
+          continue;
+        }
+        
+        // Map raw array/object to named fields based on struct order
+        const loan = {
+          id: rawLoan[0],
+          borrower: rawLoan[1],
+          tokenId: rawLoan[2],
+          collateralTokenId: rawLoan[3],
+          amount: rawLoan[4],
+          amountFunded: rawLoan[5],
+          collateralAmount: rawLoan[6],
+          interestRate: rawLoan[7],
+          duration: rawLoan[8],
+          minContribution: rawLoan[9],
+          fundingDeadline: rawLoan[10],
+          createdAt: rawLoan[11],
+          fundedAt: rawLoan[12],
+          dueDate: rawLoan[13],
+          status: rawLoan[14],
+          ipfsDocumentHash: rawLoan[15],
+          riskScore: rawLoan[16],
+          liquidationThreshold: rawLoan[17],
+          totalRepaid: rawLoan[18],
+          earlyRepaymentPenalty: rawLoan[19]
+        };
+
         const status = Number(loan.status);
         
         // Only check active (2) or voting (6) loans
@@ -145,7 +180,7 @@ class LiquidationService {
           collateralValueUSD = 1n;
         }
         
-        const isUndercollateralized = (collateralValueUSD * 100n) < (loanValueUSD * 120n); // Use 120 as default threshold
+        const isUndercollateralized = (collateralValueUSD * 100n) < (loanValueUSD * BigInt(loan.liquidationThreshold || 120));
 
         if (isPastDue || isUndercollateralized) {
           console.log(`🚨 LIQUIDATING loan ${i} (Past Due: ${isPastDue}, Undercollateralized: ${isUndercollateralized})`);
@@ -164,11 +199,19 @@ class LiquidationService {
   async processLiquidation(loanId, loan) {
     try {
       const interest = (loan.amount * loan.interestRate) / 10000n;
-      const totalOwed = loan.amount + interest; // Simple total for demo
+      const totalOwed = loan.amount + interest - loan.totalRepaid;
 
       console.log(`🔄 Attempting to liquidate loan ${loanId}. Total Owed: ${totalOwed.toString()}`);
 
-      const tokenInfo = await this.contract.supportedTokens(loan.tokenId);
+      const rawTokenInfo = await this.contract.supportedTokens(loan.tokenId);
+      const tokenInfo = {
+        tokenType: rawTokenInfo[0],
+        contractAddress: rawTokenInfo[1],
+        symbol: rawTokenInfo[2],
+        decimals: rawTokenInfo[3],
+        isActive: rawTokenInfo[4],
+        priceFeed: rawTokenInfo[5]
+      };
       
       let tx;
       if (Number(tokenInfo.tokenType) === 0) { // ETH
