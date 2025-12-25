@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Clock, DollarSign, Shield, User, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
-import { ethers } from 'ethers';
+import { ethers, formatUnits } from 'ethers';
 import { Loan, LoanStatus, TokenType, TOKEN_INFO } from '../types/loan';
 import { calculateRiskScore, getRiskLevel } from '../utils/loanFilters';
 import { useContract } from '../hooks/useContract';
@@ -75,7 +75,8 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
 
   const calculateRepaymentAmountForDisplay = () => {
     const repaymentWei = calculateRepaymentAmount();
-    return parseFloat(ethers.formatEther(repaymentWei));
+    const decimals = TOKEN_INFO[loan.loanToken]?.decimals || 18;
+    return parseFloat(formatUnits(repaymentWei, decimals));
   };
 
   const isExpired = () => {
@@ -350,7 +351,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Loan Amount</div>
               <div className="text-white font-medium">
-                {parseFloat(ethers.formatEther(loan.totalAmount)).toFixed(4)} {getTokenSymbol(loan.loanToken)}
+                {parseFloat(formatUnits(loan.totalAmount, TOKEN_INFO[loan.loanToken]?.decimals || 18)).toFixed(4)} {getTokenSymbol(loan.loanToken)}
               </div>
             </div>
           </div>
@@ -360,7 +361,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             <div>
               <div className="text-xs text-gray-400">Collateral</div>
               <div className="text-white font-medium">
-                {parseFloat(ethers.formatEther(loan.collateralAmount)).toFixed(4)} {getTokenSymbol(loan.collateralToken)}
+                {parseFloat(formatUnits(loan.collateralAmount, TOKEN_INFO[loan.collateralToken]?.decimals || 18)).toFixed(4)} {getTokenSymbol(loan.collateralToken)}
               </div>
             </div>
           </div>

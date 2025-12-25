@@ -1,13 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, DollarSign, Shield, Clock, RefreshCw, BarChart3 } from 'lucide-react';
-import { formatEther } from 'ethers';
+import { formatUnits } from 'ethers';
 import { useContract } from '../hooks/useContract';
 import { useWallet } from '../hooks/useWallet';
-import { Loan, LoanStatus } from '../types/loan';
+import { Loan, LoanStatus, TokenType, TOKEN_INFO } from '../types/loan';
 import LoanCard from './LoanCard';
 import LoanFilter, { LoanFilters } from './LoanFilter';
 import LoanListView from './LoanListView';
 import { filterLoans, sortLoans } from '../utils/loanFilters';
+
+// Helper function to format token amounts with correct decimals
+const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+  const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  return parseFloat(formatUnits(amount, decimals));
+};
 
 const Dashboard: React.FC = () => {
   const { contract } = useContract();
@@ -198,7 +204,7 @@ const Dashboard: React.FC = () => {
   const getStats = () => {
     if (!account) {
       const totalVolume = loans.reduce((sum, loan) => {
-        return sum + parseFloat(formatEther(loan.totalAmount));
+        return sum + formatTokenAmount(loan.totalAmount, loan.loanToken);
       }, 0);
       const activeLoans = loans.filter(loan => loan.status === LoanStatus.FUNDED).length;
       const totalLoans = loans.length;
@@ -209,20 +215,20 @@ const Dashboard: React.FC = () => {
     const lentLoans = loans.filter(loan => loan.lenders.some(lender => lender.toLowerCase() === account.toLowerCase()));
     
     const totalBorrowed = borrowedLoans.reduce((sum, loan) => {
-      return sum + parseFloat(formatEther(loan.totalAmount));
+      return sum + formatTokenAmount(loan.totalAmount, loan.loanToken);
     }, 0);
 
     const totalLent = lentLoans.reduce((sum, loan) => {
       // Calculate the amount this user lent to this loan
       const lenderIndex = loan.lenders.findIndex(lender => lender.toLowerCase() === account.toLowerCase());
       if (lenderIndex >= 0) {
-        return sum + parseFloat(formatEther(loan.lenderAmounts[lenderIndex]));
+        return sum + formatTokenAmount(loan.lenderAmounts[lenderIndex], loan.loanToken);
       }
       return sum;
     }, 0);
 
     const totalVolume = loans.reduce((sum, loan) => {
-      return sum + parseFloat(formatEther(loan.totalAmount));
+      return sum + formatTokenAmount(loan.totalAmount, loan.loanToken);
     }, 0);
 
     const activeLoans = loans.filter(loan => loan.status === LoanStatus.FUNDED).length;

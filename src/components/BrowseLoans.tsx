@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Filter, TrendingUp, Users, Star, Shield, DollarSign } from 'lucide-react';
-import { formatEther } from 'ethers';
+import { formatUnits } from 'ethers';
 import { useContract } from '../hooks/useContract';
-import { Loan, LoanStatus } from '../types/loan';
+import { Loan, LoanStatus, TokenType, TOKEN_INFO } from '../types/loan';
 import { BorrowerReputation } from '../types/reputation';
 import LoanCard from './LoanCard';
 import LoanFilter, { LoanFilters } from './LoanFilter';
@@ -18,6 +18,12 @@ const BrowseLoans: React.FC = () => {
     search: '',
     amountMin: '',
     amountMax: '',
+
+// Helper function to format token amounts with correct decimals
+const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+  const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  return parseFloat(formatUnits(amount, decimals));
+};
     interestRateMin: '',
     interestRateMax: '',
     durationMin: '',
@@ -117,7 +123,7 @@ const BrowseLoans: React.FC = () => {
         const loanData = await contract.loans(loanId);
         totalLoans++;
 
-        const loanAmount = parseFloat(formatEther(loanData.amount.toString()));
+        const loanAmount = formatTokenAmount(loanData.amount.toString(, loan.loanToken)));
         totalBorrowed = (parseFloat(totalBorrowed) + loanAmount).toString();
 
         if (loanData.status === LoanStatus.REPAID) {
@@ -248,7 +254,7 @@ const BrowseLoans: React.FC = () => {
 
   const getMarketplaceStats = () => {
     const totalAvailable = loans.length;
-    const totalVolume = loans.reduce((sum, loan) => sum + parseFloat(formatEther(loan.totalAmount)), 0);
+    const totalVolume = loans.reduce((sum, loan) => sum + formatTokenAmount(loan.totalAmount, loan.loanToken)), 0);
     const averageRate = loans.length > 0 ? loans.reduce((sum, loan) => sum + loan.interestRate, 0) / loans.length / 100 : 0;
     const verifiedBorrowers = Array.from(reputations.values()).filter(rep => rep.isVerified).length;
 
