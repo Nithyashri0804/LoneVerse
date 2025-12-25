@@ -187,7 +187,7 @@ class RedisPool {
 class BlockchainProviderPool {
   constructor() {
     this.providers = new Map();
-    this.defaultRpcUrl = process.env.RPC_URL || 'http://0.0.0.0:8080';
+    this.defaultRpcUrl = process.env.RPC_URL || 'http://localhost:8080';
   }
 
   getProvider(rpcUrl = null) {

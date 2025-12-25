@@ -22,10 +22,10 @@ class LiquidationService {
     
     // Contract configuration
     this.contractAddress = process.env.VITE_LOANVERSE_V4_ADDRESS || process.env.LOANVERSE_V3_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-    this.rpcUrl = process.env.RPC_URL || "http://0.0.0.0:8080";
+    this.rpcUrl = process.env.RPC_URL || "http://localhost:8080";
     
-    // In Replit environment, if 0.0.0.0:8080 fails, we might be using a public RPC or a different port
-    if (this.rpcUrl.includes('0.0.0.0:8080')) {
+    // In Replit environment, if localhost:8080 fails, we might be using a public RPC or a different port
+    if (this.rpcUrl.includes('localhost:8080')) {
       console.log('ℹ️ Using default local RPC, ensuring it is accessible');
     }
     
@@ -41,22 +41,21 @@ class LiquidationService {
     this.initializeProvider();
   }
 
-  initializeProvider() {
+  async initializeProvider() {
     try {
       console.log(`🔌 Initializing provider with RPC: ${this.rpcUrl}`);
-      // Use pooled provider and signer
-      this.provider = blockchainPool.getProvider(this.rpcUrl);
       
-      if (!this.provider) {
-        throw new Error('Failed to get provider from pool');
+      // Create a direct provider to bypass pooling issues for critical service
+      this.provider = new ethers.JsonRpcProvider(this.rpcUrl);
+      
+      // Check connection
+      try {
+        await this.provider.getNetwork();
+      } catch (e) {
+        throw new Error(`Network unreachable: ${e.message}`);
       }
 
-      this.signer = blockchainPool.getSigner(this.privateKey, this.rpcUrl);
-      
-      if (!this.signer) {
-        throw new Error('Failed to get signer from pool');
-      }
-
+      this.signer = new ethers.Wallet(this.privateKey, this.provider);
       this.contract = new ethers.Contract(this.contractAddress, LOANVERSE_V4_ABI, this.signer);
       
       console.log(`🔗 Liquidation service initialized for LoanVerseV4 at ${this.contractAddress}`);
