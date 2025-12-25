@@ -254,7 +254,7 @@ const BrowseLoans: React.FC = () => {
 
   const getMarketplaceStats = () => {
     const totalAvailable = loans.length;
-    const totalVolume = loans.reduce((sum, loan) => sum + formatTokenAmount(loan.totalAmount, loan.loanToken)), 0);
+    const totalVolume = loans.reduce((sum, loan) => sum + formatTokenAmount(loan.totalAmount, loan.loanToken), 0);
     const averageRate = loans.length > 0 ? loans.reduce((sum, loan) => sum + loan.interestRate, 0) / loans.length / 100 : 0;
     const verifiedBorrowers = Array.from(reputations.values()).filter(rep => rep.isVerified).length;
 
