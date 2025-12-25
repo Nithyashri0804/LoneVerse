@@ -1,0 +1,74 @@
+
+
+  VITE v7.1.6  ready in 421 ms
+
+  ➜  Local:   http://localhost:5000/
+  ➜  Network: http://172.23.48.1:5000/
+  ➜  Network: http://192.168.1.211:5000/
+  ➜  press h + enter to show help
+3:54:55 pm [vite] (client) hmr update /src/components/AnalyticsDashboard.tsx, /src/index.css
+3:54:55 pm [vite] (client) hmr update /src/components/BrowseLoans.tsx, /src/index.css
+3:54:55 pm [vite] (client) hmr update /src/components/Dashboard.tsx, /src/index.css
+3:54:55 pm [vite] (client) hmr update /src/components/LoanCard.tsx, /src/index.css
+3:56:43 pm [vite] (client) Pre-transform error: C:\Users\Administrator\OneDrive\Desktop\LoneVerse\src\components\BrowseLoans.tsx: Unexpected keyword 'const'. (23:0)
+
+  21 |
+  22 | // Helper function to format token amounts with correct decimals
+> 23 | const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+     | ^
+  24 |   const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  25 |   return parseFloat(formatUnits(amount, decimals));
+  26 | };
+  Plugin: vite:react-babel
+  File: C:/Users/Administrator/OneDrive/Desktop/LoneVerse/src/components/BrowseLoans.tsx:23:0
+  21 |  
+  22 |  // Helper function to format token amounts with correct decimals
+  23 |  const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+     |                        ^
+  24 |    const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  25 |    return parseFloat(formatUnits(amount, decimals));
+3:56:43 pm [vite] (client) Pre-transform error: C:\Users\Administrator\OneDrive\Desktop\LoneVerse\src\components\AnalyticsDashboard.tsx: Unexpected token, expected ";" (23:6)
+
+  21 |
+  22 | // Helper function to format token amounts with correct decimals
+> 23 | const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+     |       ^
+  24 |   const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  25 |   return parseFloat(formatUnits(amount, decimals));
+  26 | };
+  Plugin: vite:react-babel
+  File: C:/Users/Administrator/OneDrive/Desktop/LoneVerse/src/components/AnalyticsDashboard.tsx:23:6
+  21 |
+  22 |  // Helper function to format token amounts with correct decimals
+  23 |  const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+     |                              ^
+  24 |    const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  25 |    return parseFloat(formatUnits(amount, decimals));
+3:56:44 pm [vite] Internal server error: C:\Users\Administrator\OneDrive\Desktop\LoneVerse\src\components\BrowseLoans.tsx: Unexpected keyword 'const'. (23:0)
+
+  21 |
+  22 | // Helper function to format token amounts with correct decimals
+> 23 | const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+     | ^
+  24 |   const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  25 |   return parseFloat(formatUnits(amount, decimals));
+  26 | };
+  Plugin: vite:react-babel
+  File: C:/Users/Administrator/OneDrive/Desktop/LoneVerse/src/components/BrowseLoans.tsx:23:0
+  21 |
+  22 |  // Helper function to format token amounts with correct decimals
+  23 |  const formatTokenAmount = (amount: string | bigint, tokenType: TokenType): number => {
+     |                        ^
+  24 |    const decimals = TOKEN_INFO[tokenType]?.decimals || 18;
+  25 |    return parseFloat(formatUnits(amount, decimals));
+      at constructor (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:367:19)     
+      at TypeScriptParserMixin.raise (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:6630:19)
+      at TypeScriptParserMixin.checkReservedWord (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:12234:12)
+      at TypeScriptParserMixin.checkReservedWord (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9398:13)
+      at TypeScriptParserMixin.parseObjectProperty (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11964:12)
+      at TypeScriptParserMixin.parseObjPropValue (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11988:100)
+      at TypeScriptParserMixin.parseObjPropValue (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:9764:18)
+      at TypeScriptParserMixin.parsePropertyDefinition (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11925:17)
+      at TypeScriptParserMixin.parseObjectLike (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11840:21)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:11343:23)
+      at TypeScriptParserMixin.parseExprAtom (C:\Users\Administrator\OneDrive\Desktop\LoneVerse\node_modules\@babel\parser\lib\index.js:4797:20)
