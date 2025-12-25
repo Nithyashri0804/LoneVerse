@@ -177,8 +177,14 @@ class LiquidationService {
           gasLimit: 1000000 // Reasonable gas limit
         });
       } else {
-        // For ERC20, the liquidator must have tokens. 
-        // In local Hardhat, the liquidator (account 0) has everything.
+        // For ERC20, the liquidator must have tokens and approve the contract
+        const tokenAddress = tokenInfo.contractAddress;
+        const tokenContract = new ethers.Contract(tokenAddress, ["function approve(address spender, uint256 amount) public returns (bool)"], this.signer);
+        
+        console.log(`🔓 Approving ${tokenAddress} for liquidation...`);
+        const approveTx = await tokenContract.approve(this.contractAddress, totalOwed);
+        await approveTx.wait();
+        
         tx = await this.contract.liquidate(loanId, {
           gasLimit: 1000000
         });
