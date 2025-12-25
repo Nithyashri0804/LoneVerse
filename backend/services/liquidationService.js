@@ -127,42 +127,49 @@ class LiquidationService {
       }
       
       for (let i = 1; i < maxLoanId; i++) {
-        let rawLoan;
+        let loan;
         try {
-          rawLoan = await this.contract.loans(i);
-          if (!rawLoan || rawLoan.length < 16) {
-            // Silent break instead of logging every single error for non-existent loans
+          // Use raw call to get encoded data, then decode manually to handle string field
+          const encodedData = await this.provider.call({
+            to: this.contractAddress,
+            data: this.contract.interface.encodeFunctionData('loans', [i])
+          });
+          
+          if (!encodedData || encodedData === '0x') {
             break;
           }
+          
+          // Manual decode using the ABI
+          const decoded = this.contract.interface.decodeFunctionResult('loans', encodedData);
+          
+          // Map decoded result to named fields
+          loan = {
+            id: decoded[0],
+            borrower: decoded[1],
+            lender: decoded[2],
+            tokenId: decoded[3],
+            collateralTokenId: decoded[4],
+            amount: decoded[5],
+            collateralAmount: decoded[6],
+            interestRate: decoded[7],
+            duration: decoded[8],
+            createdAt: decoded[9],
+            fundedAt: decoded[10],
+            dueDate: decoded[11],
+            status: decoded[12],
+            ipfsDocumentHash: decoded[13],
+            riskScore: decoded[14],
+            collateralClaimed: decoded[15]
+          };
         } catch (e) {
           // Stop iterating if we hit non-existent loans (expected)
           if (i > 1) break;
           // Only log if it's a different kind of error
-          if (!e.message.includes('require(false)')) {
+          if (!e.message.includes('require(false)') && !e.message.includes('Could not decode')) {
             console.error(`⚠️ Error checking loans:`, e.message);
           }
           continue;
         }
-        
-        // Map raw array/object to named fields based on actual contract struct (16 fields)
-        const loan = {
-          id: rawLoan[0],
-          borrower: rawLoan[1],
-          lender: rawLoan[2],
-          tokenId: rawLoan[3],
-          collateralTokenId: rawLoan[4],
-          amount: rawLoan[5],
-          collateralAmount: rawLoan[6],
-          interestRate: rawLoan[7],
-          duration: rawLoan[8],
-          createdAt: rawLoan[9],
-          fundedAt: rawLoan[10],
-          dueDate: rawLoan[11],
-          status: rawLoan[12],
-          ipfsDocumentHash: rawLoan[13],
-          riskScore: rawLoan[14],
-          collateralClaimed: rawLoan[15]
-        };
 
         const status = Number(loan.status);
         
