@@ -1,16 +1,7 @@
 import cron from 'node-cron';
 import { ethers } from 'ethers';
 import { blockchainPool } from './connectionPools.js';
-
-    // Contract ABI for LoanVerseV4 - matches actual contract struct with 16 fields
-    const LOANVERSE_V4_ABI = [
-      "function liquidate(uint256 _loanId) external payable",
-      "function loans(uint256) external view returns (uint256, address, address, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint256, uint8, string, uint256, bool)",
-      "function supportedTokens(uint256) external view returns (uint8, address, string, uint8, bool, address)",
-      "function calculateUSDValue(uint256 _tokenId, uint256 _amount) public view returns (uint256)",
-      "function nextLoanId() external view returns (uint256)",
-      "function getLatestPrice(uint256 _tokenId) public view returns (uint256 price, uint256 updatedAt)"
-    ];
+import LoanVerseABI from '../contracts/LoanVerse.json' with { type: 'json' };
 
 class LiquidationService {
   constructor() {
@@ -56,7 +47,7 @@ class LiquidationService {
       }
 
       this.signer = new ethers.Wallet(this.privateKey, this.provider);
-      this.contract = new ethers.Contract(this.contractAddress, LOANVERSE_V4_ABI, this.signer);
+      this.contract = new ethers.Contract(this.contractAddress, LoanVerseABI.abi, this.signer);
       
       console.log(`🔗 Liquidation service initialized for LoanVerseV4 at ${this.contractAddress}`);
       this._hasLoggedInitError = false; 
