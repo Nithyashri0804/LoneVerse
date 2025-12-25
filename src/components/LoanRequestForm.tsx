@@ -29,8 +29,18 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
   const calculateRequiredCollateral = () => {
     if (!formData.totalAmount) return '0';
     const amount = parseFloat(formData.totalAmount);
-    // LoanVerseV4 requires 120% collateralization
-    return (amount * 1.2).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+    
+    // LoanVerseV4.sol constant MIN_COLLATERAL_RATIO = 150 (150%)
+    // For simplicity, we assume 1:1 price ratio in the UI calculation unless we fetch real prices
+    // The contract uses calculateUSDValue which currently mocks prices at 2000 for ETH and 1 for others
+    const loanTokenPrice = formData.loanToken === 0 ? 2000 : 1;
+    const collateralTokenPrice = formData.collateralToken === 0 ? 2000 : 1;
+    
+    const loanValueUSD = amount * loanTokenPrice;
+    const requiredCollateralUSD = (loanValueUSD * 1.5); // 150%
+    const requiredCollateral = requiredCollateralUSD / collateralTokenPrice;
+    
+    return requiredCollateral.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
   };
 
   const calculateTotalRepayment = () => {
@@ -345,7 +355,7 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
             </select>
           </div>
           <div className="mt-2 text-sm text-gray-400">
-            Minimum required: {calculateRequiredCollateral()} {TOKEN_INFO[formData.collateralToken].symbol} (120% of loan amount)
+            Minimum required: {calculateRequiredCollateral()} {TOKEN_INFO[formData.collateralToken].symbol} (150% of loan value)
           </div>
         </div>
 
@@ -377,7 +387,11 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
                 <div className="text-white font-medium">{formData.collateralAmount || '0'} {TOKEN_INFO[formData.collateralToken].symbol}</div>
               </div>
               <div>
-                <span className="text-gray-400">Collateral Ratio:</span>
+                <span className="text-gray-400">Min Collateral Ratio:</span>
+                <div className="text-white font-medium">150%</div>
+              </div>
+              <div>
+                <span className="text-gray-400">Liquidation Threshold:</span>
                 <div className="text-white font-medium">120%</div>
               </div>
             </div>
