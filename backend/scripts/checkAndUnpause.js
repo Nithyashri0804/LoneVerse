@@ -1,11 +1,13 @@
 import hre from "hardhat";
+import LoanVerseABI from "../contracts/LoanVerse.json" assert { type: "json" };
 
 async function main() {
   const { ethers } = hre;
   
   const contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
-  const LoanVerse = await ethers.getContractFactory("LoanVerse");
-  const contract = LoanVerse.attach(contractAddress);
+  const provider = new ethers.JsonRpcProvider("http://localhost:8000");
+  const signer = (await ethers.getSigners())[0] || provider;
+  const contract = new ethers.Contract(contractAddress, LoanVerseABI.abi, signer);
   
   try {
     console.log("🔍 Checking if contract is paused...");
@@ -14,7 +16,8 @@ async function main() {
     
     if (isPaused) {
       console.log("\n⏸️  Contract is PAUSED. Unpausing...");
-      const signer = (await ethers.getSigners())[0];
+      const signers = await hre.ethers.getSigners();
+      const signer = signers[0];
       const contractWithSigner = contract.connect(signer);
       const tx = await contractWithSigner.unpause();
       const receipt = await tx.wait();
