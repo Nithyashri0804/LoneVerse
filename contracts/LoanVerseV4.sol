@@ -113,8 +113,8 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
     uint256 public constant MIN_LOAN_DURATION = 1 minutes;
     uint256 public constant MAX_LOAN_DURATION = 365 days;
     uint256 public constant MIN_CREDIT_SCORE = 300;
-    uint256 public constant DEFAULT_FUNDING_PERIOD = 2 minutes;
-    uint256 public constant VOTING_PERIOD = 2 minutes;
+    uint256 public constant DEFAULT_FUNDING_PERIOD = 1 minutes;
+    uint256 public constant VOTING_PERIOD = 1 minutes;
     uint256 public constant PRICE_STALENESS_THRESHOLD = 3600; // 1 hour
     
     // Protocol fees

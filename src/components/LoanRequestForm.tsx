@@ -78,7 +78,7 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
       // Parse amounts with correct decimals
       const amount = parseUnits(formData.totalAmount, loanTokenDecimals);
       const interestRateBasisPoints = formData.interestRate * 100; // Convert to basis points
-      const durationSeconds = formData.duration * 24 * 60 * 60; // Convert days to seconds
+      const durationSeconds = Math.max(60, Math.floor(formData.duration * 24 * 60 * 60)); // Convert days to seconds, min 1 min
       
       // Validate and calculate minContribution (use loan token decimals)
       const minContributionValue = formData.minContribution || '0.01';
@@ -242,13 +242,15 @@ const LoanRequestForm: React.FC<LoanRequestFormProps> = ({ onSuccess }) => {
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">
-            Duration (Days)
+            Duration
           </label>
           <select
             value={formData.duration}
-            onChange={(e) => handleInputChange('duration', parseInt(e.target.value))}
+            onChange={(e) => handleInputChange('duration', parseFloat(e.target.value))}
             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
+            <option value={1/1440}>1 minute (Demo)</option>
+            <option value={2/1440}>2 minutes (Demo)</option>
             <option value={7}>7 days</option>
             <option value={14}>14 days</option>
             <option value={30}>30 days</option>
