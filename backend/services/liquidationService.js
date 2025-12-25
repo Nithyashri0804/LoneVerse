@@ -239,9 +239,12 @@ class LiquidationService {
       
       let tx;
       if (Number(tokenInfo.tokenType) === 0) { // ETH
+        // Get current nonce to avoid nonce mismatch
+        const nonce = await this.provider.getTransactionCount(this.signer.address, 'pending');
         tx = await this.contract.liquidate(loanId, { 
           value: totalOwed,
-          gasLimit: 1000000 // Reasonable gas limit
+          gasLimit: 1000000,
+          nonce: nonce
         });
       } else {
         // For ERC20, the liquidator must have tokens and approve the contract
@@ -249,17 +252,24 @@ class LiquidationService {
         const tokenContract = new ethers.Contract(tokenAddress, ["function approve(address spender, uint256 amount) public returns (bool)"], this.signer);
         
         console.log(`🔓 Approving ${tokenAddress} for liquidation...`);
-        const approveTx = await tokenContract.approve(this.contractAddress, totalOwed);
-        await approveTx.wait();
         
+        // Get current nonce for approve
+        let approveNonce = await this.provider.getTransactionCount(this.signer.address, 'pending');
+        const approveTx = await tokenContract.approve(this.contractAddress, totalOwed, { nonce: approveNonce });
+        const approveReceipt = await approveTx.wait();
+        console.log(`✅ Approved successfully: ${approveReceipt.hash}`);
+        
+        // Get nonce for liquidate (should be incremented after approve)
+        const liquidateNonce = await this.provider.getTransactionCount(this.signer.address, 'pending');
         tx = await this.contract.liquidate(loanId, {
-          gasLimit: 1000000
+          gasLimit: 1000000,
+          nonce: liquidateNonce
         });
       }
 
       console.log(`🔄 Liquidation transaction sent: ${tx.hash}`);
-      await tx.wait();
-      console.log(`✅ Liquidation successful for loan ${loanId}`);
+      const receipt = await tx.wait();
+      console.log(`✅ Liquidation successful for loan ${loanId}: ${receipt.hash}`);
 
     } catch (error) {
       console.error(`❌ Failed to liquidate loan ${loanId}:`, error.message);
