@@ -13,9 +13,6 @@ module.exports = {
   networks: {
     hardhat: {
       chainId: 31337,
-      forking: {
-        enabled: false, // Set to true to fork mainnet
-      },
     },
     localhost: {
       url: "http://localhost:8000",
