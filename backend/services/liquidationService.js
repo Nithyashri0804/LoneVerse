@@ -100,35 +100,39 @@ class LiquidationService {
    * Check for loans eligible for liquidation in V4
    */
   async checkLiquidatableLoans() {
+    const startTime = Date.now();
     try {
       if (!this.contract) {
         await this.initializeProvider();
         if (!this.contract) {
+          console.log('❌ Contract not initialized, skipping check');
           return;
         }
       }
 
-      // Don't log every check in production/local - too verbose
-      if (Math.random() < 0.1) {
-        console.log('🔍 Checking for liquidatable V4 loans...');
-      }
+      console.log('📍 [LIQUIDATION] Starting loan check...');
       
       let maxLoanId = 100; // Fallback limit
       
       // Try to get nextLoanId
       try {
+        const nextIdStart = Date.now();
         const nextId = await this.contract.nextLoanId();
         maxLoanId = Math.min(Number(nextId), 100);
+        console.log(`✅ [LIQUIDATION] Fetched nextLoanId: ${maxLoanId} (${Date.now() - nextIdStart}ms)`);
       } catch (e) {
-        // Fallback: iterate through loans until we hit an error
-        if (Math.random() < 0.1) {
-          console.warn(`⚠️ Could not fetch nextLoanId, using fallback method: ${e.message}`);
-        }
+        console.warn(`⚠️ [LIQUIDATION] Could not fetch nextLoanId, using fallback limit of 100: ${e.message}`);
       }
+      
+      let loansChecked = 0;
+      let loansFound = 0;
+      let liquidatable = 0;
       
       for (let i = 1; i < maxLoanId; i++) {
         let loan;
         try {
+          const loanFetchStart = Date.now();
+          
           // Encode call to loans(uint256)
           const calldata = this.contract.interface.encodeFunctionData('loans', [i]);
           
@@ -143,20 +147,16 @@ class LiquidationService {
             continue;
           }
           
-          // Parse hex data manually - struct with 16 fields
-          // Skip the ipfsDocumentHash (dynamic string) and read fixed-size fields
-          const data = result.slice(2); // Remove 0x
+          loansFound++;
           
-          // Each uint256 = 64 hex chars, address = 40 hex chars (padded to 64)
-          // Structure: id(256) borrower(160→256) lender(160→256) tokenId(256) collateralTokenId(256) 
-          //            amount(256) collateralAmount(256) interestRate(256) duration(256) createdAt(256) 
-          //            fundedAt(256) dueDate(256) status(8→256) ipfsDocumentHash(dynamic) riskScore(256) collateralClaimed(bool→256)
+          // Parse hex data manually - struct with 16 fields
+          const data = result.slice(2); // Remove 0x
           
           const offset = (idx) => idx * 64; // Convert field index to hex offset
           
           loan = {
             id: BigInt('0x' + data.slice(offset(0), offset(1))),
-            borrower: '0x' + data.slice(offset(1) + 24, offset(2)), // Take last 40 chars (20 bytes)
+            borrower: '0x' + data.slice(offset(1) + 24, offset(2)),
             lender: '0x' + data.slice(offset(2) + 24, offset(3)),
             tokenId: BigInt('0x' + data.slice(offset(3), offset(4))),
             collateralTokenId: BigInt('0x' + data.slice(offset(4), offset(5))),
@@ -167,10 +167,12 @@ class LiquidationService {
             createdAt: BigInt('0x' + data.slice(offset(9), offset(10))),
             fundedAt: BigInt('0x' + data.slice(offset(10), offset(11))),
             dueDate: BigInt('0x' + data.slice(offset(11), offset(12))),
-            status: Number('0x' + data.slice(offset(12) + 62, offset(13))), // Last 2 hex chars
+            status: Number('0x' + data.slice(offset(12) + 62, offset(13))),
             riskScore: BigInt('0x' + data.slice(offset(14), offset(15))),
             collateralClaimed: data.slice(offset(15) + 62, offset(16)) !== '00'
           };
+          
+          console.log(`  📋 Loan ${i}: Borrower=${loan.borrower.substring(0, 10)}..., Status=${loan.status}, TokenID=${loan.tokenId}, Amount=${loan.amount.toString()} (${Date.now() - loanFetchStart}ms)`);
           
           // Verify we got valid data
           if (!loan.borrower || loan.borrower.toLowerCase() === '0x0000000000000000000000000000000000000000') {
@@ -180,25 +182,30 @@ class LiquidationService {
         } catch (e) {
           // Stop iterating if we hit non-existent loans (expected)
           if (i > 1) break;
-          if (Math.random() < 0.05) {
-            console.warn(`⚠️ Could not read loan ${i}: ${e.message.substring(0, 80)}`);
-          }
+          console.warn(`⚠️ [LIQUIDATION] Could not read loan ${i}: ${e.message.substring(0, 80)}`);
           continue;
         }
 
+        loansChecked++;
         const status = Number(loan.status);
         
         // Only check active (2) or voting (6) loans
-        if (status !== 2 && status !== 6) continue;
+        if (status !== 2 && status !== 6) {
+          console.log(`  ⏭️  Loan ${i}: Skipped (status=${status}, not active/voting)`);
+          continue;
+        }
 
-        const isPastDue = Math.floor(Date.now() / 1000) > Number(loan.dueDate); 
+        const isPastDue = Math.floor(Date.now() / 1000) > Number(loan.dueDate);
+        console.log(`  🔍 Loan ${i}: Checking liquidation criteria... (Past Due: ${isPastDue})`);
         
         let loanValueUSD, collateralValueUSD;
         try {
+          const usdCalcStart = Date.now();
           loanValueUSD = await this.contract.calculateUSDValue(loan.tokenId, loan.amount);
           collateralValueUSD = await this.contract.calculateUSDValue(loan.collateralTokenId, loan.collateralAmount);
+          console.log(`  💵 Loan ${i}: LoanUSD=${loanValueUSD.toString()}, CollateralUSD=${collateralValueUSD.toString()} (${Date.now() - usdCalcStart}ms)`);
         } catch (e) {
-          console.warn(`⚠️ Could not calculate USD value for loan ${i}. Falling back to time-based liquidation.`);
+          console.warn(`⚠️ [LIQUIDATION] Could not calculate USD value for loan ${i}: ${e.message}. Falling back to time-based liquidation.`);
           loanValueUSD = 100000000n; 
           collateralValueUSD = 1n;
         }
@@ -207,13 +214,20 @@ class LiquidationService {
         const isUndercollateralized = (collateralValueUSD * 100n) < (loanValueUSD * 120n);
 
         if (isPastDue || isUndercollateralized) {
-          console.log(`🚨 LIQUIDATING loan ${i} (Past Due: ${isPastDue}, Undercollateralized: ${isUndercollateralized})`);
+          liquidatable++;
+          console.log(`🚨 [LIQUIDATION] LIQUIDATING loan ${i} (Past Due: ${isPastDue}, Undercollateralized: ${isUndercollateralized})`);
           await this.processLiquidation(i, loan);
+        } else {
+          console.log(`  ✅ Loan ${i}: Safe (collateral ratio OK, not past due)`);
         }
       }
+      
+      const totalTime = Date.now() - startTime;
+      console.log(`✅ [LIQUIDATION] Check complete: Checked=${loansChecked}, Found=${loansFound}, Liquidatable=${liquidatable}, Time=${totalTime}ms`);
 
     } catch (error) {
-      console.error('❌ Error checking liquidatable loans:', error.message);
+      const totalTime = Date.now() - startTime;
+      console.error(`❌ [LIQUIDATION] Error checking liquidatable loans (${totalTime}ms):`, error.message);
     }
   }
 
