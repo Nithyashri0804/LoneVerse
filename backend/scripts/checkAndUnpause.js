@@ -9,7 +9,7 @@ const LoanVerseABI = JSON.parse(fs.readFileSync(path.join(__dirname, "../contrac
 async function main() {
   const { ethers } = hre;
   
-  const contractAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+  const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
   const provider = new ethers.JsonRpcProvider("http://localhost:8000");
   const signer = (await ethers.getSigners())[0] || provider;
   const contract = new ethers.Contract(contractAddress, LoanVerseABI.abi, signer);
