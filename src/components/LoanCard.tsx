@@ -29,7 +29,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
         setTimeLeft(remaining > 0 ? remaining : 0);
         
         // Show "Liquidating..." status if past due
-        if (remaining <= -30) {
+        if (remaining <= 0) {
           setIsLiquidating(true);
         }
       }, 1000);
