@@ -133,52 +133,35 @@ class LiquidationService {
         try {
           const loanFetchStart = Date.now();
           
-          // Encode call to loans(uint256)
-          const calldata = this.contract.interface.encodeFunctionData('loans', [i]);
+          // Fetch loan using contract interface (properly decoded by ethers.js)
+          const rawLoan = await this.contract.loans(i);
           
-          // Make raw RPC call
-          const result = await this.provider.call({
-            to: this.contractAddress,
-            data: calldata
-          });
-          
-          if (!result || result === '0x') {
+          if (!rawLoan || !rawLoan.borrower || rawLoan.borrower === '0x0000000000000000000000000000000000000000') {
             if (i > 1) break;
             continue;
           }
           
           loansFound++;
           
-          // Parse hex data manually - struct with 16 fields
-          const data = result.slice(2); // Remove 0x
-          
-          const offset = (idx) => idx * 64; // Convert field index to hex offset
-          
+          // Convert to usable format
           loan = {
-            id: BigInt('0x' + data.slice(offset(0), offset(1))),
-            borrower: '0x' + data.slice(offset(1) + 24, offset(2)),
-            lender: '0x' + data.slice(offset(2) + 24, offset(3)),
-            tokenId: BigInt('0x' + data.slice(offset(3), offset(4))),
-            collateralTokenId: BigInt('0x' + data.slice(offset(4), offset(5))),
-            amount: BigInt('0x' + data.slice(offset(5), offset(6))),
-            collateralAmount: BigInt('0x' + data.slice(offset(6), offset(7))),
-            interestRate: BigInt('0x' + data.slice(offset(7), offset(8))),
-            duration: BigInt('0x' + data.slice(offset(8), offset(9))),
-            createdAt: BigInt('0x' + data.slice(offset(9), offset(10))),
-            fundedAt: BigInt('0x' + data.slice(offset(10), offset(11))),
-            dueDate: BigInt('0x' + data.slice(offset(11), offset(12))),
-            status: Number('0x' + data.slice(offset(12) + 62, offset(13))),
-            riskScore: BigInt('0x' + data.slice(offset(14), offset(15))),
-            collateralClaimed: data.slice(offset(15) + 62, offset(16)) !== '00'
+            id: rawLoan.id,
+            borrower: rawLoan.borrower,
+            tokenId: rawLoan.tokenId,
+            collateralTokenId: rawLoan.collateralTokenId,
+            amount: rawLoan.amount,
+            collateralAmount: rawLoan.collateralAmount,
+            interestRate: rawLoan.interestRate,
+            duration: rawLoan.duration,
+            createdAt: rawLoan.createdAt,
+            fundedAt: rawLoan.fundedAt,
+            dueDate: rawLoan.dueDate,
+            status: Number(rawLoan.status),  // Convert enum to number
+            riskScore: rawLoan.riskScore
           };
           
           console.log(`  📋 Loan ${i}: Borrower=${loan.borrower.substring(0, 10)}..., Status=${loan.status}, TokenID=${loan.tokenId}, Amount=${loan.amount.toString()} (${Date.now() - loanFetchStart}ms)`);
           
-          // Verify we got valid data
-          if (!loan.borrower || loan.borrower.toLowerCase() === '0x0000000000000000000000000000000000000000') {
-            if (i > 1) break;
-            continue;
-          }
         } catch (e) {
           // Stop iterating if we hit non-existent loans (expected)
           if (i > 1) break;
