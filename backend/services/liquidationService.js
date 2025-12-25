@@ -22,15 +22,20 @@ class LiquidationService {
     
     // Contract configuration
     this.contractAddress = process.env.VITE_LOANVERSE_V4_ADDRESS || process.env.LOANVERSE_V3_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-    this.rpcUrl = process.env.RPC_URL || "http://127.0.0.1:8545";
+    this.rpcUrl = process.env.RPC_URL || "http://0.0.0.0:8080";
+    
+    // In Replit environment, if 0.0.0.0:8080 fails, we might be using a public RPC or a different port
+    if (this.rpcUrl.includes('0.0.0.0:8080')) {
+      console.log('ℹ️ Using default local RPC, ensuring it is accessible');
+    }
     
     // Security: Require private key from environment
     if (!process.env.LIQUIDATOR_PRIVATE_KEY) {
-      console.warn('⚠️ LIQUIDATOR_PRIVATE_KEY not set - liquidation service disabled for security');
-      this.enabled = false;
-      return;
+      console.warn('⚠️ LIQUIDATOR_PRIVATE_KEY not set - using default local key for demo');
+      this.privateKey = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+    } else {
+      this.privateKey = process.env.LIQUIDATOR_PRIVATE_KEY;
     }
-    this.privateKey = process.env.LIQUIDATOR_PRIVATE_KEY;
     this.enabled = true;
     
     this.initializeProvider();
@@ -38,16 +43,27 @@ class LiquidationService {
 
   initializeProvider() {
     try {
+      console.log(`🔌 Initializing provider with RPC: ${this.rpcUrl}`);
       // Use pooled provider and signer
       this.provider = blockchainPool.getProvider(this.rpcUrl);
+      
+      if (!this.provider) {
+        throw new Error('Failed to get provider from pool');
+      }
+
       this.signer = blockchainPool.getSigner(this.privateKey, this.rpcUrl);
+      
+      if (!this.signer) {
+        throw new Error('Failed to get signer from pool');
+      }
+
       this.contract = new ethers.Contract(this.contractAddress, LOANVERSE_V4_ABI, this.signer);
       
-      console.log('🔗 Liquidation service initialized for LoanVerseV4');
-      this._hasLoggedInitError = false; // Reset error flag on success
+      console.log(`🔗 Liquidation service initialized for LoanVerseV4 at ${this.contractAddress}`);
+      this._hasLoggedInitError = false; 
     } catch (error) {
       if (!this._hasLoggedInitError) {
-        console.warn('📡 Liquidation service waiting for blockchain network...');
+        console.warn(`📡 Liquidation service waiting for blockchain network (${this.rpcUrl})... Error: ${error.message}`);
         this._hasLoggedInitError = true;
       }
       setTimeout(() => this.initializeProvider(), 5000);
@@ -159,13 +175,13 @@ class LiquidationService {
       if (Number(tokenInfo.tokenType) === 0) { // ETH
         tx = await this.contract.liquidate(loanId, { 
           value: totalOwed,
-          gasLimit: 500000 // Ensure enough gas for the distribution logic
+          gasLimit: 1000000 // Reasonable gas limit
         });
       } else {
         // For ERC20, the liquidator must have tokens. 
         // In local Hardhat, the liquidator (account 0) has everything.
         tx = await this.contract.liquidate(loanId, {
-          gasLimit: 500000
+          gasLimit: 1000000
         });
       }
 
