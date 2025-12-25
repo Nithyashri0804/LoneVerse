@@ -129,42 +129,59 @@ class LiquidationService {
       for (let i = 1; i < maxLoanId; i++) {
         let loan;
         try {
-          // Call the contract function - let ethers handle the Result object
-          const loanResult = await this.contract.loans(i);
+          // Encode call to loans(uint256)
+          const calldata = this.contract.interface.encodeFunctionData('loans', [i]);
           
-          // Handle ethers Result object - extract values directly
+          // Make raw RPC call
+          const result = await this.provider.call({
+            to: this.contractAddress,
+            data: calldata
+          });
+          
+          if (!result || result === '0x') {
+            if (i > 1) break;
+            continue;
+          }
+          
+          // Parse hex data manually - struct with 16 fields
+          // Skip the ipfsDocumentHash (dynamic string) and read fixed-size fields
+          const data = result.slice(2); // Remove 0x
+          
+          // Each uint256 = 64 hex chars, address = 40 hex chars (padded to 64)
+          // Structure: id(256) borrower(160→256) lender(160→256) tokenId(256) collateralTokenId(256) 
+          //            amount(256) collateralAmount(256) interestRate(256) duration(256) createdAt(256) 
+          //            fundedAt(256) dueDate(256) status(8→256) ipfsDocumentHash(dynamic) riskScore(256) collateralClaimed(bool→256)
+          
+          const offset = (idx) => idx * 64; // Convert field index to hex offset
+          
           loan = {
-            id: loanResult.id ? BigInt(loanResult.id) : BigInt(0),
-            borrower: loanResult.borrower || ethers.ZeroAddress,
-            lender: loanResult.lender || ethers.ZeroAddress,
-            tokenId: loanResult.tokenId ? BigInt(loanResult.tokenId) : BigInt(0),
-            collateralTokenId: loanResult.collateralTokenId ? BigInt(loanResult.collateralTokenId) : BigInt(0),
-            amount: loanResult.amount ? BigInt(loanResult.amount) : BigInt(0),
-            collateralAmount: loanResult.collateralAmount ? BigInt(loanResult.collateralAmount) : BigInt(0),
-            interestRate: loanResult.interestRate ? BigInt(loanResult.interestRate) : BigInt(0),
-            duration: loanResult.duration ? BigInt(loanResult.duration) : BigInt(0),
-            createdAt: loanResult.createdAt ? BigInt(loanResult.createdAt) : BigInt(0),
-            fundedAt: loanResult.fundedAt ? BigInt(loanResult.fundedAt) : BigInt(0),
-            dueDate: loanResult.dueDate ? BigInt(loanResult.dueDate) : BigInt(0),
-            status: loanResult.status ? Number(loanResult.status) : 0,
-            ipfsDocumentHash: loanResult.ipfsDocumentHash || '',
-            riskScore: loanResult.riskScore ? BigInt(loanResult.riskScore) : BigInt(0),
-            collateralClaimed: Boolean(loanResult.collateralClaimed)
+            id: BigInt('0x' + data.slice(offset(0), offset(1))),
+            borrower: '0x' + data.slice(offset(1) + 24, offset(2)), // Take last 40 chars (20 bytes)
+            lender: '0x' + data.slice(offset(2) + 24, offset(3)),
+            tokenId: BigInt('0x' + data.slice(offset(3), offset(4))),
+            collateralTokenId: BigInt('0x' + data.slice(offset(4), offset(5))),
+            amount: BigInt('0x' + data.slice(offset(5), offset(6))),
+            collateralAmount: BigInt('0x' + data.slice(offset(6), offset(7))),
+            interestRate: BigInt('0x' + data.slice(offset(7), offset(8))),
+            duration: BigInt('0x' + data.slice(offset(8), offset(9))),
+            createdAt: BigInt('0x' + data.slice(offset(9), offset(10))),
+            fundedAt: BigInt('0x' + data.slice(offset(10), offset(11))),
+            dueDate: BigInt('0x' + data.slice(offset(11), offset(12))),
+            status: Number('0x' + data.slice(offset(12) + 62, offset(13))), // Last 2 hex chars
+            riskScore: BigInt('0x' + data.slice(offset(14), offset(15))),
+            collateralClaimed: data.slice(offset(15) + 62, offset(16)) !== '00'
           };
           
           // Verify we got valid data
-          if (!loan.borrower || loan.borrower === ethers.ZeroAddress) {
-            if (i > 1) break; // Stop if we hit an empty loan slot
+          if (!loan.borrower || loan.borrower.toLowerCase() === '0x0000000000000000000000000000000000000000') {
+            if (i > 1) break;
             continue;
           }
         } catch (e) {
           // Stop iterating if we hit non-existent loans (expected)
           if (i > 1) break;
-          // Only log actual errors, not expected reverts
-          if (!e.message.includes('require(false)') && !e.message.includes('Bad data')) {
-            if (Math.random() < 0.05) {
-              console.warn(`⚠️ Could not read loan ${i}: ${e.message.substring(0, 100)}`);
-            }
+          if (Math.random() < 0.05) {
+            console.warn(`⚠️ Could not read loan ${i}: ${e.message.substring(0, 80)}`);
           }
           continue;
         }
