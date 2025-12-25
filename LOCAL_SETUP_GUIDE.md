@@ -57,7 +57,12 @@ npm run dev
 ```
 *Open http://localhost:5173 in your browser.*
 
-## Step 7: How to Test the Demo
+## Common Troubleshooting
+### "network is not available yet" or "ECONNREFUSED"
+If the backend fails to connect:
+1. Ensure the Hardhat node terminal is still running.
+2. If using Windows, try changing `localhost` to `127.0.0.1` in your `.env` files.
+3. Make sure you have deployed the contracts *after* starting the node.
 1. **MetaMask**: Connect MetaMask to "Localhost 8545".
 2. **Import Account**: Import Account #1 (from the hardhat node output) into MetaMask.
 3. **Request Loan**: Create a loan with a **1-minute** duration.

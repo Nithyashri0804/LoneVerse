@@ -21,7 +21,7 @@ class LiquidationService {
     
     // Contract configuration
     this.contractAddress = process.env.VITE_LOANVERSE_V4_ADDRESS || process.env.LOANVERSE_V3_ADDRESS || "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-    this.rpcUrl = process.env.RPC_URL || "http://localhost:8545";
+    this.rpcUrl = process.env.RPC_URL || "http://127.0.0.1:8545";
     
     // Security: Require private key from environment
     if (!process.env.LIQUIDATOR_PRIVATE_KEY) {

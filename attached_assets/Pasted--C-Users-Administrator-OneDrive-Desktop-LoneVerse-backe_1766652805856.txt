@@ -1,0 +1,110 @@
+ C:\Users\Administrator\OneDrive\Desktop\LoneVerse\backend> npm start
+
+> loanverse-backend@1.0.0 start
+> node server.js
+
+📧 Email service initialized
+✅ Created pooled blockchain provider for http://127.0.0.1:8545
+❌ Failed to initialize liquidation service: Error: network is not available yet (code=NETWORK_ERROR, version=6.15.0)       
+    at makeError (file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/backend/node_modules/ethers/lib.esm/utils/errors.js:132:21)
+    at assert (file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/backend/node_modules/ethers/lib.esm/utils/errors.js:151:15)
+    at get _network (file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/backend/node_modules/ethers/lib.esm/providers/provider-jsonrpc.js:357:9)
+    at BlockchainProviderPool.getProvider (file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/backend/services/connectionPools.js:198:32)
+    at BlockchainProviderPool.getSigner (file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/backend/services/connectionPools.js:223:27)
+    at LiquidationService.initializeProvider (file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/backend/services/liquidationService.js:42:36)
+    at new LiquidationService (file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/backend/services/liquidationService.js:35:10)
+    at file:///C:/Users/Administrator/OneDrive/Desktop/LoneVerse/backend/services/liquidationService.js:254:28
+    at ModuleJob.run (node:internal/modules/esm/module_job:274:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26) {
+  code: 'NETWORK_ERROR',
+  shortMessage: 'network is not available yet'
+}
+📈 Interest Rate Matching Service initialized
+📝 TensorFlow.js-node not available, trying browser version...
+✅ TensorFlow.js loaded successfully
+🚀 Starting LoanVerse Backend...
+🚀 Initializing connection pools...
+🔄 Redis reconnecting in 0ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 100ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 200ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 300ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 400ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 500ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 600ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 700ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 800ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 900ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+🔄 Redis reconnecting in 1000ms...
+❌ Redis client error:
+🔄 Redis reconnecting...
+❌ Redis max reconnection attempts reached
+❌ Redis client error:
+❌ Redis connection failed: Max reconnection attempts reached
+⚠️ Running without Redis cache
+✅ Created pooled blockchain provider for http://localhost:8545
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+❌ Provider health check failed:
+✅ Connection pools initialized
+📊 HTTP Agent: 50 max sockets, 10 max free
+📊 Redis: Disconnected
+📊 Blockchain Providers: 2 active
+
+============================
+Hi, looks like you are running TensorFlow.js in Node.js. To speed things up dramatically, install our node backend, visit https://github.com/tensorflow/tfjs-node for more details.
+============================
+🤖 ML model created successfully
+✅ ML model initialized
+🔍 Starting risk monitoring service...
+✅ Risk monitoring service started
+✅ Risk monitoring started
+🚀 Starting LoanVerseV4 automated liquidation monitoring...
+✅ Automated liquidation monitoring started
+✅ Liquidation monitoring started
+🌟 LoanVerse Backend running on port 3001
+📊 Environment: development
+🤖 ML Features: Enabled
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+⚠️ Contract not initialized
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
+JsonRpcProvider failed to detect network and cannot start up; retry in 1s (perhaps the URL is wrong or the node is not started)
