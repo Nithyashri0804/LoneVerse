@@ -266,6 +266,64 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
     }
   };
 
+  const canLiquidate = () => {
+    const statusNumber = Number(loan.status);
+    // LoanVerseV4 allows liquidation in FUNDED or VOTING status
+    return (statusNumber === LoanStatus.FUNDED || statusNumber === 6 /* VOTING */) &&
+           account && account.toLowerCase() !== loan.borrower.toLowerCase() &&
+           (isExpired() || (loan.riskScore && loan.riskScore > 800)); // Simplified UI check for liquidation
+  };
+
+  const handleLiquidate = async () => {
+    if (!contract) return;
+
+    try {
+      setIsLoading(true);
+      setError('');
+
+      const interest = (BigInt(loan.totalAmount) * BigInt(loan.interestRate)) / BigInt(10000);
+      const totalOwed = BigInt(loan.totalAmount) + interest - BigInt(loan.totalRepaid);
+      
+      const isNativeETH = loan.loanToken === 0;
+
+      if (isNativeETH) {
+        const tx = await contract.liquidate(loan.id, {
+          value: totalOwed,
+        });
+        await tx.wait();
+      } else {
+        // Handle ERC20 approval for liquidation
+        const tokenInfo = await contract.supportedTokens(loan.loanToken);
+        const tokenAddress = tokenInfo.contractAddress;
+        
+        const erc20Contract = new ethers.Contract(
+          tokenAddress,
+          ['function approve(address spender, uint256 amount) external returns (bool)',
+           'function allowance(address owner, address spender) external view returns (uint256)'],
+          contract.runner
+        );
+
+        const contractAddress = await contract.getAddress();
+        const currentAllowance = await erc20Contract.allowance(account, contractAddress);
+        
+        if (currentAllowance < totalOwed) {
+          const approveTx = await erc20Contract.approve(contractAddress, totalOwed);
+          await approveTx.wait();
+        }
+
+        const tx = await contract.liquidate(loan.id);
+        await tx.wait();
+      }
+
+      onUpdate();
+    } catch (error: any) {
+      console.error('Error liquidating loan:', error);
+      setError(error.reason || error.message || 'Failed to liquidate loan');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-gray-600 transition-colors">
       <div className="flex items-center justify-between mb-4">
@@ -407,6 +465,23 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
               <>
                 <DollarSign size={16} />
                 <span>Repay Loan</span>
+              </>
+            )}
+          </button>
+        )}
+
+        {canLiquidate() && (
+          <button
+            onClick={handleLiquidate}
+            disabled={isLoading}
+            className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
+          >
+            {isLoading ? (
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+            ) : (
+              <>
+                <AlertTriangle size={16} />
+                <span>Liquidate</span>
               </>
             )}
           </button>
