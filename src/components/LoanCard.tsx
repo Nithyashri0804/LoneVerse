@@ -472,40 +472,6 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, onUpdate }) => {
             )}
           </button>
         )}
-
-        {canLiquidate() && (
-          <button
-            onClick={handleLiquidate}
-            disabled={isLoading}
-            className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-          >
-            {isLoading ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            ) : (
-              <>
-                <AlertTriangle size={16} />
-                <span>Liquidate</span>
-              </>
-            )}
-          </button>
-        )}
-
-        {canClaimCollateral() && (
-          <button
-            onClick={handleClaimCollateral}
-            disabled={isLoading}
-            className="flex-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors flex items-center justify-center space-x-2"
-          >
-            {isLoading ? (
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-            ) : (
-              <>
-                <Shield size={16} />
-                <span>Claim Collateral</span>
-              </>
-            )}
-          </button>
-        )}
       </div>
     </div>
   );

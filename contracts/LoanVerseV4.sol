@@ -581,28 +581,12 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
 
         loan.status = LoanStatus.DEFAULTED;
         
-        // Distribute debt payment to lenders
+        // Distribute debt payment to lenders (returning USDC/Token)
         _distributeRepayment(_loanId, totalOwed);
 
-        // Return collateral: Proportional to lenders, excess to borrower
-        uint256 collateralToDistribute = loan.collateralAmount;
-        LenderContribution[] storage contributions = loanContributions[_loanId];
-        
-        uint256 totalLenderCollateral = 0;
-        for (uint256 i = 0; i < contributions.length; i++) {
-            uint256 lenderCollateralShare = (collateralToDistribute * contributions[i].amount) / loan.amount;
-            if (lenderCollateralShare > 0) {
-                totalLenderCollateral += lenderCollateralShare;
-                _transferToken(loan.collateralTokenId, contributions[i].lender, lenderCollateralShare);
-            }
-        }
-        
-        // Return remaining collateral (if any) to the borrower
-        if (collateralToDistribute > totalLenderCollateral) {
-            _transferToken(loan.collateralTokenId, loan.borrower, collateralToDistribute - totalLenderCollateral);
-        }
-        
-        loan.collateralAmount = 0;
+        // Return collateral: All excess collateral (ETH) goes back to the borrower
+        // Lenders are already repaid in the loan token (USDC) via _distributeRepayment
+        _returnCollateral(_loanId);
         
         // Update credit score
         _updateCreditScore(loan.borrower, false);
