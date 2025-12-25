@@ -4,7 +4,8 @@ const { ethers, network } = pkg;
 async function main() {
   console.log("Deploying LoanVerseV4 (Multi-Lender Pooled Lending) contract...");
   
-  // Get the ContractFactory and Signers here.
+  // Hardcode provider to 8545 for local deployment if needed
+  const localProvider = new ethers.JsonRpcProvider("http://localhost:8545");
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
   console.log("Account balance:", ethers.formatEther(await ethers.provider.getBalance(deployer.address)));
