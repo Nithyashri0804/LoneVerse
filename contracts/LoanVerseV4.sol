@@ -585,20 +585,24 @@ contract LoanVerseV4 is ReentrancyGuard, Ownable, Pausable {
         _distributeRepayment(_loanId, totalOwed);
 
         // Return collateral: Proportional to lenders, excess to borrower
-        // In this model, the liquidator bought the debt, so lenders are repaid in the loan token.
-        // The collateral itself is then distributed. 
-        // User asked: "share to be returend to the lenders proportional to the money invested . and rest of the money to be returned to the borrower in the remaining ETH"
-        // This implies the lenders get the COLLATERAL, not just the debt repayment.
-        
         uint256 collateralToDistribute = loan.collateralAmount;
         LenderContribution[] storage contributions = loanContributions[_loanId];
         
+        uint256 totalLenderCollateral = 0;
         for (uint256 i = 0; i < contributions.length; i++) {
             uint256 lenderCollateralShare = (collateralToDistribute * contributions[i].amount) / loan.amount;
             if (lenderCollateralShare > 0) {
+                totalLenderCollateral += lenderCollateralShare;
                 _transferToken(loan.collateralTokenId, contributions[i].lender, lenderCollateralShare);
             }
         }
+        
+        // Return remaining collateral (if any) to the borrower
+        if (collateralToDistribute > totalLenderCollateral) {
+            _transferToken(loan.collateralTokenId, loan.borrower, collateralToDistribute - totalLenderCollateral);
+        }
+        
+        loan.collateralAmount = 0;
         
         // Update credit score
         _updateCreditScore(loan.borrower, false);
